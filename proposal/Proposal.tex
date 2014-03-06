@@ -1,3 +1,4 @@
+
 \documentclass[12pt,a4paper]{report}
 \usepackage[utf8]{inputenc}
 \usepackage{amsmath}
@@ -7,8 +8,8 @@
 \usepackage{lmodern}
 \usepackage{kpfonts}
 \usepackage[left=2cm,right=2cm,top=2cm,bottom=2cm]{geometry}
-\author{Devan Patel, Kyle Koceski, and Daniel Fuentes}
-\title{Proposal}
+\author{Team members \\{\normalsize Devan Patel, Kyle Koceski, and Daniel Fuentes}}
+\title{Proposal \\ {\large Joseph Conway's Game of Life via Multithreading} }
 \begin{document}
 \maketitle
 \newpage
@@ -19,11 +20,23 @@
 \item Kyle Koceski - kkoceski93@ufl.edu
 \end{enumerate}
 \section{Designated Submitter}
-\indent		Devan Patel
+\paragraph{}
+Devan Patel
 \section{Project Overview}
-
+\paragraph{}
+Joseph Conway’s Game of Life program was implemented without parallelism; however, we wish to create a version with multithreading to produce a more efficient model. The program depicts how life creates, survives, and destroys depending on a cell’s neighbors in an infinite grid. For each cell, there are eight surrounding cells that could either be alive or dead; the current cell dies if there are less than two or more than three cells that are alive around it. It survives if either there are exactly two or three cells alive around it. Lastly, a cell is birthed if the current cell is dead and there are exactly three cells alive around it. It is evident that the cells in the grid form and dissipate erratically and we would like to show that via multithreading.\\
+\indent Our version would consist of a web server where the user will be allowed to input the grid size, initial number of alive cells, and maximum number of cells to be created throughout the game. However, lives will be collectively represented by threads.
 \section{How This Project Relates To Concurrent Programming}
-
+\paragraph{}
+As stated in the above, there will a single thread dedicated to a life. Each thread will know its neighbor and be able to access its current state (alive or dead). Inasmuch this will allow the current thread to determine its state. It should be noted that a Thread Pool will contain each life and the number of maximum threads will be determined by the user input (there will be a limit for the number of threads allowed). From this, we will be able to produce comparisons between a threaded and sequential version with the given information and conclude if parallelism has produced a more efficient model than its sequential counterpart. 
 \section{Hardware and Software Used}
+\paragraph{}
+There will be no additional hardware required other than a multi-core laptop since our product is purely software based.
+The software that we plan on using are as follows: 
+\begin{itemize}
+\item Backend - Java 1.7
+\item Frontend - JSP 2.2, CSS, HTML5, and XML.
+\item Testing - Apache JMeter
+\end{itemize}
 
 \end{document}
