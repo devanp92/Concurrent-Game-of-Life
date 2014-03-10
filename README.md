@@ -1,4 +1,4 @@
-COP4930
+CIS4930
 =======
 
 Concurrent Programming Project
