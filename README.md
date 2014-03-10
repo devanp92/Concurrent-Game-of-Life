@@ -8,10 +8,6 @@ Team:
 * Daniel Fuentes - danielffuentes@gmail.com - 786-269-4584  
 * Kyle Koceski - kkoceski93@ufl.edu - 321-536-1337  
 
-Member who will submit the project deliverables:
-
-Overview:
-
-Hardware and softare needed:
-
+Member who will submit the project deliverables:    
+	Devan Patel
 
