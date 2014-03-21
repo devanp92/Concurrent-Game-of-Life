@@ -6,6 +6,8 @@
 .gradle
 bin/
 tmp/
+*.classpath
+*.project
 *.tmp
 *.bak
 *.swp
