@@ -1,3 +1,5 @@
+package java.gameoflife;
+
 import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
@@ -15,7 +17,7 @@ public class Server implements Runnable {
 	public void run() {
 		try {
 			InetAddress ip = InetAddress.getLocalHost();
-			System.out.println("Server IP address: " + ip.getHostAddress());
+			System.out.println("java.gameoflife.Server IP address: " + ip.getHostAddress());
 		}
 		catch(UnknownHostException e) {
 			e.printStackTrace();
@@ -93,7 +95,7 @@ public class Server implements Runnable {
 						//TODO: use instanceof if necessary to distinguish returned object types
 						
 
-						//TODO: pass information received to another thread (MergerThread(?): would need to be created in Server()) 
+						//TODO: pass information received to another thread (MergerThread(?): would need to be created in java.gameoflife.Server())
 						//Other thread does merging, game object modification, resending next iteration
 					}
 				}
