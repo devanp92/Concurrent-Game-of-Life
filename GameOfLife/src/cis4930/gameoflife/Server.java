@@ -3,6 +3,9 @@ package cis4930.gameoflife;
 import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
+import java.util.concurrent.BrokenBarrierException;
+import java.util.concurrent.CyclicBarrier;
+import java.util.concurrent.Executor;
 
 public class Server implements Runnable {
 	private static final int port = 44445;
@@ -10,8 +13,12 @@ public class Server implements Runnable {
 	private ServerSocket serverSocket = null;
 	private volatile ArrayList<Connection> clients = new ArrayList<Connection>();
 	boolean listening = true;
+	
+	CyclicBarrier barrier;
 
 	private Object game = new Object();//TODO: create an explicit object for this
+	private volatile ArrayList<QuadTreeElement> partialComponents = new ArrayList<QuadTreeElement>();
+	private volatile boolean isPlaying = false;
 
 	@Override
 	public void run() {
@@ -49,6 +56,11 @@ public class Server implements Runnable {
 		catch(IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public void mergeData() {
+		//TODO
+		partialComponents.clear();
 	}
 
 	class Connection {
@@ -93,9 +105,28 @@ public class Server implements Runnable {
 					while(true) {
 						Object o = ois.readObject();
 						//TODO: use instanceof if necessary to distinguish returned object types
-						
+						boolean maybe = true;
+						if(maybe) {//TODO: received a PLAY message
+							barrier = new CyclicBarrier(clients.size(), new Runnable() {
+								public void run() {
+									mergeData();
+									for(Connection c : clients) {
+										c.send(game);
+									}
+								}
+							});
+						}
+						else if(o instanceof QuadTree) {
+							QuadTree qTree = (QuadTree) o;
+							partialComponents.add(qTree);
+							try {
+								barrier.await();
+							}
+							catch(InterruptedException ex) {/*ignored*/}
+							catch(BrokenBarrierException ex) {/*ignored*/}
+						}
 
-						//TODO: pass information received to another thread (MergerThread(?): would need to be created in java.gameoflife.Server())
+						//TODO: pass information received to another thread (MergerThread(?): would need to be created in Server())
 						//Other thread does merging, game object modification, resending next iteration
 					}
 				}
