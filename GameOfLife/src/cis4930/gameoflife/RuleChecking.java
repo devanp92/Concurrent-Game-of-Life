@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Created by devan on 3/29/14.
+ */
 public class RuleChecking implements Runnable {
 
     private Cell[][] grid = Grid.getGrid();
@@ -23,9 +26,9 @@ public class RuleChecking implements Runnable {
     }
 
     public Cell[][] applyRule(Cell[][] cells){
-        for (Cell[] cell1 : cells) {
+        for (int i = 0; i < cells.length; i++) {
             for (int j = 0; j < cells[0].length; j++) {
-                Cell cell = cell1[j];
+                Cell cell = cells[i][j];
             }
         }
         return null;
