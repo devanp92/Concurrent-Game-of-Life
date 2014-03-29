@@ -1,10 +1,9 @@
 package cis4930.gameoflife;
 
+import java.util.HashMap;
+
 public class QuadTree extends QuadTreeElement {
-	QuadTreeElement topRight = null;
-	QuadTreeElement topLeft = null;
-	QuadTreeElement botLeft = null;
-	QuadTreeElement botRight = null;
+	HashMap<QuadrantID, QuadTreeElement> quadrants = new HashMap<QuadrantID, QuadTreeElement>();
 	
 	int width;
 	int height;
@@ -18,111 +17,74 @@ public class QuadTree extends QuadTreeElement {
 		this.x = xOffset;
 		this.y = yOffset;
 	}
+	
+	private boolean isEmpty() {
+		return quadrants.isEmpty();
+	}
+	private boolean contains(QuadTreeElement e) {
+		boolean retVal = false;
+		QuadrantID qID = e.getQuadrantFit(this);
+		QuadTreeElement qTreeEl = quadrants.get(qID);
+		if(qTreeEl != null && qTreeEl instanceof QuadTree) {
+			QuadTree qTree = (QuadTree) qTreeEl; 
+			retVal = qTree.contains(e);
+		}
+		return retVal;
+	}
 
 	public void insert(QuadTreeElement e) throws IndexOutOfBoundsException {
 		if(!inRegion(e)) {
 			throw new IndexOutOfBoundsException("Element not in QuadTree region");
 		}
-		if(fitsInTopHalf(e)) {
-			if(fitsInLeftHalf(e)) {
-				//TOPLEFT
-				if(topLeft == null) {
-					topLeft = e;
-				}
-				else if(topLeft instanceof QuadTree) {
-					QuadTree qTree = (QuadTree) topLeft;
-					qTree.insert(e);
-				}
-				else {
-					QuadTreeElement oldElement = topLeft;
-					topLeft = new QuadTree(width/2, height/2, x, y);
-					((QuadTree)topLeft).insert(oldElement);
-				}
+		
+		QuadrantID qID = e.getQuadrantFit(this);
+		QuadTreeElement qte = quadrants.get(qID);
+		if(qte != null) {
+			if(qte instanceof QuadTree) {
+				QuadTree qTree = (QuadTree) qte;
+				qTree.insert(e);
 			}
 			else {
-				//TOPRIGHT
-				if(topRight == null) {
-					topRight = e;
-				}
-				else if(topRight instanceof QuadTree) {
-					QuadTree qTree = (QuadTree) topRight;
-					qTree.insert(e);
-				}
-				else {
-					QuadTreeElement oldElement = topRight;
-					topRight = new QuadTree(width-width/2, height/2, width-width/2+x, y);
-					((QuadTree)topRight).insert(oldElement);
-				}
+				QuadTree newQTree = new QuadTree(qID.getHalfWidth(width),
+						qID.getHalfHeight(height),
+						x + qID.getXOffset(width),
+						y + qID.getYOffset(height));
+				newQTree.insert(qte);
+				newQTree.insert(e);
+				quadrants.put(qID, newQTree);
 			}
 		}
 		else {
-			if(fitsInLeftHalf(e)) {
-				//BOTLEFT
-				if(botLeft == null) {
-					botLeft = e;
-				}
-				else if(botLeft instanceof QuadTree) {
-					QuadTree qTree = (QuadTree) botLeft;
-					qTree.insert(e);
-				}
-				else {
-					QuadTreeElement oldElement = botLeft;
-					botLeft = new QuadTree(width/2, height-height/2, x, height-height/2+y);
-					((QuadTree)botLeft).insert(oldElement);
-				}
-			}
-			else {
-				//BOTRIGHT
-				if(botRight == null) {
-					botRight = e;
-				}
-				else if(botRight instanceof QuadTree) {
-					QuadTree qTree = (QuadTree) botRight;
-					qTree.insert(e);
-				}
-				else {
-					QuadTreeElement oldElement = botRight;
-					botRight = new QuadTree(width-width/2, height-height/2, width-width/2+x, height-height/2+y);
-					((QuadTree)botRight).insert(oldElement);
-				}
-			}
+			quadrants.put(qID, e);
 		}
-		
 	}
 
 
 	public boolean remove(QuadTreeElement x) {
-		return remove(x, null);
+		return remove(x, null, null);
 	}
-	private boolean remove(QuadTreeElement x, QuadTree parent) {
+	private boolean remove(QuadTreeElement x, QuadTree parent, QuadrantID locationInParent) {
 		boolean found = false;
-		if(x.equals(topLeft)) {
-			found = true;
-			topLeft = null;
-		}
-		else if(x.equals(topRight)) {
-			found = true;
-			topRight = null;
-		}
-		else if(x.equals(botLeft)) {
-			found = true;
-			botLeft = null;
-		}
-		else if(x.equals(botRight)) {
-			found = true;
-			botRight = null;
-		}
 		
-		if(found) {
-			//clean up if necessary
-		}
-		else {
-			
+		QuadrantID qID = x.getQuadrantFit(this);
+		QuadTreeElement qte = quadrants.get(qID);
+		if(qte != null) {
+			if(qte instanceof QuadTree) {
+				QuadTree qTree = (QuadTree) qte;
+				found = qTree.remove(x, this, qID);
+			}
+			else {
+				if(x.equals(qte)) {
+					found = true;
+					quadrants.remove(qID);
+				}
+				if(isEmpty()) {
+					parent.quadrants.remove(locationInParent);
+				}
+			}
 		}
 		return found;
 	}
-	
-	
 	
 	/**Returns true if element <i>e</i> fits in the left half of this QuadTreeElement, false otherwise*/
 	public boolean fitsInLeftHalf(QuadTreeElement e) {
