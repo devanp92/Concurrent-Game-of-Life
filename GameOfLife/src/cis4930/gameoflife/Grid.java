@@ -11,6 +11,11 @@ public class Grid {
     public Grid(int numRows) {
         this.numRows = numRows;
         grid = new Cell[numRows][numRows];
+        for (int i = 0; i < numRows; i++) {
+            for (int j = 0; j < numRows; j++) {
+                grid[i][j] = new Cell(i,j);
+            }
+        }
     }
     public Grid(Cell[][] grid) {
         Grid.grid = grid;
