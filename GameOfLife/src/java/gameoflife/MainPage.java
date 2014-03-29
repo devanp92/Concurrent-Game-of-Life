@@ -9,8 +9,10 @@ import java.awt.event.ActionListener;
  */
 public class MainPage {
     private JPanel panelMain;
-    private JLabel josephConwaySGameLabel;
+    private JLabel josephConwayGameLabel;
     private JButton startButton;
+    private JButton stopButton;
+    private JTable table1;
     private int numClicks = 0;
 
     public MainPage() {
@@ -26,5 +28,9 @@ public class MainPage {
                 }
             }
         });
+    }
+
+    private void createUIComponents() {
+        // TODO: place custom component creation code here
     }
 }
