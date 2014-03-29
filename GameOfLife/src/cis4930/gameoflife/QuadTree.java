@@ -32,9 +32,22 @@ public class QuadTree extends QuadTreeElement {
 		}
 		return retVal;
 	}
+	public int size() {
+		int retVal = 0;
+		for(QuadTreeElement qte : quadrants.values()) {
+			if(qte instanceof QuadTree) {
+				QuadTree qTree = (QuadTree) qte;
+				retVal += qTree.size();
+			}
+			else {
+				retVal += 1;
+			}
+		}
+		return retVal;
+	}
 
 	public void insert(QuadTreeElement e) throws IndexOutOfBoundsException {
-		if(!inRegion(e)) {
+		if(!e.inRegion(this)) {
 			throw new IndexOutOfBoundsException("Element not in QuadTree region");
 		}
 		
@@ -104,37 +117,59 @@ public class QuadTree extends QuadTreeElement {
 		return itemList;
 	}
 	
-	/**Returns true if element <i>e</i> fits in the left half of this QuadTreeElement, false otherwise*/
-	public boolean fitsInLeftHalf(QuadTreeElement e) {
-		boolean retVal = false;
-		if(e.x < x + width) {
-			retVal = true;
+	/**Breadth-first divisioning; produces no more than numOfDivisions divisions*/
+	public ArrayList<QuadTreeElement> divideLess(int numOfDivisions) {
+		ArrayList<QuadTreeElement> list = new ArrayList<QuadTreeElement>();
+		list.add(this);
+		int index = 0;
+		while(list.size() < numOfDivisions && index < list.size()) {
+			QuadTreeElement q = list.get(index);
+			if(q instanceof QuadTree) {
+				QuadTree qTree = (QuadTree) q;
+				if(qTree.quadrants.size()+list.size()-1 <= numOfDivisions) {
+					list.remove(index);
+					for(QuadTreeElement qte : qTree.quadrants.values()) {
+						list.add(qte);
+					}
+				}
+				else {
+					index++;
+				}
+			}
+			else {
+				index++;
+			}
 		}
-		return retVal;
+		return list;
 	}
 	
-	/**Returns true if element <i>e</i> fits in the top half of this QuadTreeElement, false otherwise*/
-	public boolean fitsInTopHalf(QuadTreeElement e) {
-		boolean retVal = false;
-		if(e.y < y + height) {
-			retVal = true;
+	/**Breadth-first divisioning; produces at least numOfDivisions divisions*/
+	public ArrayList<QuadTreeElement> divideMore(int numOfDivisions) {
+		ArrayList<QuadTreeElement> list = new ArrayList<QuadTreeElement>();
+		list.add(this);
+		int index = 0;
+		while(list.size() < numOfDivisions && index < list.size()) {
+			QuadTreeElement q = list.get(index);
+			if(q instanceof QuadTree) {
+				QuadTree qTree = (QuadTree) q;
+				list.remove(index);
+				for(QuadTreeElement qte : qTree.quadrants.values()) {
+					list.add(qte);
+				}
+			}
+			else {
+				index++;
+			}
 		}
-		return retVal;
+		return list;
 	}
 	
-	public boolean inRegion(QuadTreeElement e) {
-		boolean retVal = true;
-		if(e.x < x) {
-			retVal = false;
-		}
-		else if(e.x > x+width) {
-			retVal = false;
-		}
-		else if(e.y < y) {
-			retVal = false;
-		}
-		else if(e.y > y+height) {
-			retVal = false;
+	private boolean hasSubTrees() {
+		boolean retVal = false;
+		for(QuadTreeElement qte : quadrants.values()) {
+			if(qte instanceof QuadTree) {
+				retVal = true;
+			}
 		}
 		return retVal;
 	}
