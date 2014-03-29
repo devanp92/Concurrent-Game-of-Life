@@ -1,5 +1,6 @@
 package cis4930.gameoflife;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class QuadTree extends QuadTreeElement {
@@ -84,6 +85,23 @@ public class QuadTree extends QuadTreeElement {
 			}
 		}
 		return found;
+	}
+	
+	public ArrayList<QuadTreeElement> getItemList() {
+		ArrayList<QuadTreeElement> itemList = new ArrayList<QuadTreeElement>();
+		return getItemList(itemList);
+	}
+	private ArrayList<QuadTreeElement> getItemList(ArrayList<QuadTreeElement> itemList) {		
+		for(QuadTreeElement qte : quadrants.values()) {
+			if(qte instanceof QuadTree) {
+				QuadTree qTree = (QuadTree) qte;
+				itemList = qTree.getItemList();
+			}
+			else {
+				itemList.add(qte);
+			}
+		}
+		return itemList;
 	}
 	
 	/**Returns true if element <i>e</i> fits in the left half of this QuadTreeElement, false otherwise*/
