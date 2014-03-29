@@ -1,14 +1,18 @@
 package cis4930.gameoflife;
 
 public class Cell extends QuadTreeElement {
-	boolean isAlive;
-	
+	int isAlive;
+
 	public Cell(int x, int y) {
 		this.x = x;
 		this.y = y;
 	}
-	
-	public void setLife(boolean isAlive) {
+
+    /**
+     * Set if the cell is alive or not.
+     * @param isAlive 1 if it is alive, 0 if dead.
+     */
+	public void setLife(int isAlive) {
 		this.isAlive = isAlive;
 	}
 }
