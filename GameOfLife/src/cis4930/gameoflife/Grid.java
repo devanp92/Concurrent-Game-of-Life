@@ -4,7 +4,8 @@ package cis4930.gameoflife;
  * Created by devan on 3/29/14.
  */
 public class Grid {
-    private Cell[][] grid;
+
+    private static Cell[][] grid;
     private int numRows;
 
     public Grid(int numRows) {
@@ -12,7 +13,7 @@ public class Grid {
         grid = new Cell[numRows][numRows];
     }
     public Grid(Cell[][] grid) {
-        this.grid = grid;
+        Grid.grid = grid;
         this.numRows = grid.length;
     }
 
@@ -20,11 +21,11 @@ public class Grid {
         grid[row][column].isAlive = 1;
     }
 
-    public Cell[][] getGrid() {
+    public static Cell[][] getGrid() {
         return grid;
     }
 
     public void setGrid(Cell[][] grid) {
-        this.grid = grid;
+        Grid.grid = grid;
     }
 }
