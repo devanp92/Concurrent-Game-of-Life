@@ -1,4 +1,4 @@
-package java.gameoflife;
+package cis4930.gameoflife;
 
 public abstract class QuadTreeElement {
 	int x;

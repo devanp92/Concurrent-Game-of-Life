@@ -1,4 +1,4 @@
-package java.gameoflife;
+package cis4930.gameoflife;
 
 import java.io.*;
 import java.net.*;
