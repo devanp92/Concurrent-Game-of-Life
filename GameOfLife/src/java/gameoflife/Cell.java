@@ -1,7 +1,6 @@
 package java.gameoflife;
 
 public class Cell extends QuadTreeElement {
-	int x, y;
 	boolean isAlive;
 	
 	public Cell(int x, int y) {
