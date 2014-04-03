@@ -3,28 +3,35 @@ package cis4930.gameoflife;
 import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.Executor;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 public class Server implements Runnable {
-	private static final int port = 44445;
+	public static final int port = 44445;
 
 	private ServerSocket serverSocket = null;
 	private volatile ArrayList<Connection> clients = new ArrayList<Connection>();
 	boolean listening = true;
 	
-	CyclicBarrier barrier;
+	volatile CyclicBarrier barrier;
 
-	private Object game = new Object();//TODO: create an explicit object for this
+	private QuadTree game = new QuadTree(10,10);//TODO: create an explicit object for this
 	private volatile ArrayList<QuadTreeElement> partialComponents = new ArrayList<QuadTreeElement>();
 	private volatile boolean isPlaying = false;
+	
+	private Thread playThread = new Thread();
+	private volatile ArrayList<Object> connectionLock = new ArrayList<Object>();
 
 	@Override
 	public void run() {
 		try {
 			InetAddress ip = InetAddress.getLocalHost();
-			System.out.println("java.gameoflife.Server IP address: " + ip.getHostAddress());
+			System.out.println("Server IP address: " + ip.getHostAddress());
 		}
 		catch(UnknownHostException e) {
 			e.printStackTrace();
@@ -44,6 +51,7 @@ public class Server implements Runnable {
 				Connection c = new Connection(serverSocket.accept());
 				clients.add(c);
 				c.send(game);
+				System.out.println("Client Connected");
 			}
 			catch(IOException e) {
 				e.printStackTrace();
@@ -56,6 +64,49 @@ public class Server implements Runnable {
 		catch(IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public void play() {
+		final Runnable r = new Runnable() {
+			public void run() {
+				isPlaying = true;
+				try {
+					while(!Thread.interrupted()) {
+						Collection<Connection> clientCopy;
+						synchronized(clients) {
+							clientCopy = Collections.unmodifiableCollection(clients);
+						}
+						barrier = new CyclicBarrier(clientCopy.size() + 1);
+						System.out.println("Barrier in play(): " + barrier);
+						Thread.sleep(1000);
+						for(Connection c : clientCopy) {
+							c.send(game);
+						}
+						
+						
+						barrier.await();
+						System.out.println("After barrier.await(): " + barrier);
+					}
+				}
+				catch(InterruptedException e) {
+					//handle why we exited
+					//if PAUSE, do nothing;
+					//if client connection lost, determine what needs recalculated
+				}
+				catch(BrokenBarrierException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				isPlaying = false;
+			}
+		};
+		playThread = new Thread(r);
+		playThread.setDaemon(true);
+		playThread.start();
+	}
+	
+	public void pause() {
+		playThread.interrupt();
 	}
 	
 	public void mergeData() {
@@ -104,26 +155,40 @@ public class Server implements Runnable {
 				try {
 					while(true) {
 						Object o = ois.readObject();
+						System.out.println("Received Back a Part");
+						System.out.println("Barrier: " + barrier);
 						//TODO: use instanceof if necessary to distinguish returned object types
 						boolean maybe = true;
-						if(maybe) {//TODO: received a PLAY message
-							barrier = new CyclicBarrier(clients.size(), new Runnable() {
-								public void run() {
-									mergeData();
-									for(Connection c : clients) {
-										c.send(game);
-									}
-								}
-							});
-						}
-						else if(o instanceof QuadTree) {
-							QuadTree qTree = (QuadTree) o;
-							partialComponents.add(qTree);
-							try {
-								barrier.await();
+						if(o instanceof NetworkMessage) {
+							NetworkMessage nm = (NetworkMessage) o;
+							switch(nm) {
+								case PLAY:
+									play();
+									break;
+								case PAUSE:
+									pause();
+									break;
 							}
-							catch(InterruptedException ex) {/*ignored*/}
-							catch(BrokenBarrierException ex) {/*ignored*/}
+						}
+						else if(o instanceof QuadTreeElement) {
+							if(barrier != null) {
+								try {
+									barrier.await(0, TimeUnit.MILLISECONDS);
+								}
+								catch(InterruptedException e) {
+									e.printStackTrace();
+								}
+								catch(BrokenBarrierException e) {
+									//thrown when any awaiting thread is interrupted
+									//OR
+									//the barrier is reset
+								}
+								catch(TimeoutException e) {
+									//DON'T DO ANYTHING
+								}
+								//QuadTree qTree = (QuadTree) o;
+								//partialComponents.add(qTree);
+							}
 						}
 
 						//TODO: pass information received to another thread (MergerThread(?): would need to be created in Server())

@@ -1,9 +1,12 @@
 package cis4930.gameoflife;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class QuadTree extends QuadTreeElement {
+public class QuadTree extends QuadTreeElement implements Serializable {
+	private static final long serialVersionUID = 1L;
+
 	HashMap<QuadrantID, QuadTreeElement> quadrants = new HashMap<QuadrantID, QuadTreeElement>();
 	
 	int width;
