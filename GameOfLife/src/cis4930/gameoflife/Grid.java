@@ -1,36 +1,46 @@
 package cis4930.gameoflife;
 
+import java.util.concurrent.atomic.AtomicReferenceArray;
+
 /**
  * Created by devan on 3/29/14.
  */
 public class Grid {
 
-    private static Cell[][] grid;
+    private static AtomicReferenceArray grid;
     private int numRows;
 
     public Grid(int numRows) {
         this.numRows = numRows;
-        grid = new Cell[numRows][numRows];
+        Cell[][] cells = new Cell[numRows][numRows];
         for (int i = 0; i < numRows; i++) {
             for (int j = 0; j < numRows; j++) {
-                grid[i][j] = new Cell(i,j);
+                cells[i][j] = new Cell(i, j);
             }
         }
+        Grid.grid = new AtomicReferenceArray(cells);
     }
-    public Grid(Cell[][] grid) {
+
+    public Grid(AtomicReferenceArray grid) {
         Grid.grid = grid;
-        this.numRows = grid.length;
+        this.numRows = grid.length();
     }
 
-    public void initializeCell(int row, int column){
-        grid[row][column].isAlive = 1;
+    public void initializeCell(int row, int column) {
+        int position = row * numRows + column;
+        Cell cell = (Cell) grid.get(position);
+        cell.setLife(1);
     }
 
-    public static Cell[][] getGrid() {
+    public static AtomicReferenceArray getGrid() {
         return grid;
     }
 
-    public void setGrid(Cell[][] grid) {
+    public void setGrid(AtomicReferenceArray grid) {
         Grid.grid = grid;
+    }
+
+    public Cell getCell(int row, int column) {
+        return (Cell) grid.get(row * numRows + column);
     }
 }
