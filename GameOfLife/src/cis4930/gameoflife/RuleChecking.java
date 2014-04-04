@@ -1,13 +1,8 @@
 package cis4930.gameoflife;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicReferenceArray;
 
-/**
- * Created by devan on 3/29/14.
- */
+
 public class RuleChecking implements Runnable {
 
     private AtomicReferenceArray grid = Grid.getGrid();
