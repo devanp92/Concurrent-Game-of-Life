@@ -19,10 +19,5 @@ public class Cell extends QuadTreeElement {
 	public void setLife(int isAlive) {
 		this.isAlive = isAlive;
 	}
-    public int getX(){
-        return this.x;
-    }
-    public int getY(){
-        return this.y;
-    }
+    
 }
