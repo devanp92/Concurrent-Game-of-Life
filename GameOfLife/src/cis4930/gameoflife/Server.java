@@ -20,7 +20,7 @@ public class Server implements Runnable {
 	
 	volatile CyclicBarrier barrier;
 
-	private QuadTree game = new QuadTree(10,10);//TODO: create an explicit object for this
+	private Grid game = new Grid(10);
 	private volatile ArrayList<QuadTreeElement> partialComponents = new ArrayList<QuadTreeElement>();
 	private volatile boolean isPlaying = false;
 	
@@ -109,6 +109,10 @@ public class Server implements Runnable {
 		playThread.interrupt();
 	}
 	
+	public void clear() {
+		game = new Grid(game.getNumRows());
+	}
+	
 	public void mergeData() {
 		//TODO
 		partialComponents.clear();
@@ -168,9 +172,31 @@ public class Server implements Runnable {
 								case PAUSE:
 									pause();
 									break;
+								case CLEAR:
+									pause();
+									clear();
+									break;
 							}
 						}
-						else if(o instanceof QuadTreeElement) {
+						else if(o instanceof Cell) {
+							pause();
+							Cell c = (Cell) o;
+							game.getCell(c.y, c.x).setLife(c.cellState);
+							
+							/*if(c.isAlive == 1) {
+								game.insert(c);
+							}
+							else if(c.isAlive == 0) {
+								game.remove(c);
+							}*/
+						}
+						else if(o instanceof Grid) {
+							pause();
+							Grid g = (Grid) o;
+							game = g;
+							//TODO: implement appropriate barrier synchronization
+						}
+						else if(o instanceof QuadTreeElement) {//TODO: move this to instanceof Grid
 							if(barrier != null) {
 								try {
 									barrier.await(0, TimeUnit.MILLISECONDS);

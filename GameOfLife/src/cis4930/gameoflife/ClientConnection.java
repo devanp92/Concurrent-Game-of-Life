@@ -9,6 +9,10 @@ public class ClientConnection {
 	private Socket socket = null;
 	private ObjectOutputStream oos = null;
 	private InputHandler ih = null;
+	private volatile Grid g = new Grid(10);
+	public Grid getGrid() {
+		return g;
+	}
 
 	public ClientConnection(Socket s) {
 		this.socket = s;
@@ -46,13 +50,23 @@ public class ClientConnection {
 		public void run() {
 			boolean doLoop = true;
 			try {
-				Object recGame;
+				Object recvObj;
 				while(doLoop) {
-					recGame = ois.readObject();
-					if(recGame != null) {
-						System.out.println("RECEIVED GAME");
-						Thread.sleep(1000);
-						send(recGame);//TODO: perhaps make this a send on another thread
+					recvObj = ois.readObject();
+					if(recvObj != null) {
+						if(recvObj instanceof Grid) {
+							System.out.println("Received Grid");
+							g = (Grid) recvObj;
+							//TODO: display on UI
+						}
+						else if(recvObj instanceof Integer) {
+							System.out.println("Received Row to Calculate");
+							Integer rowToCalculate = (Integer) recvObj;
+							//calculate iteration on the row
+							//send back next iteration
+						}
+						
+						//send(recvObj);//TODO: perhaps make this a send on another thread
 					}
 					else {
 						doLoop = false;
@@ -64,9 +78,6 @@ public class ClientConnection {
 			}
 			catch(IOException e) {
 				e.printStackTrace();
-			}
-			catch(InterruptedException e) {
-				/*ignored*/
 			}
 		}
 	}
