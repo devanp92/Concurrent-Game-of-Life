@@ -1,6 +1,6 @@
 package cis4930.gameoflife;
 
-public class Cell extends QuadTreeElement {
+public class Cell extends QuadTreeElement{
 
     int cellState;
     CellCase cellCase;
