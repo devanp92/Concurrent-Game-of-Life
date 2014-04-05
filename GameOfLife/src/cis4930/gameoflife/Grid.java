@@ -38,9 +38,10 @@ public class Grid {
             int x = cellPositionOnGrid.get('X');
             int y = cellPositionOnGrid.get('Y');
 
-            CellCase cellCase = checkCellCase(x, y);
+            Cell cell = new Cell(x, y);
+            cell.setCellCase(x, y, numRows);
 
-            cells[i] = new Cell(x, y, cellCase);
+            cells[i] = cell;
         }
         return cells;
     }
@@ -66,18 +67,6 @@ public class Grid {
         return hashMap;
     }
 
-    public CellCase checkCellCase(int i, int j) {
-        if ((i == 0 && j == 0) || (i == 0 && j == numRows - 1) || (i == numRows - 1 && j == 0) || (i == numRows - 1 && j == numRows - 1)) {
-            return CellCase.CORNER;
-
-        } else if ((j == 0 && i > 0 && i < numRows - 1) || (j == numRows - 1 && i > 0 && i < numRows - 1) || (i == 0 && j > 0 && j < numRows - 1) || ((i == numRows - 1 && j > 0 && j < numRows - 1))) {
-            return CellCase.BORDER;
-
-        } else {
-            return CellCase.MIDDLE;
-
-        }
-    }
 
     public static AtomicReferenceArray<Cell> getGrid() {
         return grid;

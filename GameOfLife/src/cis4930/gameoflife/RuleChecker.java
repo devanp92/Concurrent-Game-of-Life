@@ -5,8 +5,37 @@ import java.util.concurrent.atomic.AtomicReferenceArray;
 
 public class RuleChecker implements Runnable {
 
-    private AtomicReferenceArray grid = Grid.getGrid();
+    private AtomicReferenceArray<Cell> grid = Grid.getGrid();
 
+    public void checkCase(Cell cell) {
+
+        CellCase cellCase = cell.getCellCase();
+
+        switch (cellCase) {
+            case BORDER:
+                checkBorder(cell);
+                break;
+            case CORNER:
+                checkCorner(cell);
+                break;
+            case MIDDLE:
+                checkMiddle(cell);
+                break;
+
+        }
+    }
+
+    private void checkMiddle(Cell cell) {
+
+    }
+
+    private void checkCorner(Cell cell) {
+
+    }
+
+    private void checkBorder(Cell cell) {
+
+    }
 
 //    for (int i = 0; i < cells.length; i++) {
 //            for (int j = 0; j < cells[0].length; j++) {
