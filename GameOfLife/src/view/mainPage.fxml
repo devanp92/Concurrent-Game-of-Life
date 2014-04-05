@@ -1,23 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.shape.Rectangle?>
+
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.TextField?>
-
-
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.Rectangle?>
 <GridPane fx:id="grid" onMouseClicked="#click" fx:controller="view.mainPageController" alignment="center" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8">
     <children>
     <Label fx:id="title" text="The Game of Life" GridPane.halignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="1" textAlignment="CENTER" style="-fx-font-size: 24pt" GridPane.columnSpan="2"/>
     <Button text="New Game" GridPane.halignment="CENTER" GridPane.columnIndex="1" textAlignment="CENTER" GridPane.rowIndex="2" onAction="#newGame"/>
     <Button text="Quit" GridPane.halignment="CENTER" GridPane.columnIndex="2" textAlignment="CENTER" GridPane.rowIndex="2" onAction="#quit"/>
-    <Rectangle fx:id="recta11" onMouseClicked="#click1"  height="200" width="200" fill="antiquewhite" stroke="black" GridPane.rowIndex="3" GridPane.columnIndex="1"></Rectangle>
-    <Rectangle fx:id="recta12"  height="200" width="200" fill="antiquewhite" stroke="black" GridPane.rowIndex="3" GridPane.columnIndex="2"></Rectangle>
-    <Rectangle fx:id="recta21"  height="200" width="200" fill="antiquewhite" stroke="black" GridPane.rowIndex="4" GridPane.columnIndex="1"></Rectangle>
-    <Rectangle fx:id="recta22"  height="200" width="200" fill="antiquewhite" stroke="black" GridPane.rowIndex="4" GridPane.columnIndex="2"></Rectangle>
+    <Rectangle fx:id="recta11" onMouseClicked="#click1"  height="200" width="200" fill="antiquewhite" stroke="black" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+    <Rectangle fx:id="recta12"  height="200" width="200" fill="antiquewhite" stroke="black" GridPane.rowIndex="3" GridPane.columnIndex="2"/>
+    <Rectangle fx:id="recta21"  height="200" width="200" fill="antiquewhite" stroke="black" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+    <Rectangle fx:id="recta22"  height="200" width="200" fill="antiquewhite" stroke="black" GridPane.rowIndex="4" GridPane.columnIndex="2"/>
     </children>
 </GridPane>
 <!--onAction="#onSignIn

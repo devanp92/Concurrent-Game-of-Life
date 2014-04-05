@@ -22,6 +22,7 @@ public class mainPageController {
     public Rectangle recta12;
     public Rectangle recta21;
     public Rectangle recta22;
+    public Label title;
 
     public void click()
     {
