@@ -8,6 +8,7 @@ import java.util.concurrent.atomic.AtomicReferenceArray;
 public class Grid {
 
     private static AtomicReferenceArray grid;
+
     private int numRows;
 
     public Grid(int numRows) {
@@ -15,7 +16,11 @@ public class Grid {
         Cell[][] cells = new Cell[numRows][numRows];
         for (int i = 0; i < numRows; i++) {
             for (int j = 0; j < numRows; j++) {
-                cells[i][j] = new Cell(i, j);
+                if ((i == 0 && j == 0) || (i == 0 && j == numRows - 1) || (i == numRows - 1 && j == 0) || (i == numRows - 1 && j == numRows - 1)) {
+                    cells[i][j] = new Cell(i, j, CellCase.CORNER);
+                } else if((i == 0 && j > 0) || (i > 0 && j == 0) || (i == numRows - 1 && j > 0) || (i < numRows - 1 && j == numRows - 1))
+
+
             }
         }
         Grid.grid = new AtomicReferenceArray(cells);
@@ -42,5 +47,9 @@ public class Grid {
 
     public Cell getCell(int row, int column) {
         return (Cell) grid.get(row * numRows + column);
+    }
+
+    public int getNumRows() {
+        return numRows;
     }
 }

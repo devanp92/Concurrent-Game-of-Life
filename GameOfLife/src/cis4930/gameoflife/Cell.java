@@ -2,11 +2,14 @@ package cis4930.gameoflife;
 
 public class Cell extends QuadTreeElement {
 	int isAlive;
+    CellCase cellCase;
 
-	public Cell(int x, int y) {
+    public Cell(int x, int y, CellCase cellCase) {
 		this.x = x;
 		this.y = y;
         setLife(0);
+        this.cellCase = cellCase;
+
 	}
 
     /**

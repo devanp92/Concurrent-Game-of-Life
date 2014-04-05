@@ -1,20 +1,17 @@
 package test;
 
-import cis4930.gameoflife.Cell;
 import cis4930.gameoflife.Grid;
-import cis4930.gameoflife.RuleChecking;
+import cis4930.gameoflife.RuleChecker;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.util.List;
 
 import static org.junit.Assert.assertNotNull;
 
 /**
  * Created by devan on 3/29/14.
  */
-public class RuleCheckingTest {
+public class RuleCheckerTest {
     Grid grid;
     @Before
     public void setUp() throws Exception {
@@ -29,10 +26,10 @@ public class RuleCheckingTest {
     @Test
     public void testDivideLists() throws Exception {
         grid = new Grid(4);
-        RuleChecking ruleChecking = new RuleChecking();
+        RuleChecker ruleChecker = new RuleChecker();
     /* ToDO  cemented the stamens bellow to enable compilation*/
         /*
-        List<List<Cell>> lists = ruleChecking.divideLists(4);
+        List<List<Cell>> lists = ruleChecker.divideLists(4);
         assertNotNull(lists);
         */
     }
