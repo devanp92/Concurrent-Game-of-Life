@@ -17,7 +17,7 @@ public class startGame extends Application{
 
     @Override
     public void start(Stage primaryStage) throws Exception{
-        Parent root = FXMLLoader.load(getClass().getResource("startPage.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("mainPage.fxml"));
         //root.getStylesheets().add("sample/myStyle.css");
         primaryStage.setTitle("Game of Life");
         primaryStage.setScene(new Scene(root, 500, 500));
