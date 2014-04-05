@@ -8,7 +8,7 @@ public class Cell extends QuadTreeElement{
     public Cell(int x, int y) {
         this.x = x;
         this.y = y;
-        setLife(0);
+        setCellState(0);
     }
 
     /**
@@ -16,9 +16,13 @@ public class Cell extends QuadTreeElement{
      *
      * @param cellState 1 if it is alive, 0 if dead.
      */
-    public void setLife(int cellState) {
+    public void setCellState(int cellState) {
         this.cellState = cellState;
     }
+    public int getCellState() {
+    	return this.cellState;
+    }
+    
 
     public CellCase setCellCase(int i, int j, int numRows) {
         if ((i == 0 && j == 0) || (i == numRows - 1 && j == 0) || (i == numRows - 1 && j == numRows - 1)) {
