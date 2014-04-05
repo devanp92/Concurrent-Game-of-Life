@@ -87,9 +87,11 @@ public class ClientConnection {
 			System.out.println("Client socket accepted");
 			System.out.println("Created I/O streams");
 		}
-		catch(IOException | InterruptedException ex) {
-			System.out.println("Failed to accept client OR create I/O streams");
+		catch(IOException ex) {
+			System.out.println("Failed to create I/O streams");
 			System.exit(1);
-		}
+		} catch(InterruptedException ex){
+            System.out.println("Failed to create connection");
+        }
 	}
 }
