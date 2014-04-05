@@ -1,4 +1,4 @@
-package cis4930.gameoflife;
+package backend;
 
 public enum QuadrantID {
 	TOP_LEFT, TOP_RIGHT, BOT_LEFT, BOT_RIGHT;

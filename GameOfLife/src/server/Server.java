@@ -1,9 +1,8 @@
-package cis4930.gameoflife.server;
+package server;
 
-import cis4930.gameoflife.Cell;
-import cis4930.gameoflife.Grid;
-import cis4930.gameoflife.QuadTree;
-import cis4930.gameoflife.QuadTreeElement;
+import backend.Cell;
+import backend.Grid;
+import backend.QuadTreeElement;
 
 import java.io.*;
 import java.net.*;

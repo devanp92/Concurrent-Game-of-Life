@@ -1,4 +1,4 @@
-package cis4930.gameoflife;
+package backend;
 
 public abstract class QuadTreeElement {
 	public int x;

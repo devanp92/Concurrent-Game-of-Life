@@ -1,7 +1,7 @@
 package test;
 
-import cis4930.gameoflife.Grid;
-import cis4930.gameoflife.RuleChecker;
+import backend.Grid;
+import backend.RuleChecker;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

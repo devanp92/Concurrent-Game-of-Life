@@ -1,4 +1,4 @@
-package cis4930.gameoflife;
+package backend;
 
 import java.util.HashMap;
 

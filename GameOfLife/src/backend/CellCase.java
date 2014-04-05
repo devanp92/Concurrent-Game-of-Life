@@ -1,4 +1,4 @@
-package cis4930.gameoflife;
+package backend;
 
 /**
  * Created by devan on 4/5/14.

@@ -1,12 +1,10 @@
-package cis4930.gameoflife;
+package backend;
 
 import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
-
-import sun.rmi.runtime.NewThreadAction;
 
 public class QuadTree extends QuadTreeElement implements Serializable {
 	private static final long serialVersionUID = 1L;
