@@ -1,7 +1,7 @@
 package cis4930.gameoflife;
 
 import java.util.HashMap;
-import java.util.concurrent.atomic.AtomicReferenceArray;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Created by devan on 3/29/14.
@@ -9,28 +9,18 @@ import java.util.concurrent.atomic.AtomicReferenceArray;
 
 public class Grid {
 
-    private static AtomicReferenceArray<Cell> grid;
+    private static AtomicReference[] grid;
 
     private int numRows;
 
     public Grid(int numRows) {
         this.numRows = numRows;
-        Cell[] cells = initializeGrid(numRows);
-        Grid.grid = new AtomicReferenceArray<Cell>(cells);
+        Grid.grid = initializeGrid(numRows);
     }
 
-    public Grid(AtomicReferenceArray<Cell> grid) {
-        Grid.grid = grid;
-        this.numRows = grid.length();
-    }
 
-    public void setValueOfCell(int index, int deadOrAlive) {
-        Cell cell = grid.get(index);
-        cell.setLife(deadOrAlive);
-    }
-
-    public Cell[] initializeGrid(int numRows) {
-        Cell[] cells = new Cell[(int) Math.pow(numRows, 2)];
+    public AtomicReference[] initializeGrid(int numRows) {
+        AtomicReference[] cells = new AtomicReference[(int) Math.pow(numRows, 2)];
         for (int i = 0; i < (int) Math.pow(numRows, 2); i++) {
 
             HashMap<Character, Integer> cellPositionOnGrid = getPositionOfGridFromXAndY(i);
@@ -41,7 +31,7 @@ public class Grid {
             Cell cell = new Cell(x, y);
             cell.setCellCase(x, y, numRows);
 
-            cells[i] = cell;
+            cells[i] = new AtomicReference<Cell>(cell);
         }
         return cells;
     }
@@ -68,16 +58,17 @@ public class Grid {
     }
 
 
-    public static AtomicReferenceArray<Cell> getGrid() {
+    public static AtomicReference[] getGrid() {
         return grid;
     }
 
-    public void setGrid(AtomicReferenceArray<Cell> grid) {
+    public void setGrid(AtomicReference[] grid) {
         Grid.grid = grid;
     }
 
     public Cell getCell(int row, int column) {
-        return grid.get(row * numRows + column);
+        AtomicReference atomicReferences = grid[row * numRows + column];
+        return (Cell) atomicReferences.get();
     }
 
     public int getNumRows() {

@@ -1,11 +1,11 @@
 package cis4930.gameoflife;
 
-import java.util.concurrent.atomic.AtomicReferenceArray;
+import java.util.concurrent.atomic.AtomicReference;
 
 
 public class RuleChecker implements Runnable {
 
-    private AtomicReferenceArray<Cell> grid = Grid.getGrid();
+    private AtomicReference[] grid = Grid.getGrid();
 
     public void checkCase(Cell cell) {
 
@@ -26,7 +26,7 @@ public class RuleChecker implements Runnable {
     }
 
     private void checkMiddle(Cell cell) {
-
+        
     }
 
     private void checkCorner(Cell cell) {
@@ -37,8 +37,6 @@ public class RuleChecker implements Runnable {
 
     }
 
-//    for (int i = 0; i < cells.length; i++) {
-//            for (int j = 0; j < cells[0].length; j++) {
 //                Cell cell = cells[i][j];
 //                if (cell.getX() == 0) {
 //                    //left side
