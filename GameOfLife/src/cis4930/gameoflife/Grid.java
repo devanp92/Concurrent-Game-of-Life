@@ -7,15 +7,14 @@ import java.util.concurrent.atomic.AtomicReference;
  * Created by devan on 3/29/14.
  */
 
-public class Grid {
+public class Grid extends CoordinateCalculator {
 
     private static AtomicReference[] grid;
-
-    private int numRows;
 
     public Grid(int numRows) {
         this.numRows = numRows;
         Grid.grid = initializeGrid(numRows);
+        super.numRows = numRows;
     }
 
 
@@ -23,7 +22,7 @@ public class Grid {
         AtomicReference[] cells = new AtomicReference[(int) Math.pow(numRows, 2)];
         for (int i = 0; i < (int) Math.pow(numRows, 2); i++) {
 
-            HashMap<Character, Integer> cellPositionOnGrid = getPositionOfGridFromXAndY(i);
+            HashMap<Character, Integer> cellPositionOnGrid = super.convert1DCoordinateTo2D(i);
 
             int x = cellPositionOnGrid.get('X');
             int y = cellPositionOnGrid.get('Y');
@@ -36,27 +35,6 @@ public class Grid {
         return cells;
     }
 
-    public HashMap<Character, Integer> getPositionOfGridFromXAndY(int i) {
-        HashMap<Character, Integer> hashMap = new HashMap<Character, Integer>();
-        int row, column;
-
-        if (i == 0) {
-            row = 0;
-            column = 0;
-        } else if (i / 10 == 0) {
-            row = 0;
-            column = i - 1;
-        } else {
-            row = i / numRows;
-            column = i % numRows;
-        }
-
-        hashMap.put('x', row);
-        hashMap.put('y', column);
-
-        return hashMap;
-    }
-
 
     public static AtomicReference[] getGrid() {
         return grid;
@@ -67,7 +45,7 @@ public class Grid {
     }
 
     public Cell getCell(int row, int column) {
-        AtomicReference atomicReferences = grid[row * numRows + column];
+        AtomicReference atomicReferences = grid[super.convert2DCoordinateTo1D(row, column)];
         return (Cell) atomicReferences.get();
     }
 

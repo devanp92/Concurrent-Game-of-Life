@@ -3,12 +3,17 @@ package cis4930.gameoflife;
 import java.util.concurrent.atomic.AtomicReference;
 
 
-public class RuleChecker implements Runnable {
+public class RuleChecker extends CoordinateCalculator implements Runnable {
 
     private AtomicReference[] grid = Grid.getGrid();
+    private AtomicReference<Cell> atomicCell;
 
-    public void checkCase(Cell cell) {
+    public RuleChecker(AtomicReference<Cell> cellToCheck) {
+        this.atomicCell = cellToCheck;
+    }
 
+    public void checkCase() {
+        Cell cell = atomicCell.get();
         CellCase cellCase = cell.getCellCase();
 
         switch (cellCase) {
@@ -40,35 +45,39 @@ public class RuleChecker implements Runnable {
     }
 
     private void checkTopLeftCorner(Cell cell) {
+        int sumOfNeighbors = 0;
+        Cell rightNeighbor = (Cell) grid[2].get();
+        Cell bottomNeighbor = (Cell) grid[numRows].get();
+        //Cell
 
     }
 
     private void checkTopRightCorner(Cell cell) {
-
+        int sumOfNeighbors = 0;
     }
 
     private void checkBottomLeftCorner(Cell cell) {
-
+        int sumOfNeighbors = 0;
     }
 
     private void checkBottomRightCorner(Cell cell) {
-
+        int sumOfNeighbors = 0;
     }
 
     private void checkTopBorder(Cell cell) {
-
+        int sumOfNeighbors = 0;
     }
 
     private void checkRightBorder(Cell cell) {
-
+        int sumOfNeighbors = 0;
     }
 
     private void checkLeftBorder(Cell cell) {
-
+        int sumOfNeighbors = 0;
     }
 
     private void checkBottomBorder(Cell cell) {
-
+        int sumOfNeighbors = 0;
     }
 
     private void checkMiddle(Cell cell) {

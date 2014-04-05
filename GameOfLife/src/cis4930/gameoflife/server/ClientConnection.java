@@ -1,4 +1,4 @@
-package cis4930.gameoflife;
+package cis4930.gameoflife.server;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;

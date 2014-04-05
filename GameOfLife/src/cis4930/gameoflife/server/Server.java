@@ -1,4 +1,7 @@
-package cis4930.gameoflife;
+package cis4930.gameoflife.server;
+
+import cis4930.gameoflife.QuadTree;
+import cis4930.gameoflife.QuadTreeElement;
 
 import java.io.*;
 import java.net.*;
@@ -7,7 +10,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;
-import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
