@@ -1,8 +1,8 @@
 package cis4930.gameoflife;
 
 public abstract class QuadTreeElement {
-	int x;
-	int y;
+	public int x;
+	public int y;
 	
 	public QuadrantID getQuadrantFit(QuadTree qTree) {
 		if(!inRegion(qTree)) {

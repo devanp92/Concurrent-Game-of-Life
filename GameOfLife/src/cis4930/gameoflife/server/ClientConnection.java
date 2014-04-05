@@ -5,6 +5,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
+import cis4930.gameoflife.Grid;
+
 public class ClientConnection {
 	private Socket socket = null;
 	private ObjectOutputStream oos = null;

@@ -1,5 +1,7 @@
 package cis4930.gameoflife.server;
 
+import cis4930.gameoflife.Cell;
+import cis4930.gameoflife.Grid;
 import cis4930.gameoflife.QuadTree;
 import cis4930.gameoflife.QuadTreeElement;
 
@@ -183,7 +185,7 @@ public class Server implements Runnable {
 						else if(o instanceof Cell) {
 							pause();
 							Cell c = (Cell) o;
-							game.getCell(c.y, c.x).setLife(c.cellState);
+							game.getCell(c.y, c.x).setCellState(c.getCellState());
 							
 							/*if(c.isAlive == 1) {
 								game.insert(c);
