@@ -1,8 +1,12 @@
 package cis4930.gameoflife;
 
 import java.io.Serializable;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
+
+import sun.rmi.runtime.NewThreadAction;
 
 public class QuadTree extends QuadTreeElement implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -21,11 +25,23 @@ public class QuadTree extends QuadTreeElement implements Serializable {
 		this.x = xOffset;
 		this.y = yOffset;
 	}
+	//Make sure NOT to pass null values in, empty QuadTrees can be removed at end
+	public QuadTree(QuadTree NE, QuadTree NW, QuadTree SW, QuadTree SE) {
+		x = NE.x;
+		y = NE.y;
+		width = NW.width+NE.width;
+		height = NW.height+SW.height;
+		
+		quadrants.put(QuadrantID.TOP_RIGHT, NE);
+		quadrants.put(QuadrantID.TOP_LEFT, NW);
+		quadrants.put(QuadrantID.BOT_LEFT, SW);
+		quadrants.put(QuadrantID.BOT_RIGHT, SE);
+	}
 	
 	private boolean isEmpty() {
 		return quadrants.isEmpty();
 	}
-	private boolean contains(QuadTreeElement e) {
+	public boolean contains(QuadTreeElement e) {
 		boolean retVal = false;
 		QuadrantID qID = e.getQuadrantFit(this);
 		QuadTreeElement qTreeEl = quadrants.get(qID);
@@ -165,6 +181,42 @@ public class QuadTree extends QuadTreeElement implements Serializable {
 			}
 		}
 		return list;
+	}
+	
+	private QuadTreeIteration getNextIteration() {
+		QuadTreeIteration nextIteration = new QuadTreeIteration(this);
+		ArrayList<QuadTreeElement> elements = getItemList();
+		HashMap<QuadTreeElement, Integer> neighborCount = new HashMap<QuadTreeElement, Integer>();
+		final int[][] borderCoords = {{-1,-1}, {0,-1}, {1,-1}, {-1,0}, {1,0}, {-1,1}, {0,1}, {1,1}};
+		
+		for(QuadTreeElement qte : elements) {
+			for(int i = 0;i<borderCoords.length;i++) {
+				QuadTreeElement newQte = null;
+				
+				//Reflection: be worried
+				Constructor<?> c;
+				try {
+					c = Class.forName(qte.getClass().getName()).getDeclaredConstructor(Integer.TYPE, Integer.TYPE);
+					c.setAccessible(true);
+					newQte = (QuadTreeElement) c.newInstance(new Object[] {qte.x+borderCoords[i][0], qte.x+borderCoords[i][1]});
+				}
+				catch(NoSuchMethodException | SecurityException | ClassNotFoundException e) {
+					//For assignment to c
+					e.printStackTrace();
+				}
+				catch(InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+					// for creation of newQte
+					e.printStackTrace();
+				}
+				
+				if(!neighborCount.containsKey(newQte)) {
+					neighborCount.put(newQte, 0);
+				}
+				neighborCount.put(newQte, neighborCount.get(newQte)+1);
+			}
+		}
+		nextIteration.insertBorder(neighborCount);
+		return nextIteration;
 	}
 	
 	private boolean hasSubTrees() {
