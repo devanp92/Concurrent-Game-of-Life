@@ -6,6 +6,7 @@ import java.util.concurrent.atomic.AtomicReferenceArray;
 /**
  * Created by devan on 3/29/14.
  */
+
 public class Grid {
 
     private static AtomicReferenceArray<Cell> grid;
@@ -32,19 +33,19 @@ public class Grid {
         Cell[] cells = new Cell[(int) Math.pow(numRows, 2)];
         for (int i = 0; i < (int) Math.pow(numRows, 2); i++) {
 
-            HashMap<Character, Integer> cellPosition = getPositionOf1DArrayFromXAndY(i);
+            HashMap<Character, Integer> cellPositionOnGrid = getPositionOfGridFromXAndY(i);
 
-            int x = cellPosition.get('X');
-            int y = cellPosition.get('Y');
+            int x = cellPositionOnGrid.get('X');
+            int y = cellPositionOnGrid.get('Y');
 
-            CellCase cellCase = checkCase(x, y);
+            CellCase cellCase = checkCellCase(x, y);
 
             cells[i] = new Cell(x, y, cellCase);
         }
         return cells;
     }
 
-    public HashMap<Character, Integer> getPositionOf1DArrayFromXAndY(int i) {
+    public HashMap<Character, Integer> getPositionOfGridFromXAndY(int i) {
         HashMap<Character, Integer> hashMap = new HashMap<Character, Integer>();
         int row, column;
 
@@ -65,7 +66,7 @@ public class Grid {
         return hashMap;
     }
 
-    public CellCase checkCase(int i, int j) {
+    public CellCase checkCellCase(int i, int j) {
         if ((i == 0 && j == 0) || (i == 0 && j == numRows - 1) || (i == numRows - 1 && j == 0) || (i == numRows - 1 && j == numRows - 1)) {
             return CellCase.CORNER;
 
@@ -87,7 +88,7 @@ public class Grid {
     }
 
     public Cell getCell(int row, int column) {
-        return (Cell) grid.get(row * numRows + column);
+        return grid.get(row * numRows + column);
     }
 
     public int getNumRows() {
