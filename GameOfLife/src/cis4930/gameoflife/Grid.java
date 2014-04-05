@@ -16,9 +16,11 @@ public class Grid {
         Cell[][] cells = new Cell[numRows][numRows];
         for (int i = 0; i < numRows; i++) {
             for (int j = 0; j < numRows; j++) {
-                if ((i == 0 && j == 0) || (i == 0 && j == numRows - 1) || (i == numRows - 1 && j == 0) || (i == numRows - 1 && j == numRows - 1)) {
-                    cells[i][j] = new Cell(i, j, CellCase.CORNER);
-                } else if((i == 0 && j > 0) || (i > 0 && j == 0) || (i == numRows - 1 && j > 0) || (i < numRows - 1 && j == numRows - 1))
+//                if ((i == 0 && j == 0) || (i == 0 && j == numRows - 1) || (i == numRows - 1 && j == 0) || (i == numRows - 1 && j == numRows - 1)) {
+//                    cells[i][j] = new Cell(i, j, CellCase.CORNER);
+//                } else if((j == 0 && i > 0 && i < numRows - 1) || ()){
+//
+//                }
 
 
             }
