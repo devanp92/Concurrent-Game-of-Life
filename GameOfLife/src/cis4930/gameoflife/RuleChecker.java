@@ -12,30 +12,69 @@ public class RuleChecker implements Runnable {
         CellCase cellCase = cell.getCellCase();
 
         switch (cellCase) {
-            case BORDER:
-                checkBorder(cell);
+            case TOP_LEFT_CORNER:
+                checkTopLeftCorner(cell);
                 break;
-            case CORNER:
-                checkCorner(cell);
+            case TOP_RIGHT_CORNER:
+                checkTopRightCorner(cell);
                 break;
-            case MIDDLE:
-                checkMiddle(cell);
+            case BOTTOM_LEFT_CORNER:
+                checkBottomLeftCorner(cell);
                 break;
-
+            case BOTTOM_RIGHT_CORNER:
+                checkBottomRightCorner(cell);
+                break;
+            case TOP_BORDER:
+                checkTopBorder(cell);
+                break;
+            case RIGHT_BORDER:
+                checkRightBorder(cell);
+                break;
+            case LEFT_BORDER:
+                checkLeftBorder(cell);
+                break;
+            case BOTTOM_BORDER:
+                checkBottomBorder(cell);
+                break;
         }
     }
 
+    private void checkTopLeftCorner(Cell cell) {
+
+    }
+
+    private void checkTopRightCorner(Cell cell) {
+
+    }
+
+    private void checkBottomLeftCorner(Cell cell) {
+
+    }
+
+    private void checkBottomRightCorner(Cell cell) {
+
+    }
+
+    private void checkTopBorder(Cell cell) {
+
+    }
+
+    private void checkRightBorder(Cell cell) {
+
+    }
+
+    private void checkLeftBorder(Cell cell) {
+
+    }
+
+    private void checkBottomBorder(Cell cell) {
+
+    }
+
     private void checkMiddle(Cell cell) {
-        
-    }
-
-    private void checkCorner(Cell cell) {
 
     }
 
-    private void checkBorder(Cell cell) {
-
-    }
 
 //                Cell cell = cells[i][j];
 //                if (cell.getX() == 0) {
