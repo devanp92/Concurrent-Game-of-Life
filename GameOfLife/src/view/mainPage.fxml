@@ -5,7 +5,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.shape.Rectangle?>
-<GridPane fx:id="grid" onMouseClicked="#click" fx:controller="view.mainPageController" alignment="center" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8">
+<GridPane fx:id="grid" onMouseClicked="#click" fx:controller="view.mainPageController" alignment="center" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1000.0" prefWidth="800.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8">
     <children>
     <Label fx:id="title" text="The Game of Life" GridPane.halignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="1" textAlignment="CENTER" style="-fx-font-size: 24pt" GridPane.columnSpan="2"/>
     <Button text="New Game" GridPane.halignment="CENTER" GridPane.columnIndex="1" textAlignment="CENTER" GridPane.rowIndex="2" onAction="#newGame"/>

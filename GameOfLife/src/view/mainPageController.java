@@ -37,7 +37,6 @@ public class mainPageController {
         else
         {
             grid.setGridLinesVisible(true);
-            click1();
         }
     }
     public void click1()
@@ -59,13 +58,10 @@ public class mainPageController {
 
 
     public void newGame(ActionEvent actionEvent) {
+
     }
 
     public void quit(ActionEvent actionEvent) {
         System.exit(0);
     }
-
-
-
-
 }
