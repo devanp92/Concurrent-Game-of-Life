@@ -1,11 +1,8 @@
 package view;
 
-import com.sun.org.apache.xerces.internal.util.SymbolTable;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 
 /**
  * Created by Daniel on 4/5/2014.
@@ -18,6 +15,7 @@ public class borderPageController {
     public GridPane displayGrid;
 
     public void newGame()
+            //TODO need to add the mouse clicked listener to register this.
     {   //not getting error when I call method with here
         //System.out.println(size.getText().toString());
         int inputSize = Integer.getInteger(size.getText());
