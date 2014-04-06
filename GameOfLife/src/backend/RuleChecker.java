@@ -46,8 +46,7 @@ public class RuleChecker extends CoordinateCalculator implements Runnable {
 
     private void checkTopLeftCorner(Cell cell) {
         int sumOfNeighbors = 0;
-        Cell rightNeighbor = (Cell) grid[2].get();
-        Cell bottomNeighbor = (Cell) grid[numRows].get();
+
         //Cell
 
     }
@@ -83,32 +82,6 @@ public class RuleChecker extends CoordinateCalculator implements Runnable {
     private void checkMiddle(Cell cell) {
 
     }
-
-
-//                Cell cell = cells[i][j];
-//                if (cell.getX() == 0) {
-//                    //left side
-//                } else if (cell.getX() == cells.length - 1) {
-//                    //right side
-//                } else if (cell.getY() == 0) {
-//                    //top
-//                } else if (cell.getY() == cells.length - 1) {
-//                    //bottom
-//                } else if (cell.getX() == 0 && cell.getY() == 0) {
-//                    //top left
-//                } else if (cell.getX() == 0 && cell.getY() == cells.length - 1) {
-//                    //bottom left
-//                } else if (cell.getX() == cells.length - 1 && cell.getY() == 0) {
-//                    //top right
-//                } else if (cell.getX() == cells.length - 1 && cell.getY() == cells.length - 1) {
-//                    //bottom right
-//                } else {
-//                    //in middle
-//                }
-//            }
-//        }
-//        return null;
-//    }
 
     @Override
     public void run() {
