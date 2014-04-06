@@ -11,19 +11,6 @@ public class Cell extends QuadTreeElement{
         setCellState(0);
     }
 
-    /**
-     * Set if the cell is alive or not.
-     *
-     * @param cellState 1 if it is alive, 0 if dead.
-     */
-    public void setCellState(int cellState) {
-        this.cellState = cellState;
-    }
-    public int getCellState() {
-    	return this.cellState;
-    }
-    
-
     public CellCase setCellCase(int i, int j, int numRows) {
         if ((i == 0 && j == 0) || (i == numRows - 1 && j == 0) || (i == numRows - 1 && j == numRows - 1)) {
             return CellCase.TOP_LEFT_CORNER;
@@ -46,8 +33,21 @@ public class Cell extends QuadTreeElement{
         }
     }
 
+
     public CellCase getCellCase() {
         return cellCase;
+    }
+
+    /**
+     * Set if the cell is alive or not.
+     *
+     * @param cellState 1 if it is alive, 0 if dead.
+     */
+    public void setCellState(int cellState) {
+        this.cellState = cellState;
+    }
+    public int getCellState() {
+        return this.cellState;
     }
 
 }
