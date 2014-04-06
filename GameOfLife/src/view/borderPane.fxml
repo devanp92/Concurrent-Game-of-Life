@@ -1,45 +1,54 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import javafx.geometry.*?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
-
-<BorderPane fx:controller="view.borderPageController" maxHeight="800" maxWidth="600" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800" prefWidth="600" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane maxHeight="800" maxWidth="600" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800" prefWidth="600"
+            xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="view.borderPageController">
     <padding>
-        <Insets top="20.0" />
+        <Insets top="20.0"/>
     </padding>
     <top>
-        <GridPane maxHeight="150" maxWidth="-Infinity" prefHeight="100.0" prefWidth="500.0" vgap="10" BorderPane.alignment="TOP_CENTER">
+        <GridPane maxHeight="150" maxWidth="-Infinity" prefHeight="100.0" prefWidth="500.0" vgap="10"
+                  BorderPane.alignment="TOP_CENTER">
             <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0"/>
             </columnConstraints>
             <rowConstraints>
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
             </rowConstraints>
             <children>
-                <Label fx:id="title" style="-fx-font-size: 24pt" text="The Game of Life" textAlignment="CENTER" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="0" />
-                <Label fx:id="boardDimensionsLabel" minWidth="200" style="-fx-font-size: 20pt" text="Enter board size:" GridPane.columnIndex="0" GridPane.halignment="LEFT" GridPane.rowIndex="1" />
-                <TextField fx:id="size" maxWidth="60" promptText="Size" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
-                <Button onAction="#newGame" text="New Game" textAlignment="CENTER" GridPane.columnIndex="0" GridPane.halignment="LEFT" GridPane.rowIndex="2" />
-                <Button onAction="#quit" text="Quit" textAlignment="CENTER" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="2" />
+                <Label fx:id="title" style="-fx-font-size: 24pt" text="The Game of Life" textAlignment="CENTER"
+                       GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="0"/>
+                <Label fx:id="boardDimensionsLabel" minWidth="200" style="-fx-font-size: 20pt" text="Enter board size:"
+                       GridPane.columnIndex="0" GridPane.halignment="LEFT" GridPane.rowIndex="1"/>
+                <TextField fx:id="size" maxWidth="60" promptText="Size" GridPane.columnIndex="0"
+                           GridPane.halignment="CENTER" GridPane.rowIndex="1"/>
+                <Button onAction="#newGame" onMouseClicked="#newGame" text="New Game" textAlignment="CENTER"
+                        GridPane.columnIndex="0" GridPane.halignment="LEFT" GridPane.rowIndex="2"/>
+                <Button onAction="#quit" text="Quit" textAlignment="CENTER" GridPane.columnIndex="0"
+                        GridPane.halignment="CENTER" GridPane.rowIndex="2"/>
+                <Button mnemonicParsing="false" prefHeight="26.0" prefWidth="86.0" text="Start" textAlignment="CENTER"
+                        GridPane.rowIndex="3"/>
             </children>
         </GridPane>
     </top>
     <center>
-        <GridPane fx:id="displayGrid" maxHeight="500" maxWidth="500" prefHeight="500.0" prefWidth="500.0" BorderPane.alignment="CENTER">
-          <columnConstraints>
-            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-          </columnConstraints>
-          <rowConstraints>
-            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-          </rowConstraints>
+        <GridPane fx:id="displayGrid" maxHeight="500" maxWidth="500" prefHeight="500.0" prefWidth="500.0"
+                  BorderPane.alignment="CENTER">
+            <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+            </columnConstraints>
+            <rowConstraints>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+            </rowConstraints>
         </GridPane>
     </center>
 </BorderPane>

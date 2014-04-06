@@ -14,20 +14,19 @@ public class borderPageController {
     public TextField size;
     public GridPane displayGrid;
 
-    public void newGame()
-            //TODO need to add the mouse clicked listener to register this.
-    {   //not getting error when I call method with here
+    public void newGame() {   //not getting error when I call method with here
+        //TODO need to add the mouse clicked listener to register this.
         //System.out.println(size.getText().toString());
         int inputSize = Integer.getInteger(size.getText());
         size.clear();
         initializeBoard(inputSize);
     }
-    public void quit()
-    {
+
+    public void quit() {
         System.exit(0);
     }
-    public void initializeBoard(int size)
-    {
+
+    public void initializeBoard(int size) {
         System.out.println(size);
         /* todo
         but i get error here
