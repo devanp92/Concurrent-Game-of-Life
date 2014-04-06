@@ -33,7 +33,6 @@ public class Cell extends QuadTreeElement{
         }
     }
 
-
     public CellCase getCellCase() {
         return cellCase;
     }

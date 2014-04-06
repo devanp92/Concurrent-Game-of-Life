@@ -1,87 +1,58 @@
 package backend;
 
-import java.util.concurrent.atomic.AtomicReference;
+import java.util.List;
 
 
 public class RuleChecker extends CoordinateCalculator implements Runnable {
 
-    private AtomicReference[] grid = Grid.getGrid();
-    private AtomicReference<Cell> atomicCell;
+    private Cell currCell;
 
-    public RuleChecker(AtomicReference<Cell> cellToCheck) {
-        this.atomicCell = cellToCheck;
+    public RuleChecker(Cell cellToCheck) {
+        this.currCell = cellToCheck;
     }
 
-    public void checkCase() {
-        Cell cell = atomicCell.get();
-        CellCase cellCase = cell.getCellCase();
+    //TODO add rule checking
+/*
+Any live cell with fewer than two live neighbours dies, as if caused by under-population.
+Any live cell with two or three live neighbours lives on to the next generation.
+Any live cell with more than three live neighbours dies, as if by overcrowding.
+Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction.
+*/
+    private void checkRules() {
+        NeighborFinder neighborFinder = new NeighborFinder(currCell);
+        int isCurrCellAliveOrDead = currCell.getCellState();
+        int sum = numberOfAliveCellsAroundCurrentCell(neighborFinder.findNeighbors());
 
-        switch (cellCase) {
-            case TOP_LEFT_CORNER:
-                checkTopLeftCorner(cell);
+        int isCurrCellAliveOrDeadAfterCalc = 0;
+        switch (isCurrCellAliveOrDead) {
+            case 0:
+                //TODO check if it will become alive or not
+                isCurrCellAliveOrDeadAfterCalc = deadCellsNewState(sum);
                 break;
-            case TOP_RIGHT_CORNER:
-                checkTopRightCorner(cell);
+            case 1:
+                //TODO determine if it stays alive or dies
+                isCurrCellAliveOrDeadAfterCalc = aliveCellsNewState(sum);
                 break;
-            case BOTTOM_LEFT_CORNER:
-                checkBottomLeftCorner(cell);
-                break;
-            case BOTTOM_RIGHT_CORNER:
-                checkBottomRightCorner(cell);
-                break;
-            case TOP_BORDER:
-                checkTopBorder(cell);
-                break;
-            case RIGHT_BORDER:
-                checkRightBorder(cell);
-                break;
-            case LEFT_BORDER:
-                checkLeftBorder(cell);
-                break;
-            case BOTTOM_BORDER:
-                checkBottomBorder(cell);
-                break;
+
         }
     }
 
-    private void checkTopLeftCorner(Cell cell) {
-        int sumOfNeighbors = 0;
-
-        //Cell
-
+    private int deadCellsNewState(int sum) {
+        return 0;
     }
 
-    private void checkTopRightCorner(Cell cell) {
-        int sumOfNeighbors = 0;
+    private int aliveCellsNewState(int sum) {
+        return 0;
     }
 
-    private void checkBottomLeftCorner(Cell cell) {
-        int sumOfNeighbors = 0;
+    private int numberOfAliveCellsAroundCurrentCell(List<Cell> listOfNeighbors) {
+        int sum = 0;
+        for (Cell cell : listOfNeighbors) {
+            sum += cell.getCellState();
+        }
+        return sum;
     }
 
-    private void checkBottomRightCorner(Cell cell) {
-        int sumOfNeighbors = 0;
-    }
-
-    private void checkTopBorder(Cell cell) {
-        int sumOfNeighbors = 0;
-    }
-
-    private void checkRightBorder(Cell cell) {
-        int sumOfNeighbors = 0;
-    }
-
-    private void checkLeftBorder(Cell cell) {
-        int sumOfNeighbors = 0;
-    }
-
-    private void checkBottomBorder(Cell cell) {
-        int sumOfNeighbors = 0;
-    }
-
-    private void checkMiddle(Cell cell) {
-
-    }
 
     @Override
     public void run() {
