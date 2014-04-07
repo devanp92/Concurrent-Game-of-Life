@@ -10,6 +10,7 @@ import javafx.stage.Stage;
 /**
  * Created by Daniel on 3/29/2014.
  */
+/*This class should hold the client connection Object try to see how to make it happen when the user presses the connect button */
 public class startGame extends Application{
     public static void main(String[] args) {
         launch(args);
