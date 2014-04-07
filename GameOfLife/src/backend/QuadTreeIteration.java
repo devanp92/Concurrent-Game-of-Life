@@ -85,19 +85,24 @@ public class QuadTreeIteration {
 		QuadTreeIteration[] quads = {NE, NW, SW, SE};
 		HashMap<QuadTreeElement, Integer> mergedCountList = new HashMap<QuadTreeElement, Integer>();
 		for(int i = 0;i<quads.length;i++) {
-			for(int j = 0;j<quads.length;j++) {
-				if(i == j) continue;
-				for(QuadTreeElement qte : quads[i].innerBorder.keySet()) {
-					if(!mergedCountList.containsKey(qte)) {
-						mergedCountList.put(qte, quads[i].innerBorder.get(qte));
-					}
-					if(quads[j].outerBorder.containsKey(qte)) {
-						mergedCountList.put(qte, mergedCountList.get(qte) + quads[j].outerBorder.get(qte));
-					}
-				}				
+			for(QuadTreeElement qte : quads[i].innerBorder.keySet()) {
+				if(!mergedCountList.containsKey(qte)) {
+					mergedCountList.put(qte, quads[i].innerBorder.get(qte));
+				}
+				else {
+					mergedCountList.put(qte, mergedCountList.get(qte) + quads[i].innerBorder.get(qte));
+				}
+			}
+			for(QuadTreeElement qte : quads[i].outerBorder.keySet()) {
+				if(!mergedCountList.containsKey(qte)) {
+					mergedCountList.put(qte, quads[i].outerBorder.get(qte));
+				}
+				else {
+					mergedCountList.put(qte, mergedCountList.get(qte) + quads[i].outerBorder.get(qte));
+				}
 			}
 		}
-		System.out.println(mergedCountList);
+		
 		merge.insertBorder(mergedCountList);
 		
 		return merge;

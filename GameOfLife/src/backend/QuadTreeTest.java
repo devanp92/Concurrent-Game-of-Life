@@ -8,22 +8,22 @@ public class QuadTreeTest {
 		q.insert(new Cell(1,2));
 		q.insert(new Cell(2,2));
 		
-		QuadTree a = new QuadTree(2,2,0,0);
-		a.insert(new Cell(1,1));
-		QuadTree b = new QuadTree(2,2,2,0);
-		b.insert(new Cell(2,1));
-		QuadTree c = new QuadTree(2,2,0,2);
-		c.insert(new Cell(1,2));
-		QuadTree d = new QuadTree(2,2,2,2);
-		d.insert(new Cell(2,2));
+		QuadTree nw = new QuadTree(2,2,0,0);
+		nw.insert(new Cell(1,1));
+		QuadTree ne = new QuadTree(2,2,2,0);
+		ne.insert(new Cell(2,1));
+		QuadTree sw = new QuadTree(2,2,0,2);
+		sw.insert(new Cell(1,2));
+		QuadTree se = new QuadTree(2,2,2,2);
+		se.insert(new Cell(2,2));
 		
 		QuadTreeIteration qti = q.getNextIteration();
 		QuadTree next = qti.getQuadTree();
 		
-		QuadTreeIteration qtiMerge = QuadTreeIteration.mergeQuadTreeIteration(b.getNextIteration(), 
-																			  a.getNextIteration(),
-																			  c.getNextIteration(),
-																			  d.getNextIteration());
+		QuadTreeIteration qtiMerge = QuadTreeIteration.mergeQuadTreeIteration(ne.getNextIteration(), 
+																			  nw.getNextIteration(),
+																			  sw.getNextIteration(),
+																			  se.getNextIteration());
 		QuadTree nextMerged = qtiMerge.getQuadTree();
 		
 		System.out.println(q.size() + ": " + q.getItemList());
