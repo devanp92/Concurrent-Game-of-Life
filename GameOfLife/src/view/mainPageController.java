@@ -111,5 +111,6 @@ public class mainPageController implements Initializable{
         resumeGameButton.setVisible(false);
         pauseGameButton.setVisible(true);
         statusLabel.setText("The game has resumed");
+        System.out.println("resume functionality needs to be implemented");
     }
 }

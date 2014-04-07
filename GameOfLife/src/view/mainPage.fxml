@@ -4,7 +4,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane maxHeight="800" maxWidth="600" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800" prefWidth="600" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.borderPageController">
+<BorderPane maxHeight="800" maxWidth="600" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800" prefWidth="600" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.mainPageController">
     <padding>
         <Insets top="20.0"/>
     </padding>
@@ -33,7 +33,6 @@
         </GridPane>
     </top>
     <center>
-        <fx:include source="mainPage.fxml" charset="UTF-8" />
         <GridPane fx:id="displayGrid" prefHeight="0" prefWidth="0" BorderPane.alignment="CENTER">
             <style>-fx-border-width: 10</style>
             <style>-fx-border-style: solid</style>
