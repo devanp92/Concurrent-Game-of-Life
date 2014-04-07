@@ -1,22 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.shape.Rectangle?>
-<GridPane fx:id="grid" onMouseClicked="#click" fx:controller="view.mainPageController" alignment="center" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1000.0" prefWidth="800.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8">
-    <children>
-    <Label fx:id="title" text="The Game of Life" GridPane.halignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="1" textAlignment="CENTER" style="-fx-font-size: 24pt" GridPane.columnSpan="2"/>
-    <Button text="New Game" GridPane.halignment="CENTER" GridPane.columnIndex="1" textAlignment="CENTER" GridPane.rowIndex="2" onAction="#newGame"/>
-    <Button text="Quit" GridPane.halignment="CENTER" GridPane.columnIndex="2" textAlignment="CENTER" GridPane.rowIndex="2" onAction="#quit"/>
-    <Rectangle fx:id="recta11" onMouseClicked="#click1"  height="200" width="200" fill="antiquewhite" stroke="black" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
-    <Rectangle fx:id="recta12"  height="200" width="200" fill="antiquewhite" stroke="black" GridPane.rowIndex="3" GridPane.columnIndex="2"/>
-    <Rectangle fx:id="recta21"  height="200" width="200" fill="antiquewhite" stroke="black" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
-    <Rectangle fx:id="recta22"  height="200" width="200" fill="antiquewhite" stroke="black" GridPane.rowIndex="4" GridPane.columnIndex="2"/>
-    </children>
-</GridPane>
-<!--onAction="#onSignIn
 
-hgap="10" vgap="10"
--->
+<BorderPane maxHeight="800" maxWidth="600" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800" prefWidth="600" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.mainPageController">
+    <padding>
+        <Insets top="20.0"/>
+    </padding>
+    <top>
+        <GridPane maxHeight="150" maxWidth="-Infinity" prefHeight="100.0" prefWidth="500.0" vgap="20" BorderPane.alignment="TOP_CENTER">
+            <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0"/>
+            </columnConstraints>
+            <rowConstraints>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+            </rowConstraints>
+            <children>
+                <Label fx:id="title" style="-fx-font-size: 24pt" text="The Game of Life" textAlignment="CENTER" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="0"/>
+                <Label fx:id="boardDimensionsLabel" minWidth="200" style="-fx-font-size: 20pt" text="Enter grid size:" GridPane.columnIndex="0" GridPane.halignment="LEFT" GridPane.rowIndex="1"/>
+                <Label fx:id="initializedBoardDimensionsLabel" minWidth="200" style="-fx-font-size: 20pt" text="The grid size is: " GridPane.columnIndex="0" GridPane.halignment="LEFT" GridPane.rowIndex="1" visible="false"/>
+                <TextField fx:id="size" maxWidth="60" promptText="Size" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="1"/>
+                <Button fx:id="startGameButton" onAction="#startNewGame" text="Build Grid" textAlignment="CENTER" GridPane.columnIndex="0" GridPane.halignment="LEFT" GridPane.rowIndex="2"/>
+                <Button fx:id="pauseGameButton" onAction="#pauseGame" text="Pause" textAlignment="CENTER" GridPane.columnIndex="0" GridPane.halignment="LEFT" GridPane.rowIndex="2" visible="false"/>
+                <Button fx:id="resumeGameButton" onAction="#resumeGame" text="Resume" textAlignment="CENTER" GridPane.columnIndex="0" GridPane.halignment="LEFT" GridPane.rowIndex="2" visible="false"/>
+                <Button onAction="#quit" text="Quit" textAlignment="CENTER" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="2"/>
+                <Label fx:id="statusLabel" visible="false" style="-fx-font-size: 20pt" textAlignment="CENTER" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="3"/>
+            </children>
+        </GridPane>
+    </top>
+    <center>
+        <GridPane fx:id="displayGrid" prefHeight="0" prefWidth="0" BorderPane.alignment="CENTER">
+            <style>-fx-border-width: 10</style>
+            <style>-fx-border-style: solid</style>
+            <style>-fx-border-color: black</style>
+            <visible>false</visible>
+        </GridPane>
+    </center>
+</BorderPane>
