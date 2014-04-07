@@ -23,10 +23,16 @@ public class QuadTree extends QuadTreeElement implements Serializable {
 		this.x = xOffset;
 		this.y = yOffset;
 	}
+	public QuadTree(QuadTree qt) {
+		this(qt.width, qt.height, qt.x, qt.y);
+		for(QuadTreeElement qte : qt.getItemList()) {
+			this.insert(qte);
+		}
+	}
 	//Make sure NOT to pass null values in, empty QuadTrees can be removed at end
 	public QuadTree(QuadTree NE, QuadTree NW, QuadTree SW, QuadTree SE) {
-		x = NE.x;
-		y = NE.y;
+		x = NW.x;
+		y = NW.y;
 		width = NW.width+NE.width;
 		height = NW.height+SW.height;
 		
@@ -43,9 +49,14 @@ public class QuadTree extends QuadTreeElement implements Serializable {
 		boolean retVal = false;
 		QuadrantID qID = e.getQuadrantFit(this);
 		QuadTreeElement qTreeEl = quadrants.get(qID);
-		if(qTreeEl != null && qTreeEl instanceof QuadTree) {
-			QuadTree qTree = (QuadTree) qTreeEl; 
-			retVal = qTree.contains(e);
+		if(qTreeEl != null) {
+			if(qTreeEl instanceof QuadTree) {
+				QuadTree qTree = (QuadTree) qTreeEl; 
+				retVal = qTree.contains(e);
+			}
+			else if(qTreeEl instanceof QuadTreeElement) {
+				retVal = e.equals(qTreeEl);
+			}
 		}
 		return retVal;
 	}
@@ -76,13 +87,15 @@ public class QuadTree extends QuadTreeElement implements Serializable {
 				qTree.insert(e);
 			}
 			else {
-				QuadTree newQTree = new QuadTree(qID.getHalfWidth(width),
-						qID.getHalfHeight(height),
-						x + qID.getXOffset(width),
-						y + qID.getYOffset(height));
-				newQTree.insert(qte);
-				newQTree.insert(e);
-				quadrants.put(qID, newQTree);
+				if(!qte.equals(e)) {
+					QuadTree newQTree = new QuadTree(qID.getHalfWidth(width),
+							qID.getHalfHeight(height),
+							x + qID.getXOffset(width),
+							y + qID.getYOffset(height));
+					newQTree.insert(qte);
+					newQTree.insert(e);
+					quadrants.put(qID, newQTree);
+				}
 			}
 		}
 		else {
@@ -181,7 +194,7 @@ public class QuadTree extends QuadTreeElement implements Serializable {
 		return list;
 	}
 	
-	private QuadTreeIteration getNextIteration() {
+	public QuadTreeIteration getNextIteration() {
 		QuadTreeIteration nextIteration = new QuadTreeIteration(this);
 		ArrayList<QuadTreeElement> elements = getItemList();
 		HashMap<QuadTreeElement, Integer> neighborCount = new HashMap<QuadTreeElement, Integer>();
@@ -196,7 +209,7 @@ public class QuadTree extends QuadTreeElement implements Serializable {
 				try {
 					c = Class.forName(qte.getClass().getName()).getDeclaredConstructor(Integer.TYPE, Integer.TYPE);
 					c.setAccessible(true);
-					newQte = (QuadTreeElement) c.newInstance(qte.x+borderCoords[i][0], qte.x+borderCoords[i][1]);
+					newQte = (QuadTreeElement) c.newInstance(qte.x+borderCoords[i][0], qte.y+borderCoords[i][1]);
 				} catch(Exception e){
                     e.printStackTrace();
                 }

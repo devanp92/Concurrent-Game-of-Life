@@ -32,17 +32,27 @@ public abstract class QuadTreeElement {
 		boolean retVal = true;
 		if(x < qTree.x)
 			retVal = false;
-		else if(x > qTree.x + qTree.width)
+		else if(x >= qTree.x + qTree.width)
 			retVal = false;
 		else if(y < qTree.y)
 			retVal = false;
-		else if(y > qTree.y + qTree.height)
+		else if(y >= qTree.y + qTree.height)
 			retVal = false;
 		return retVal;
 	}
 	
+	public boolean equals(Object o) {
+		if(o instanceof QuadTreeElement) {
+			QuadTreeElement qte = (QuadTreeElement) o;
+			return equals(qte);
+		}
+		else return false;
+	}
 	public boolean equals(QuadTreeElement e) {
 		return x == e.x && y == e.y;
+	}
+	public int hashCode() {
+		return x ^ y;
 	}
 	public String toString() {
 		return "(" + x + "," + y + ")";
