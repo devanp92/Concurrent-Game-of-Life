@@ -5,6 +5,10 @@ import java.util.HashMap;
 /**
  * Created by devan on 4/5/14.
  */
+
+/**
+ * Converts 2D coordinates and 1D coordinates
+ */
 public abstract class CoordinateCalculator {
     int numRows;
 

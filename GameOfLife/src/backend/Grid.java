@@ -18,14 +18,14 @@ public class Grid extends CoordinateCalculator {
     }
 
 
-    public AtomicReference[] initializeGrid(int numRows) {
+    private AtomicReference[] initializeGrid(int numRows) {
         AtomicReference[] cells = new AtomicReference[(int) Math.pow(numRows, 2)];
         for (int i = 0; i < (int) Math.pow(numRows, 2); i++) {
 
             HashMap<Character, Integer> cellPositionOnGrid = super.convert1DCoordinateTo2D(i);
 
-            int x = cellPositionOnGrid.get('X');
-            int y = cellPositionOnGrid.get('Y');
+            int x = cellPositionOnGrid.get('x');
+            int y = cellPositionOnGrid.get('y');
 
             Cell cell = new Cell(x, y);
             cell.setCellCase(x, y, numRows);

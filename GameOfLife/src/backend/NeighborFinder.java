@@ -7,8 +7,8 @@ import java.util.concurrent.atomic.AtomicReference;
 /**
  * Created by devan on 4/5/14.
  */
+
 public class NeighborFinder extends CoordinateCalculator {
-    //TODO Finish the finding border and middle cells
 
     private int CENTER_LEFT_NEIGHBOR;
     private int CENTER_RIGHT_NEIGHBOR;
@@ -21,9 +21,8 @@ public class NeighborFinder extends CoordinateCalculator {
     private int UP_RIGHT_NEIGHBOR;
     private int UP_CENTER_NEIGHBOR;
 
-
-    Cell cell;
-    AtomicReference[] grid = Grid.getGrid();
+    private Cell cell;
+    private AtomicReference[] grid = Grid.getGrid();
 
     public NeighborFinder(Cell cell) {
         this.cell = cell;
@@ -72,11 +71,11 @@ public class NeighborFinder extends CoordinateCalculator {
 
         Cell rightNeighbor = (Cell) grid[CENTER_RIGHT_NEIGHBOR].get();
         Cell bottomNeighbor = (Cell) grid[DOWN_RIGHT_NEIGHBOR].get();
-        Cell diagNeighbor = (Cell) grid[DOWN_RIGHT_NEIGHBOR].get();
+        Cell diagonalNeighbor = (Cell) grid[DOWN_RIGHT_NEIGHBOR].get();
 
         list.add(rightNeighbor);
         list.add(bottomNeighbor);
-        list.add(diagNeighbor);
+        list.add(diagonalNeighbor);
 
         return list;
     }
@@ -86,11 +85,11 @@ public class NeighborFinder extends CoordinateCalculator {
 
         Cell leftNeighbor = (Cell) grid[CENTER_LEFT_NEIGHBOR].get();
         Cell bottomNeighbor = (Cell) grid[DOWN_CENTER_NEIGHBOR].get();
-        Cell diagNeighbor = (Cell) grid[DOWN_LEFT_NEIGHBOR].get();
+        Cell diagonalNeighbor = (Cell) grid[DOWN_LEFT_NEIGHBOR].get();
 
         list.add(leftNeighbor);
         list.add(bottomNeighbor);
-        list.add(diagNeighbor);
+        list.add(diagonalNeighbor);
 
         return list;
     }
@@ -99,13 +98,13 @@ public class NeighborFinder extends CoordinateCalculator {
         List<Cell> list = new ArrayList<Cell>();
 
         Cell topNeighbor = (Cell) grid[UP_CENTER_NEIGHBOR].get();
-        Cell diagNeighbor = (Cell) grid[UP_RIGHT_NEIGHBOR].get();
+        Cell diagonalNeighbor = (Cell) grid[UP_RIGHT_NEIGHBOR].get();
         Cell rightNeighbor = (Cell) grid[CENTER_RIGHT_NEIGHBOR].get();
 
 
         list.add(topNeighbor);
         list.add(rightNeighbor);
-        list.add(diagNeighbor);
+        list.add(diagonalNeighbor);
 
         return list;
     }
@@ -114,13 +113,13 @@ public class NeighborFinder extends CoordinateCalculator {
         List<Cell> list = new ArrayList<Cell>();
 
         Cell leftNeighbor = (Cell) grid[CENTER_LEFT_NEIGHBOR].get();
-        Cell diagNeighbor = (Cell) grid[UP_LEFT_NEIGHBOR].get();
+        Cell diagonalNeighbor = (Cell) grid[UP_LEFT_NEIGHBOR].get();
         Cell topNeighbor = (Cell) grid[UP_CENTER_NEIGHBOR].get();
 
 
         list.add(topNeighbor);
         list.add(leftNeighbor);
-        list.add(diagNeighbor);
+        list.add(diagonalNeighbor);
 
         return list;
     }
