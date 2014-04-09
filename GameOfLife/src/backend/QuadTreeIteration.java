@@ -9,7 +9,7 @@ public class QuadTreeIteration {
 	public QuadTree getQuadTree() {
 		QuadTree nextQuadTree = new QuadTree(qTree);
 		for(QuadTreeElement qte : innerBorder.keySet()) {
-			if(isLegalInsertion(qte, innerBorder.get(qte))) {
+			if(isInsertionLegal(qte, innerBorder.get(qte))) {
 				nextQuadTree.insert(qte);
 			}
 		}
@@ -57,12 +57,12 @@ public class QuadTreeIteration {
 	}
 
 	private void insertIfLegal(QuadTreeElement qte, int neighborCount) {
-		if(isLegalInsertion(qte,neighborCount)) {
+		if(isInsertionLegal(qte,neighborCount)) {
 			qTree.insert(qte);
 		}
 	}
 
-	private boolean isLegalInsertion(QuadTreeElement qte, int neighborCount) {
+	private boolean isInsertionLegal(QuadTreeElement qte, int neighborCount) {
 		boolean retVal = false;
 		if(prevQuadTree.contains(qte)) {
 			if(2 <= neighborCount && neighborCount <= 3) {
@@ -74,8 +74,9 @@ public class QuadTreeIteration {
 		}
 		return retVal;
 	}
-
-	//TODO: doesn't exactly work properly yet
+	
+	//TODO: ensure correctness
+	//TODO: parallelize for loops 
 	public static QuadTreeIteration mergeQuadTreeIteration(	QuadTreeIteration NE,
 															QuadTreeIteration NW,
 															QuadTreeIteration SW,
