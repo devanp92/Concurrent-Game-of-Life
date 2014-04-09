@@ -36,13 +36,8 @@ public class Grid extends CoordinateCalculator {
         return cells;
     }
 
-
     public static AtomicReference[] getGrid() {
         return grid;
-    }
-
-    public static void setGrid(AtomicReference[] grid) {
-        Grid.grid = grid;
     }
 
     public Cell getCell(int row, int column) {
@@ -53,11 +48,32 @@ public class Grid extends CoordinateCalculator {
     public int getNumRows() {
         return numRows;
     }
+
     public void setCell(int index, Cell cell){
         AtomicReference<Cell> cellAtomicReference = new AtomicReference<Cell>(cell);
         grid[index] = cellAtomicReference;
     }
+
     public AtomicReference[] getSubSetOfGrid(int start, int end){
         return Arrays.copyOfRange(grid, start, end);
+    }
+
+    public Cell[][] convertGridTo2DArray(){
+        Cell[][] cells = new Cell[(int) Math.sqrt(numRows)][];
+        for (int i = 0; i < numRows; i++) {
+            for (int j = 0; j < numRows; j++) {
+                AtomicReference atomic = grid[convert2DCoordinateTo1D(i,j)];
+                cells[i][j] = (Cell) atomic.get();
+            }
+        }
+        return cells;
+    }
+
+    public void setGrid(Cell[][] cells){
+        for (int i = 0; i < cells.length; i++) {
+            for (int j = 0; j < cells[0].length; j++) {
+                setCell(convert2DCoordinateTo1D(i, j), cells[i][j]);
+            }
+        }
     }
 }
