@@ -1,40 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import javafx.geometry.*?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
 <BorderPane maxHeight="800" maxWidth="600" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800" prefWidth="600" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.mainPageController">
     <padding>
-        <Insets top="20.0" />
+        <Insets top="20.0"/>
     </padding>
     <top>
         <GridPane maxHeight="150" maxWidth="-Infinity" prefHeight="100.0" prefWidth="500.0" vgap="20" BorderPane.alignment="TOP_CENTER">
             <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0"/>
             </columnConstraints>
             <rowConstraints>
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
             </rowConstraints>
             <children>
-                <Label fx:id="title" style="-fx-font-size: 24pt" text="The Game of Life" textAlignment="CENTER" GridPane.columnIndex="0" GridPane.halignment="CENTER" />
-                <Label fx:id="boardDimensionsLabel" minWidth="200" style="-fx-font-size: 20pt" text="Enter grid size:" GridPane.columnIndex="0" GridPane.halignment="LEFT" GridPane.rowIndex="2" />
-                <Label fx:id="initializedBoardDimensionsLabel" minWidth="200" style="-fx-font-size: 20pt" text="The grid size is: " visible="false" GridPane.columnIndex="0" GridPane.halignment="LEFT" GridPane.rowIndex="1" />
-                <TextField fx:id="size" maxWidth="77.0" prefHeight="44.0" prefWidth="77.0" promptText="Size" style="-fx-font-size: 18pt" text="Size" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="2">
-                </TextField>
-                <TextField fx:id="serverIpAdress" maxWidth="146.0" prefHeight="15.0" prefWidth="105.0" style="-fx-font-size: 18pt" text="127.0.0.1" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.rowIndex="4">
-                </TextField>
-                <Button fx:id="connectButton" text="Connect" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.rowIndex="4" />
-                <Button fx:id="startGameButton" onAction="#startNewGame" text="Build Grid" textAlignment="CENTER" GridPane.columnIndex="0" GridPane.halignment="LEFT" GridPane.rowIndex="5" />
-                <Button fx:id="pauseGameButton" onAction="#pauseGame" text="Pause" textAlignment="CENTER" visible="false" GridPane.columnIndex="0" GridPane.halignment="LEFT" GridPane.rowIndex="3" />
-                <Button fx:id="resumeGameButton" onAction="#resumeGame" text="Resume" textAlignment="CENTER" visible="false" GridPane.columnIndex="0" GridPane.halignment="LEFT" GridPane.rowIndex="4" />
-                <Button onAction="#quit" text="Quit" textAlignment="CENTER" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.rowIndex="5" />
-                <Label fx:id="statusLabel" style="-fx-font-size: 20pt" textAlignment="CENTER" visible="false" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="4" /><Label minWidth="152.0" prefHeight="18.0" prefWidth="152.0" style="-fx-font-size: 20pt" text="Enter host:" GridPane.rowIndex="4" />
+                <Label fx:id="title" style="-fx-font-size: 24pt" text="The Game of Life" textAlignment="CENTER" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="0"/>
+                <Label fx:id="boardDimensionsLabel" minWidth="200" style="-fx-font-size: 20pt" text="Enter grid size:" GridPane.columnIndex="0" GridPane.halignment="LEFT" GridPane.rowIndex="1"/>
+                <Label fx:id="initializedBoardDimensionsLabel" minWidth="200" style="-fx-font-size: 20pt" text="The grid size is: " GridPane.columnIndex="0" GridPane.halignment="LEFT" GridPane.rowIndex="1" visible="false"/>
+                <TextField fx:id="size" maxWidth="60" promptText="Size" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="1"/>
+                <TextField fx:id="serverIpAdress" text="127.0.0.1" maxWidth="100" GridPane.rowIndex="2" GridPane.columnIndex="0" GridPane.halignment="LEFT"/>
+                <Button fx:id="connectButton" text="Connect" GridPane.columnIndex="0" GridPane.rowIndex="2" GridPane.halignment="CENTER"/>
+                <Button fx:id="startGameButton" onAction="#startNewGame" text="Build Grid" textAlignment="CENTER" GridPane.columnIndex="0" GridPane.halignment="LEFT" GridPane.rowIndex="3"/>
+                <Button fx:id="pauseGameButton" onAction="#pauseGame" text="Pause" textAlignment="CENTER" GridPane.columnIndex="0" GridPane.halignment="LEFT" GridPane.rowIndex="3" visible="false"/>
+                <Button fx:id="resumeGameButton" onAction="#resumeGame" text="Resume" textAlignment="CENTER" GridPane.columnIndex="0" GridPane.halignment="LEFT" GridPane.rowIndex="3" visible="false"/>
+                <Button onAction="#quit" text="Quit" textAlignment="CENTER" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="3"/>
+                <Label fx:id="statusLabel" visible="false" style="-fx-font-size: 20pt" textAlignment="CENTER" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="4"/>
             </children>
         </GridPane>
     </top>

@@ -7,6 +7,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.Border;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -28,8 +29,6 @@ public class mainPageController implements Initializable{
     public Button pauseGameButton;
     public Label statusLabel;
     public Button resumeGameButton;
-    public TextField serverIpAdress;
-    public Button connectButton;
     private int gridSize = 0;
     private boolean gridclickedOn = false;
 
@@ -60,27 +59,27 @@ public class mainPageController implements Initializable{
        {
             for (int j = 0; j <size; j++)
             {
-                final Rectangle rectangle = new Rectangle(20,20);
-                rectangle.setOnMouseClicked(new EventHandler<Event>(){
+                Rectangle recta = new Rectangle(20,20);
+                recta.setOnMouseClicked(new EventHandler<Event>(){
                     @Override
                     public void handle(Event event) {
                         if(!gridclickedOn)
                         {
                             gridclickedOn = true;
                             statusLabel.setText("The Game has started!!!");
-                            if (rectangle.getFill().equals(Color.BLACK))
+                            if (recta.getFill().equals(Color.BLACK))
                             {
-                                rectangle.setFill(Color.WHITE);
+                                recta.setFill(Color.WHITE);
                             }
                             else
                             {
-                                rectangle.setFill(Color.BLACK);
+                                recta.setFill(Color.BLACK);
                             }
                         }
                     }
                 });
-                rectangle.setFill(Color.WHITE);
-                displayGrid.add(rectangle,i,j);
+                recta.setFill(Color.WHITE);
+                displayGrid.add(recta,i,j);
             }
         }
         displayGrid.setVisible(true);
