@@ -59,7 +59,7 @@ public class mainPageController implements Initializable{
        {
             for (int j = 0; j <size; j++)
             {
-                Rectangle recta = new Rectangle(20,20);
+                final Rectangle recta = new Rectangle(20,20);
                 recta.setOnMouseClicked(new EventHandler<Event>(){
                     @Override
                     public void handle(Event event) {
