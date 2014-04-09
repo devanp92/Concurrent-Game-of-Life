@@ -8,14 +8,14 @@ public class RuleChecker extends CoordinateCalculator {
     private Cell currCell;
 
 
-    public void determineCellsNextState(Cell cellToCheck) {
+    public Cell determineCellsNextState(Cell cellToCheck) {
         this.currCell = cellToCheck;
 
         NeighborFinder neighborFinder = new NeighborFinder(currCell);
         int numAliveNeighbors = numOfAliveCellsAroundCurrentCell(neighborFinder.findNeighbors());
 
-        setCurrCellsNextStateDependingOnNumAliveNeighbors(numAliveNeighbors);
-     }
+           return setCurrCellsNextStateDependingOnNumAliveNeighbors(numAliveNeighbors);
+    }
 
     private int numOfAliveCellsAroundCurrentCell(List<Cell> listOfNeighbors) {
         int numAliveNeighbors = 0;
@@ -25,30 +25,35 @@ public class RuleChecker extends CoordinateCalculator {
         return numAliveNeighbors;
     }
 
-    private void setCurrCellsNextStateDependingOnNumAliveNeighbors(int numAliveNeighbors){
+    private Cell setCurrCellsNextStateDependingOnNumAliveNeighbors(int numAliveNeighbors) {
         int isCurrCellAliveOrDead = currCell.getCellState();
+        Cell cell = null;
         switch (isCurrCellAliveOrDead) {
             case 0:
-                setDeadCellsNewState(numAliveNeighbors);
+                cell = setDeadCellsNewState(numAliveNeighbors);
                 break;
             case 1:
-                setAliveCellsNewState(numAliveNeighbors);
+                cell = setAliveCellsNewState(numAliveNeighbors);
                 break;
         }
+        return cell;
     }
 
-    private void setDeadCellsNewState(int numAliveNeighbors) {
+    private Cell setDeadCellsNewState(int numAliveNeighbors) {
+        Cell cell = currCell;
         if (numAliveNeighbors == 3) {
-            currCell.setCellState(1);
+            cell.setCellState(1);
         }
+        return cell;
     }
 
-    private void setAliveCellsNewState(int numAliveNeighbors) {
+    private Cell setAliveCellsNewState(int numAliveNeighbors) {
+        Cell cell = currCell;
         if (numAliveNeighbors == 2 || numAliveNeighbors == 3) {
-            currCell.setCellState(1);
+            cell.setCellState(1);
         } else {
-            currCell.setCellState(0);
+            cell.setCellState(0);
         }
+        return cell;
     }
-
 }

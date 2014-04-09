@@ -40,7 +40,7 @@ public class Grid extends CoordinateCalculator {
         return grid;
     }
 
-    public void setGrid(AtomicReference[] grid) {
+    public static void setGrid(AtomicReference[] grid) {
         Grid.grid = grid;
     }
 
@@ -51,5 +51,9 @@ public class Grid extends CoordinateCalculator {
 
     public int getNumRows() {
         return numRows;
+    }
+    public void setCell(int index, Cell cell){
+        AtomicReference<Cell> cellAtomicReference = new AtomicReference<Cell>(cell);
+        grid[index] = cellAtomicReference;
     }
 }

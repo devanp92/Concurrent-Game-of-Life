@@ -1,9 +1,10 @@
 package backend;
 
-public class Cell extends QuadTreeElement{
+public class Cell extends QuadTreeElement {
 
-    int cellState;
-    CellCase cellCase;
+    private int cellState;
+    private CellCase cellCase;
+    private int coordinateIn1D;
 
     public Cell(int x, int y) {
         this.x = x;
@@ -45,6 +46,7 @@ public class Cell extends QuadTreeElement{
     public void setCellState(int cellState) {
         this.cellState = cellState;
     }
+
     public int getCellState() {
         return this.cellState;
     }
