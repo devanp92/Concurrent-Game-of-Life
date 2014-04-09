@@ -10,7 +10,7 @@ public class QuadTree extends QuadTreeElement implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	HashMap<QuadrantID, QuadTreeElement> quadrants = new HashMap<QuadrantID, QuadTreeElement>();
-	
+
 	int width;
 	int height;
 
@@ -35,13 +35,13 @@ public class QuadTree extends QuadTreeElement implements Serializable {
 		y = NW.y;
 		width = NW.width+NE.width;
 		height = NW.height+SW.height;
-		
+
 		quadrants.put(QuadrantID.TOP_RIGHT, NE);
 		quadrants.put(QuadrantID.TOP_LEFT, NW);
 		quadrants.put(QuadrantID.BOT_LEFT, SW);
 		quadrants.put(QuadrantID.BOT_RIGHT, SE);
 	}
-	
+
 	private boolean isEmpty() {
 		return quadrants.isEmpty();
 	}
@@ -51,7 +51,7 @@ public class QuadTree extends QuadTreeElement implements Serializable {
 		QuadTreeElement qTreeEl = quadrants.get(qID);
 		if(qTreeEl != null) {
 			if(qTreeEl instanceof QuadTree) {
-				QuadTree qTree = (QuadTree) qTreeEl; 
+				QuadTree qTree = (QuadTree) qTreeEl;
 				retVal = qTree.contains(e);
 			}
 			else if(qTreeEl instanceof QuadTreeElement) {
@@ -78,7 +78,7 @@ public class QuadTree extends QuadTreeElement implements Serializable {
 		if(!e.inRegion(this)) {
 			throw new IndexOutOfBoundsException("Element not in QuadTree region");
 		}
-		
+
 		QuadrantID qID = e.getQuadrantFit(this);
 		QuadTreeElement qte = quadrants.get(qID);
 		if(qte != null) {
@@ -109,7 +109,7 @@ public class QuadTree extends QuadTreeElement implements Serializable {
 	}
 	private boolean remove(QuadTreeElement x, QuadTree parent, QuadrantID locationInParent) {
 		boolean found = false;
-		
+
 		QuadrantID qID = x.getQuadrantFit(this);
 		QuadTreeElement qte = quadrants.get(qID);
 		if(qte != null) {
@@ -131,12 +131,12 @@ public class QuadTree extends QuadTreeElement implements Serializable {
 		}
 		return found;
 	}
-	
+
 	public ArrayList<QuadTreeElement> getItemList() {
 		ArrayList<QuadTreeElement> itemList = new ArrayList<QuadTreeElement>();
 		return getItemList(itemList);
 	}
-	private ArrayList<QuadTreeElement> getItemList(ArrayList<QuadTreeElement> itemList) {		
+	private ArrayList<QuadTreeElement> getItemList(ArrayList<QuadTreeElement> itemList) {
 		for(QuadTreeElement qte : quadrants.values()) {
 			if(qte instanceof QuadTree) {
 				QuadTree qTree = (QuadTree) qte;
@@ -148,7 +148,7 @@ public class QuadTree extends QuadTreeElement implements Serializable {
 		}
 		return itemList;
 	}
-	
+
 	/**Breadth-first divisioning; produces no more than numOfDivisions divisions*/
 	public ArrayList<QuadTreeElement> divideLess(int numOfDivisions) {
 		ArrayList<QuadTreeElement> list = new ArrayList<QuadTreeElement>();
@@ -174,7 +174,7 @@ public class QuadTree extends QuadTreeElement implements Serializable {
 		}
 		return list;
 	}
-	
+
 	/**Breadth-first divisioning; produces at least numOfDivisions divisions*/
 	public ArrayList<QuadTreeElement> divideMore(int numOfDivisions) {
 		ArrayList<QuadTreeElement> list = new ArrayList<QuadTreeElement>();
@@ -195,17 +195,17 @@ public class QuadTree extends QuadTreeElement implements Serializable {
 		}
 		return list;
 	}
-	
+
 	public QuadTreeIteration getNextIteration() {
 		QuadTreeIteration nextIteration = new QuadTreeIteration(this);
 		ArrayList<QuadTreeElement> elements = getItemList();
 		HashMap<QuadTreeElement, Integer> neighborCount = new HashMap<QuadTreeElement, Integer>();
 		final int[][] borderCoords = {{-1,-1}, {0,-1}, {1,-1}, {-1,0}, {1,0}, {-1,1}, {0,1}, {1,1}};
-		
+
 		for(QuadTreeElement qte : elements) {
 			for(int i = 0;i<borderCoords.length;i++) {
 				QuadTreeElement newQte = null;
-				
+
 				//Reflection: be worried
 				Constructor<?> c;
 				try {
@@ -215,7 +215,7 @@ public class QuadTree extends QuadTreeElement implements Serializable {
 				} catch(Exception e) {
                     e.printStackTrace();
                 }
-				
+
 				if(!neighborCount.containsKey(newQte)) {
 					neighborCount.put(newQte, 0);
 				}
@@ -225,7 +225,7 @@ public class QuadTree extends QuadTreeElement implements Serializable {
 		nextIteration.insertBorder(neighborCount);
 		return nextIteration;
 	}
-	
+
 	private boolean hasSubTrees() {
 		boolean retVal = false;
 		for(QuadTreeElement qte : quadrants.values()) {

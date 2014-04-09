@@ -12,8 +12,8 @@ public class IterationCalculator {
 
     private Grid grid;
     private Grid newGridToSet;
-    private List<Calculator> calculators;
 
+    private Calculator[] calculators;
 
     public IterationCalculator(Grid grid) {
         if (grid == null) {
@@ -23,24 +23,30 @@ public class IterationCalculator {
         this.newGridToSet = new Grid(grid.getNumRows());
     }
 
+
     public void calculateNewIteration() throws Exception {
-        int numThreads = numThreads();
-
-
-
-
+        initializeCalculators();
     }
-    //TODO
-//    private List<Calculator> initializeCalculators(int numThreads){
-//        calculators = new ArrayList<Calculator>();
-//        for (int i = 0; i < numThreads; i++) {
-//            calculators.get(i) = new Calculator()
-//        }
-//    }
-//
-//    private AtomicReference<Cell>[] findSubSetOfCellsForThread(int numThreads, int threadNumber){
-//
-//    }
+
+    private void initializeCalculators() throws Exception {
+        int numThreads = numThreads();
+        calculators = new Calculator[numThreads];
+        List<AtomicReference[]> listOfSubSets = findSubSetsOfCellsForThread(numThreads, grid.numRows * grid.numRows);
+
+        for (int i = 0; i < numThreads; i++) {
+            AtomicReference[] cells = listOfSubSets.get(i);
+            calculators[i] = new Calculator(cells, new RuleChecker());
+        }
+    }
+
+    private List<AtomicReference[]> findSubSetsOfCellsForThread(int numThreads, int numCells) {
+        List<AtomicReference[]> list = new ArrayList<AtomicReference[]>();
+        for (int i = 0; i < numCells; i += numThreads) {
+            AtomicReference[] subSet = grid.getSubSetOfGrid(i, Math.min(numCells, i + numThreads));
+            list.add(subSet);
+        }
+        return list;
+    }
 
     private int numThreads() throws Exception {
         int cores = Runtime.getRuntime().availableProcessors();
@@ -50,8 +56,8 @@ public class IterationCalculator {
         return cores;
     }
 
-    private void setNewGrid(AtomicReference[] cells) {
-        Grid.setGrid(cells);
+    public Calculator[] getCalculators() {
+        return calculators;
     }
 
     public class Calculator implements Runnable {
@@ -65,7 +71,7 @@ public class IterationCalculator {
 
         @Override
         public void run() {
-            for(AtomicReference atomicReference : cells){
+            for (AtomicReference atomicReference : cells) {
                 Cell cell = (Cell) atomicReference.get();
                 Cell nextIterationCell = ruleChecker.determineCellsNextState(cell);
                 int cellIndex = grid.convert2DCoordinateTo1D(nextIterationCell.x, nextIterationCell.y);
