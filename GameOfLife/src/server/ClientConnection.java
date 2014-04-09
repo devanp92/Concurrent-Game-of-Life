@@ -59,7 +59,7 @@ public class ClientConnection {
 						if(recvObj instanceof Grid) {
 							System.out.println("Received Grid");
 							g = (Grid) recvObj;
-							//TODO: display on UI
+							updateDisplay();
 						}
 						else if(recvObj instanceof Integer) {
 							System.out.println("Received Row to Calculate");
@@ -82,12 +82,13 @@ public class ClientConnection {
 				e.printStackTrace();
 			}
 		}
+		
+		public void updateDisplay() {
+			//TODO
+		}
 	}
 	
-	
-	
-	
-	
+
 	
 	public static void main(String[] args) {
 		final String serverIP = "127.0.0.1";

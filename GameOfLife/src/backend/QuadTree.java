@@ -123,7 +123,9 @@ public class QuadTree extends QuadTreeElement implements Serializable {
 					quadrants.remove(qID);
 				}
 				if(isEmpty()) {
-					parent.quadrants.remove(locationInParent);
+					if(parent != null) {
+						parent.quadrants.remove(locationInParent);
+					}
 				}
 			}
 		}
@@ -210,19 +212,9 @@ public class QuadTree extends QuadTreeElement implements Serializable {
 					c = Class.forName(qte.getClass().getName()).getDeclaredConstructor(Integer.TYPE, Integer.TYPE);
 					c.setAccessible(true);
 					newQte = (QuadTreeElement) c.newInstance(qte.x+borderCoords[i][0], qte.y+borderCoords[i][1]);
-				} catch(Exception e){
+				} catch(Exception e) {
                     e.printStackTrace();
                 }
-
-                //TODO Kyle, need to change multi catch
-//				catch(NoSuchMethodException | SecurityException | ClassNotFoundException e) {
-//					//For assignment to c
-//					e.printStackTrace();
-//				}
-//				catch(InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-//					// for creation of newQte
-//					e.printStackTrace();
-//				}
 				
 				if(!neighborCount.containsKey(newQte)) {
 					neighborCount.put(newQte, 0);

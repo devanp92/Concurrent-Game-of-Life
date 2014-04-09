@@ -2,7 +2,7 @@ package backend;
 
 public class QuadTreeTest {
 	public static void main(String[] args) {
-		QuadTree q = new QuadTree(4,4);
+		QuadTree q = new QuadTree(8,8);
 		q.insert(new Cell(1,1));
 		q.insert(new Cell(2,1));
 		q.insert(new Cell(1,2));
