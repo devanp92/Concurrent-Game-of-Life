@@ -58,6 +58,10 @@ public class Grid extends CoordinateCalculator {
         return Arrays.copyOfRange(grid, start, end);
     }
 
+    /**
+     * Get grid in 2D of cells
+     * @return Cell[][]
+     */
     public Cell[][] convertGridTo2DArray(){
         Cell[][] cells = new Cell[(int) Math.sqrt(numRows)][];
         for (int i = 0; i < numRows; i++) {
@@ -69,6 +73,10 @@ public class Grid extends CoordinateCalculator {
         return cells;
     }
 
+    /**
+     * setting new grid
+     * @param cells grid to atomic reference
+     */
     public void setGrid(Cell[][] cells){
         for (int i = 0; i < cells.length; i++) {
             for (int j = 0; j < cells[0].length; j++) {
