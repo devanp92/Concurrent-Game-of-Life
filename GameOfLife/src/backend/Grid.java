@@ -1,5 +1,6 @@
 package backend;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -55,5 +56,8 @@ public class Grid extends CoordinateCalculator {
     public void setCell(int index, Cell cell){
         AtomicReference<Cell> cellAtomicReference = new AtomicReference<Cell>(cell);
         grid[index] = cellAtomicReference;
+    }
+    public AtomicReference[] getSubSetOfGrid(int start, int end){
+        return Arrays.copyOfRange(grid, start, end);
     }
 }
