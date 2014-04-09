@@ -3,7 +3,7 @@ package backend;
 public abstract class QuadTreeElement {
 	public int x;
 	public int y;
-	
+
 	public QuadrantID getQuadrantFit(QuadTree qTree) {
 		if(!inRegion(qTree)) {
 			throw new IndexOutOfBoundsException("Element not in QuadTree region");
@@ -40,7 +40,7 @@ public abstract class QuadTreeElement {
 			retVal = false;
 		return retVal;
 	}
-	
+
 	public boolean equals(Object o) {
 		if(o instanceof QuadTreeElement) {
 			QuadTreeElement qte = (QuadTreeElement) o;

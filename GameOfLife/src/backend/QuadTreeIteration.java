@@ -5,7 +5,7 @@ import java.util.HashMap;
 public class QuadTreeIteration {
 	private QuadTree prevQuadTree = null;
 	private QuadTree qTree;
-	
+
 	public QuadTree getQuadTree() {
 		QuadTree nextQuadTree = new QuadTree(qTree);
 		for(QuadTreeElement qte : innerBorder.keySet()) {
@@ -15,7 +15,7 @@ public class QuadTreeIteration {
 		}
 		return nextQuadTree;
 	}
-	
+
 	private HashMap<QuadTreeElement, Integer> innerBorder = new HashMap<QuadTreeElement, Integer>();
 	private HashMap<QuadTreeElement, Integer> outerBorder = new HashMap<QuadTreeElement, Integer>();
 
@@ -55,13 +55,13 @@ public class QuadTreeIteration {
 			}
 		}
 	}
-	
+
 	private void insertIfLegal(QuadTreeElement qte, int neighborCount) {
 		if(isLegalInsertion(qte,neighborCount)) {
 			qTree.insert(qte);
 		}
 	}
-	
+
 	private boolean isLegalInsertion(QuadTreeElement qte, int neighborCount) {
 		boolean retVal = false;
 		if(prevQuadTree.contains(qte)) {
@@ -74,11 +74,11 @@ public class QuadTreeIteration {
 		}
 		return retVal;
 	}
-	
+
 	//TODO: doesn't exactly work properly yet
 	public static QuadTreeIteration mergeQuadTreeIteration(	QuadTreeIteration NE,
-															QuadTreeIteration NW, 
-															QuadTreeIteration SW, 
+															QuadTreeIteration NW,
+															QuadTreeIteration SW,
 															QuadTreeIteration SE) {
 		QuadTree qTree = new QuadTree(NE.prevQuadTree, NW.prevQuadTree, SW.prevQuadTree, SE.prevQuadTree);
 		QuadTreeIteration merge = new QuadTreeIteration(qTree);
@@ -102,9 +102,9 @@ public class QuadTreeIteration {
 				}
 			}
 		}
-		
+
 		merge.insertBorder(mergedCountList);
-		
+
 		return merge;
 	}
 }
