@@ -12,7 +12,10 @@ public class Grid extends CoordinateCalculator {
 
     private static AtomicReference[] grid;
 
-    public Grid(int numRows) {
+    public Grid(int numRows) throws Exception {
+        if(numRows < 2){
+            throw new Exception("Grid has less than 2 rows");
+        }
         this.numRows = numRows;
         Grid.grid = initializeGrid(numRows);
         super.numRows = numRows;
