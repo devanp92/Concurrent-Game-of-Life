@@ -1,11 +1,17 @@
 package server;
 
+
 import backend.Cell;
 import backend.Grid;
 import backend.QuadTreeElement;
 
-import java.io.*;
-import java.net.*;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.InetAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -116,7 +122,7 @@ public class Server implements Runnable {
 		playThread.interrupt();
 	}
 	
-	public void clear() {
+	public void clear() throws Exception {
 		game = new Grid(game.getNumRows());
 	}
 	
@@ -199,8 +205,7 @@ public class Server implements Runnable {
 						}
 						else if(o instanceof Grid) {
 							pause();
-							Grid g = (Grid) o;
-							game = g;
+                            game = (Grid) o;
 							//TODO: implement appropriate barrier synchronization
 						}
 						else if(o instanceof QuadTreeElement) {//TODO: move this to instanceof Grid
@@ -233,8 +238,9 @@ public class Server implements Runnable {
 				}
 				catch(IOException e) {
 					//e.printStackTrace();
-				}
-				finally {
+				} catch (Exception e) {
+                    e.printStackTrace();
+                } finally {
 					if(ois != null) {
 						try {
 							ois.close();
@@ -257,7 +263,7 @@ public class Server implements Runnable {
 		}
 	}
 
-	public static void main(String[] args) {
-		new Thread(new Server()).start();
+	public static void main(String[] args) throws Exception {
+		new Thread(new Server(10)).start();
 	}
 }
