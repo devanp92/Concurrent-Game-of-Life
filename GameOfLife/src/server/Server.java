@@ -23,14 +23,18 @@ public class Server implements Runnable {
 	
 	volatile CyclicBarrier barrier;
 
-	private Grid game = new Grid(10);
+	private Grid game;
 	private volatile ArrayList<QuadTreeElement> partialComponents = new ArrayList<QuadTreeElement>();
 	private volatile boolean isPlaying = false;
 	
 	private Thread playThread = new Thread();
 	private volatile ArrayList<Object> connectionLock = new ArrayList<Object>();
 
-	@Override
+    public Server(int numRows) throws Exception {
+        game = new Grid(numRows);
+    }
+
+    @Override
 	public void run() {
 		try {
 			InetAddress ip = InetAddress.getLocalHost();
