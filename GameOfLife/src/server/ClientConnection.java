@@ -11,10 +11,14 @@ public class ClientConnection {
 	private Socket socket = null;
 	private ObjectOutputStream oos = null;
 	private InputHandler ih = null;
-	private volatile Grid g = new Grid(10);
+	private volatile Grid g;
 	public Grid getGrid() {
 		return g;
 	}
+
+    public void initializeGrid(int numRows) throws Exception {
+        this.g = new Grid(numRows);
+    }
 
 	public ClientConnection(Socket s) {
 		this.socket = s;
