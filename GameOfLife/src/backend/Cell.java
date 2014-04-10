@@ -49,7 +49,7 @@ public class Cell extends QuadTreeElement {
      * @param cellState 1 if it is alive, 0 if dead.
      */
     public void setCellState(int cellState) {
-        this.setCellState(cellState);
+        this.cellState = cellState;
     }
 
     public int getCellState() {

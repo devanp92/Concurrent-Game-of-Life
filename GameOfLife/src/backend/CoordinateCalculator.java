@@ -23,9 +23,9 @@ public abstract class CoordinateCalculator {
         if (i == 0) {
             row = 0;
             column = 0;
-        } else if (i / 10 == 0) {
+        } else if (i / numRows == 0) {
             row = 0;
-            column = i - 1;
+            column = i % numRows;
         } else {
             row = i / numRows;
             column = i % numRows;
