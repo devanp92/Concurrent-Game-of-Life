@@ -15,7 +15,7 @@ public class IterationCalculator {
 
     private Calculator[] calculators;
 
-    public IterationCalculator(Grid grid) {
+    public IterationCalculator(Grid grid) throws Exception {
         if (grid == null) {
             throw new NullPointerException("The grid is null");
         }

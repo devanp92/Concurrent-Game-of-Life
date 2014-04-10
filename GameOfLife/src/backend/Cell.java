@@ -4,7 +4,6 @@ public class Cell extends QuadTreeElement {
 
     private int cellState;
     private CellCase cellCase;
-    private int coordinateIn1D;
 
     public Cell(int x, int y) {
         this.x = x;
@@ -13,21 +12,22 @@ public class Cell extends QuadTreeElement {
     }
 
     public CellCase setCellCase(int i, int j, int numRows) {
-        if ((i == 0 && j == 0) || (i == numRows - 1 && j == 0) || (i == numRows - 1 && j == numRows - 1)) {
+        int numRowsMinusOne = numRows - 1;
+        if ((i == 0 && j == 0)) {
             return CellCase.TOP_LEFT_CORNER;
-        } else if (i == 0 && j == numRows - 1) {
+        } else if (i == 0 && j == numRowsMinusOne) {
             return CellCase.BOTTOM_LEFT_CORNER;
-        } else if (i == numRows - 1 && j == 0) {
+        } else if (i == numRowsMinusOne && j == 0) {
             return CellCase.TOP_RIGHT_CORNER;
-        } else if (i == numRows - 1 && j == numRows - 1) {
+        } else if (i == numRowsMinusOne && j == numRowsMinusOne) {
             return CellCase.BOTTOM_RIGHT_CORNER;
-        } else if (j == 0 && i > 0 && i < numRows - 1) {
+        } else if (j == 0 && i > 0 && i < numRowsMinusOne) {
             return CellCase.TOP_BORDER;
-        } else if (j == numRows - 1 && i > 0 && i < numRows - 1) {
+        } else if (j == numRowsMinusOne && i > 0 && i < numRowsMinusOne) {
             return CellCase.BOTTOM_BORDER;
-        } else if (i == 0 && j > 0 && j < numRows - 1) {
+        } else if (i == 0 && j > 0 && j < numRowsMinusOne) {
             return CellCase.LEFT_BORDER;
-        } else if (i == numRows - 1 && j > 0 && j < numRows - 1) {
+        } else if (i == numRowsMinusOne && j > 0 && j < numRowsMinusOne) {
             return CellCase.RIGHT_BORDER;
         } else {
             return CellCase.MIDDLE;

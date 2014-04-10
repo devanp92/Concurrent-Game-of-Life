@@ -46,8 +46,6 @@ public class BackendTalker {
      */
     public void setCellState(int x, int y, int state) {
         Cell cell = grid.getCell(x, y);
-        int index = grid.convert2DCoordinateTo1D(x, y);
         cell.setCellState(state);
-        grid.setCell(index, cell);
     }
 }
