@@ -6,7 +6,9 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by devan on 4/9/14.
@@ -30,32 +32,31 @@ public class GridTest {
 
     }
 
-//    @Test
-//    public void testGetGrid() throws Exception {
-//
-//    }
-
     @Test
     public void testGetCell() throws Exception {
         Cell cell = grid.getCell(1, 0);
         assertNotNull(cell);
     }
 
-//    @Test
-//    public void testGetNumRows() throws Exception {
-//
-//    }
-//
-//    @Test
-//    public void testSetCell() throws Exception {
-//
-//    }
-//
-//    @Test
-//    public void testGetSubSetOfGrid() throws Exception {
-//
-//    }
-//
+    @Test
+    public void testGetNumRows() throws Exception {
+        int numRows = grid.getNumRows();
+        assertEquals(4, numRows);
+    }
+
+    @Test
+    public void testSetCell() throws Exception {
+        Cell cell = new Cell(0,1);
+        grid.setCell(1, cell);
+        Cell newCell = grid.getCell(1);
+        assertEquals(cell, newCell);
+    }
+
+    @Test
+    public void testGet4SubSetsOfGrid() throws Exception {
+        
+    }
+
 //    @Test
 //    public void testConvertGridTo2DArray() throws Exception {
 //
