@@ -44,7 +44,7 @@ public class BackendTalker {
      * @param x coordinate
      * @param y coordinate
      */
-    public void setCellState(int x, int y, int state) {
+    public void setCellState(int x, int y, int state) throws Exception {
         Cell cell = grid.getCell(x, y);
         cell.setCellState(state);
     }

@@ -13,7 +13,7 @@ public class Grid extends CoordinateCalculator {
     private static AtomicReference[] grid;
 
     public Grid(int numRows) throws Exception {
-        if(numRows < 2){
+        if (numRows < 2) {
             throw new Exception("Grid has less than 2 rows");
         }
         this.numRows = numRows;
@@ -22,7 +22,7 @@ public class Grid extends CoordinateCalculator {
     }
 
 
-    private AtomicReference[] initializeGrid(int numRows) {
+    private AtomicReference[] initializeGrid(int numRows) throws Exception {
         AtomicReference[] cells = new AtomicReference[(int) Math.pow(numRows, 2)];
         for (int i = 0; i < (int) Math.pow(numRows, 2); i++) {
 
@@ -48,28 +48,42 @@ public class Grid extends CoordinateCalculator {
         return (Cell) atomicReferences.get();
     }
 
+    public Cell getCell(int index1D) {
+        AtomicReference atomicReferences = grid[index1D];
+        return (Cell) atomicReferences.get();
+    }
+
     public int getNumRows() {
         return numRows;
     }
 
-    public void setCell(int index, Cell cell){
+    public void setCell(int index, Cell cell) {
         AtomicReference<Cell> cellAtomicReference = new AtomicReference<Cell>(cell);
         grid[index] = cellAtomicReference;
     }
 
-    public AtomicReference[] getSubSetOfGrid(int start, int end){
+    public void setCellState(int index, int cellState) throws Exception {
+        if (cellState < 0 || cellState > 1) {
+            throw new Exception("Incorrect cell state. Must be either 0 or 1");
+        }
+        Cell cell = getCell(index);
+        cell.setCellState(cellState);
+    }
+
+    public AtomicReference[] getSubSetOfGrid(int start, int end) {
         return Arrays.copyOfRange(grid, start, end);
     }
 
     /**
      * Get grid in 2D of cells
+     *
      * @return Cell[][]
      */
-    public Cell[][] convertGridTo2DArray(){
+    public Cell[][] convertGridTo2DArray() {
         Cell[][] cells = new Cell[(int) Math.sqrt(numRows)][];
         for (int i = 0; i < numRows; i++) {
             for (int j = 0; j < numRows; j++) {
-                AtomicReference atomic = grid[convert2DCoordinateTo1D(i,j)];
+                AtomicReference atomic = grid[convert2DCoordinateTo1D(i, j)];
                 cells[i][j] = (Cell) atomic.get();
             }
         }
@@ -78,9 +92,10 @@ public class Grid extends CoordinateCalculator {
 
     /**
      * setting new grid
+     *
      * @param cells grid to atomic reference
      */
-    public void setGrid(Cell[][] cells){
+    public void setGrid(Cell[][] cells) {
         for (int i = 0; i < cells.length; i++) {
             for (int j = 0; j < cells[0].length; j++) {
                 setCell(convert2DCoordinateTo1D(i, j), cells[i][j]);

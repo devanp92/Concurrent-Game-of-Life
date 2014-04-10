@@ -73,7 +73,13 @@ public class IterationCalculator {
         public void run() {
             for (AtomicReference atomicReference : cells) {
                 Cell cell = (Cell) atomicReference.get();
-                Cell nextIterationCell = ruleChecker.determineCellsNextState(cell);
+                Cell nextIterationCell = null;
+                try {
+                    nextIterationCell = ruleChecker.determineCellsNextState(cell);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                assert nextIterationCell != null;
                 int cellIndex = grid.convert2DCoordinateTo1D(nextIterationCell.x, nextIterationCell.y);
                 newGridToSet.setCell(cellIndex, nextIterationCell);
             }

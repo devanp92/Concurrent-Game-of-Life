@@ -1,17 +1,22 @@
 package backend;
 
+import java.util.InputMismatchException;
+
 public class Cell extends QuadTreeElement {
 
     private int cellState;
     private CellCase cellCase;
 
-    public Cell(int x, int y) {
+    public Cell(int x, int y) throws Exception {
         this.x = x;
         this.y = y;
         setCellState(0);
     }
 
-    public CellCase setCellCase(int i, int j, int numRows) {
+    public CellCase setCellCase(int i, int j, int numRows) throws Exception {
+        if (i >= numRows || i < 0 || j >= numRows || j < 0) {
+            throw new InputMismatchException("i or j have incorrect coordinates");
+        }
         int numRowsMinusOne = numRows - 1;
         if ((i == 0 && j == 0)) {
             return CellCase.TOP_LEFT_CORNER;
@@ -44,7 +49,7 @@ public class Cell extends QuadTreeElement {
      * @param cellState 1 if it is alive, 0 if dead.
      */
     public void setCellState(int cellState) {
-        this.cellState = cellState;
+        this.setCellState(cellState);
     }
 
     public int getCellState() {
