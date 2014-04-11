@@ -6,6 +6,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.Assert.*;
@@ -56,15 +57,32 @@ public class GridTest {
     public void testGetSubSetsOfGrid() throws Exception {
         AtomicReference[] testGridSubset = grid.getSubSetOfGrid(0,3);
         assertEquals(3, testGridSubset.length);
+        Cell[] cells = new Cell[3];
+        for (int i = 0; i < 3; i++) {
+            cells[i] = new Cell(0,i);
+        }
+        for(int i = 0; i < 3; i++){
+            Cell cell = (Cell) testGridSubset[i].get();
+            assertEquals(cell, cells[i]);
+        }
     }
 
-//    @Test
-//    public void testConvertGridTo2DArray() throws Exception {
-//
-//    }
-//
-//    @Test
-//    public void testSetGrid() throws Exception {
-//
-//    }
+    @Test
+    public void testConvertGridTo2DArray() throws Exception {
+        Cell[][] cell2DArray = grid.convertGridTo2DArray();
+        for(int i = 0; i < Math.pow(grid.getNumRows(),2); i++){
+            HashMap<Character, Integer> hashMap = grid.convert1DCoordinateTo2D(i);
+            int x = hashMap.get('x');
+            int y = hashMap.get('y');
+            assertEquals(cell2DArray[x][y],grid.getCell(i));
+        }
+    }
+
+    @Test
+    public void testSetGrid() throws Exception {
+        Grid testGrid = new Grid(4);
+        Grid previousGrid = grid;
+        grid.setGrid(testGrid.convertGridTo2DArray());
+        assertNotEquals(testGrid, previousGrid);
+    }
 }
