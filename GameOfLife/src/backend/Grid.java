@@ -35,9 +35,8 @@ public class Grid extends CoordinateCalculator implements Serializable{
             int y = cellPositionOnGrid.get('y');
 
             Cell cell = new Cell(x, y);
-            cell.setCellCase(x, y, numRows);
-
-            cells[i] = new AtomicReference<Cell>(cell);
+            cell.setCellCase(numRows);
+            cells[i] = new AtomicReference<>(cell);
         }
         return cells;
     }
@@ -61,7 +60,7 @@ public class Grid extends CoordinateCalculator implements Serializable{
     }
 
     public void setCell(int index, Cell cell) {
-        AtomicReference<Cell> cellAtomicReference = new AtomicReference<Cell>(cell);
+        AtomicReference<Cell> cellAtomicReference = new AtomicReference<>(cell);
         grid[index] = cellAtomicReference;
     }
 
