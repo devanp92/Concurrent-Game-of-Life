@@ -10,16 +10,16 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class NeighborFinder extends CoordinateCalculator {
 
-    private int CENTER_LEFT_NEIGHBOR;
-    private int CENTER_RIGHT_NEIGHBOR;
+    public int CENTER_LEFT_NEIGHBOR;
+    public int CENTER_RIGHT_NEIGHBOR;
 
-    private int DOWN_LEFT_NEIGHBOR;
-    private int DOWN_RIGHT_NEIGHBOR;
-    private int DOWN_CENTER_NEIGHBOR;
+    public int DOWN_LEFT_NEIGHBOR;
+    public int DOWN_RIGHT_NEIGHBOR;
+    public int DOWN_CENTER_NEIGHBOR;
 
-    private int UP_LEFT_NEIGHBOR;
-    private int UP_RIGHT_NEIGHBOR;
-    private int UP_CENTER_NEIGHBOR;
+    public int UP_LEFT_NEIGHBOR;
+    public int UP_RIGHT_NEIGHBOR;
+    public int UP_CENTER_NEIGHBOR;
 
     private Cell cell;
     private AtomicReference[] grid = Grid.getGrid();
