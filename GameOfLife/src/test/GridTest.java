@@ -6,9 +6,9 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import java.util.concurrent.atomic.AtomicReference;
+
+import static org.junit.Assert.*;
 
 /**
  * Created by devan on 4/9/14.
@@ -53,8 +53,9 @@ public class GridTest {
     }
 
     @Test
-    public void testGet4SubSetsOfGrid() throws Exception {
-        
+    public void testGetSubSetsOfGrid() throws Exception {
+        AtomicReference[] testGridSubset = grid.getSubSetOfGrid(0,3);
+        assertEquals(3, testGridSubset.length);
     }
 
 //    @Test
