@@ -10,19 +10,19 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class NeighborFinder extends CoordinateCalculator {
 
-    private int CENTER_LEFT_NEIGHBOR;
-    private int CENTER_RIGHT_NEIGHBOR;
+    public int CENTER_LEFT_NEIGHBOR;
+    public int CENTER_RIGHT_NEIGHBOR;
 
-    private int DOWN_LEFT_NEIGHBOR;
-    private int DOWN_RIGHT_NEIGHBOR;
-    private int DOWN_CENTER_NEIGHBOR;
+    public int DOWN_LEFT_NEIGHBOR;
+    public int DOWN_RIGHT_NEIGHBOR;
+    public int DOWN_CENTER_NEIGHBOR;
 
-    private int UP_LEFT_NEIGHBOR;
-    private int UP_RIGHT_NEIGHBOR;
-    private int UP_CENTER_NEIGHBOR;
+    public int UP_LEFT_NEIGHBOR;
+    public int UP_RIGHT_NEIGHBOR;
+    public int UP_CENTER_NEIGHBOR;
 
-    private Cell cell;
-    private AtomicReference[] grid = Grid.getGrid();
+    public Cell cell;
+    public AtomicReference[] grid = Grid.getGrid();
 
     public NeighborFinder(Cell cell) {
         this.cell = cell;
@@ -36,38 +36,38 @@ public class NeighborFinder extends CoordinateCalculator {
 
         switch (cellCase) {
             case TOP_LEFT_CORNER:
-                neighbors = findNeighborForTopLeftCornerCell();
+                neighbors = findNeighborsForTopLeftCornerCell();
                 break;
             case TOP_RIGHT_CORNER:
-                neighbors = findNeighborForTopRightCornerCell();
+                neighbors = findNeighborsForTopRightCornerCell();
                 break;
             case BOTTOM_LEFT_CORNER:
-                neighbors = findNeighborForBottomLeftCornerCell();
+                neighbors = findNeighborsForBottomLeftCornerCell();
                 break;
             case BOTTOM_RIGHT_CORNER:
-                neighbors = findNeighborForBottomRightCornerCell();
+                neighbors = findNeighborsForBottomRightCornerCell();
                 break;
             case TOP_BORDER:
-                neighbors = findNeighborForTopBorderCell();
+                neighbors = findNeighborsForTopBorderCell();
                 break;
             case RIGHT_BORDER:
-                neighbors = findNeighborForRightBorderCell();
+                neighbors = findNeighborsForRightBorderCell();
                 break;
             case LEFT_BORDER:
-                neighbors = findNeighborForLeftBorderCell();
+                neighbors = findNeighborsForLeftBorderCell();
                 break;
             case BOTTOM_BORDER:
-                neighbors = findNeighborForBottomBorderCell();
+                neighbors = findNeighborsForBottomBorderCell();
                 break;
             case MIDDLE:
-                neighbors = findNeighborForMiddleCells();
+                neighbors = findNeighborsForMiddleCells();
                 break;
         }
         return neighbors;
     }
 
-    private List<Cell> findNeighborForTopLeftCornerCell() {
-        List<Cell> list = new ArrayList<Cell>();
+    public List<Cell> findNeighborsForTopLeftCornerCell() {
+        List<Cell> list = new ArrayList<>();
 
         Cell rightNeighbor = (Cell) grid[CENTER_RIGHT_NEIGHBOR].get();
         Cell bottomNeighbor = (Cell) grid[DOWN_RIGHT_NEIGHBOR].get();
@@ -80,8 +80,8 @@ public class NeighborFinder extends CoordinateCalculator {
         return list;
     }
 
-    private List<Cell> findNeighborForTopRightCornerCell() {
-        List<Cell> list = new ArrayList<Cell>();
+    public List<Cell> findNeighborsForTopRightCornerCell() {
+        List<Cell> list = new ArrayList<>();
 
         Cell leftNeighbor = (Cell) grid[CENTER_LEFT_NEIGHBOR].get();
         Cell bottomNeighbor = (Cell) grid[DOWN_CENTER_NEIGHBOR].get();
@@ -94,8 +94,8 @@ public class NeighborFinder extends CoordinateCalculator {
         return list;
     }
 
-    private List<Cell> findNeighborForBottomLeftCornerCell() {
-        List<Cell> list = new ArrayList<Cell>();
+    public List<Cell> findNeighborsForBottomLeftCornerCell() {
+        List<Cell> list = new ArrayList<>();
 
         Cell topNeighbor = (Cell) grid[UP_CENTER_NEIGHBOR].get();
         Cell diagonalNeighbor = (Cell) grid[UP_RIGHT_NEIGHBOR].get();
@@ -109,8 +109,8 @@ public class NeighborFinder extends CoordinateCalculator {
         return list;
     }
 
-    private List<Cell> findNeighborForBottomRightCornerCell() {
-        List<Cell> list = new ArrayList<Cell>();
+    public List<Cell> findNeighborsForBottomRightCornerCell() {
+        List<Cell> list = new ArrayList<>();
 
         Cell leftNeighbor = (Cell) grid[CENTER_LEFT_NEIGHBOR].get();
         Cell diagonalNeighbor = (Cell) grid[UP_LEFT_NEIGHBOR].get();
@@ -124,8 +124,8 @@ public class NeighborFinder extends CoordinateCalculator {
         return list;
     }
 
-    private List<Cell> findNeighborForTopBorderCell() {
-        List<Cell> list = new ArrayList<Cell>();
+    public List<Cell> findNeighborsForTopBorderCell() {
+        List<Cell> list = new ArrayList<>();
 
         Cell center_left_neighbor = (Cell) grid[CENTER_LEFT_NEIGHBOR].get();
         Cell center_right_neighbor = (Cell) grid[CENTER_RIGHT_NEIGHBOR].get();
@@ -142,8 +142,8 @@ public class NeighborFinder extends CoordinateCalculator {
         return list;
     }
 
-    private List<Cell> findNeighborForRightBorderCell() {
-        List<Cell> list = new ArrayList<Cell>();
+    public List<Cell> findNeighborsForRightBorderCell() {
+        List<Cell> list = new ArrayList<>();
 
         Cell center_left_neighbor = (Cell) grid[CENTER_LEFT_NEIGHBOR].get();
         Cell down_left_neighbor = (Cell) grid[DOWN_LEFT_NEIGHBOR].get();
@@ -160,8 +160,8 @@ public class NeighborFinder extends CoordinateCalculator {
         return list;
     }
 
-    private List<Cell> findNeighborForLeftBorderCell() {
-        List<Cell> list = new ArrayList<Cell>();
+    public List<Cell> findNeighborsForLeftBorderCell() {
+        List<Cell> list = new ArrayList<>();
 
         Cell center_right_neighbor = (Cell) grid[CENTER_RIGHT_NEIGHBOR].get();
         Cell down_right_neighbor = (Cell) grid[DOWN_RIGHT_NEIGHBOR].get();
@@ -178,8 +178,8 @@ public class NeighborFinder extends CoordinateCalculator {
         return list;
     }
 
-    private List<Cell> findNeighborForBottomBorderCell() {
-        List<Cell> list = new ArrayList<Cell>();
+    public List<Cell> findNeighborsForBottomBorderCell() {
+        List<Cell> list = new ArrayList<>();
 
         Cell center_left_neighbor = (Cell) grid[CENTER_LEFT_NEIGHBOR].get();
         Cell center_right_neighbor = (Cell) grid[CENTER_RIGHT_NEIGHBOR].get();
@@ -196,8 +196,8 @@ public class NeighborFinder extends CoordinateCalculator {
         return list;
     }
 
-    private List<Cell> findNeighborForMiddleCells() {
-        List<Cell> list = new ArrayList<Cell>();
+    public List<Cell> findNeighborsForMiddleCells() {
+        List<Cell> list = new ArrayList<>();
 
         Cell center_left_neighbor = (Cell) grid[CENTER_LEFT_NEIGHBOR].get();
         Cell center_right_neighbor = (Cell) grid[CENTER_RIGHT_NEIGHBOR].get();
