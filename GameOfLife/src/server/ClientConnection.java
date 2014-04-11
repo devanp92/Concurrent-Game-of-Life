@@ -8,7 +8,7 @@ import java.net.Socket;
 import backend.Grid;
 
 public class ClientConnection extends Thread {
-	private Socket socket = null;
+	private Socket s = null;
 	private ObjectOutputStream oos = null;
 	private ObjectInputStream ois = null;
 	private volatile Grid g;
@@ -21,7 +21,7 @@ public class ClientConnection extends Thread {
     }
 
 	public ClientConnection(Socket s) {
-		this.socket = s;
+		this.s = s;
 		try {
 			oos = new ObjectOutputStream(s.getOutputStream());
 			ois = new ObjectInputStream(s.getInputStream());
@@ -72,6 +72,32 @@ public class ClientConnection extends Thread {
 		}
 		catch(IOException e) {
 			e.printStackTrace();
+		}
+		finally {
+			if(ois != null) {
+				try {
+					ois.close();
+				}
+				catch(IOException e) {
+					e.printStackTrace();
+				}
+			}
+			if(oos != null) {
+				try {
+					oos.close();
+				}
+				catch(IOException e) {
+					e.printStackTrace();
+				}
+			}
+			if(s != null) {
+				try {
+					s.close();
+				}
+				catch(IOException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 	}
 

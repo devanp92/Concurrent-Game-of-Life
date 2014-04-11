@@ -244,6 +244,14 @@ public class Server implements Runnable {
 						e.printStackTrace();
 					}
 				}
+				if(oos != null) {
+					try {
+						oos.close();
+					}
+					catch(IOException e) {
+						e.printStackTrace();
+					}
+				}
 				if(s != null) {
 					try {
 						s.close();
