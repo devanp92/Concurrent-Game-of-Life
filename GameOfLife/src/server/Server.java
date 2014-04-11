@@ -36,11 +36,10 @@ public class Server implements Runnable {
 	private Thread playThread = new Thread();
 	
 	/**A mapping between a connection and what component it is currently calculating*/
-	private HashMap<Connection, Integer> connectionCalculating = new HashMap<Connection, Integer>();
+	private volatile HashMap<Connection, Integer> connectionCalculating = new HashMap<Connection, Integer>();
 	
 	/**A mapping between a component of the Grid to be calculated and the nextIteration*/
-	//TODO: change Grid to whatever a partialComponent is for Grid
-	private volatile HashMap<Integer, Grid> partialComponents = new HashMap<Integer, Grid>();
+	private volatile HashMap<Integer, ArrayList<Cell>> partialComponents = new HashMap<Integer, ArrayList<Cell>>();
 	
     public Server(int numRows) throws Exception {
         game = new Grid(numRows);
@@ -87,6 +86,26 @@ public class Server implements Runnable {
 	
 	public void play() {
 		final Runnable r = new Runnable() {
+			public void resendRemainingPartialComponents() {
+				ArrayList<Connection> clientCopy;
+				synchronized(clients) {
+					clientCopy = new ArrayList<Connection>(Collections.unmodifiableCollection(clients));
+				}
+				
+				HashMap<Connection, Integer> newConnectionCalculating = new HashMap<Connection, Integer>();
+				int i = 0;
+				for(Connection c : connectionCalculating.keySet()) {
+					newConnectionCalculating.put(clientCopy.get(i), connectionCalculating.get(c));
+					i++;
+				}
+				connectionCalculating = newConnectionCalculating;
+				for(Connection c : connectionCalculating.keySet()) {
+					c.send(connectionCalculating.get(c));
+				}
+				
+				barrier = new CyclicBarrier(connectionCalculating.size() + 1);
+			}
+			
 			public void run() {
 				isPlaying = true;
 				try {
@@ -95,23 +114,28 @@ public class Server implements Runnable {
 						synchronized(clients) {
 							clientCopy = Collections.unmodifiableCollection(clients);
 						}
-						barrier = new CyclicBarrier(clientCopy.size() + 1);
-						System.out.println("Barrier in play(): " + barrier);
-						Thread.sleep(1000);
-						for(Connection c : clientCopy) {
-							c.send(game);
+						//TODO: initialize partialComponents
+						//TODO: initialize connectionCalculating
+						barrier = new CyclicBarrier(connectionCalculating.size() + 1);
+						
+						for(Connection c : connectionCalculating.keySet()) {
+							//c.send(partialComponent)
 						}
 						
-						
 						barrier.await();
+
+						while(!connectionCalculating.isEmpty()) {
+							resendRemainingPartialComponents();
+						}
 						System.out.println("After barrier.await(): " + barrier);
 						mergeData();
+						sendGameToAll();
+						Thread.sleep(1000);//TODO: use appropriate timeout if necessary 
 					}
 				}
 				catch(InterruptedException e) {
 					//handle why we exited
 					//if PAUSE, do nothing;
-					//if client connection lost, determine what needs recalculated
 				}
 				catch(BrokenBarrierException e) {
 					e.printStackTrace();
@@ -135,6 +159,12 @@ public class Server implements Runnable {
 	public void mergeData() {
 		//TODO
 		partialComponents.clear();
+	}
+	
+	public void sendGameToAll() {
+		for(Connection c : clients) {
+			c.send(game);
+		}
 	}
 
 	class Connection extends Thread {
@@ -195,37 +225,25 @@ public class Server implements Runnable {
 							else if(c.isAlive == 0) {
 								game.remove(c);
 							}*/
+						sendGameToAll();
 					}
 					else if(o instanceof Grid) {
 						pause();
-						Grid partialComponent = (Grid) o;
+						game = (Grid) o;
+						sendGameToAll();
+					}
+					else if(o instanceof ArrayList<?>) {
+						pause();
+						ArrayList<Cell> partialComponent = (ArrayList<Cell>) o;//TODO: reflection again?
 						Integer item = connectionCalculating.get(this);
 						partialComponents.put(item, partialComponent);
-						//TODO: implement appropriate barrier synchronization
+						passBarrier();
 					}
 					else if(o instanceof QuadTreeElement) {//TODO: move this to instanceof Grid
-						if(barrier != null) {
-							try {
-								barrier.await(0, TimeUnit.MILLISECONDS);
-							}
-							catch(InterruptedException e) {
-								e.printStackTrace();
-							}
-							catch(BrokenBarrierException e) {
-								//thrown when any awaiting thread is interrupted
-								//OR
-								//the barrier is reset
-							}
-							catch(TimeoutException e) {
-								//DON'T DO ANYTHING
-							}
-							//QuadTree qTree = (QuadTree) o;
+						passBarrier();
+						//QuadTree qTree = (QuadTree) o;
 							//partialComponents.add(qTree);
-						}
 					}
-
-					//TODO: pass information received to another thread (MergerThread(?): would need to be created in Server())
-					//Other thread does merging, game object modification, resending next iteration
 				}
 			}
 			catch(ClassNotFoundException e) {
@@ -261,6 +279,27 @@ public class Server implements Runnable {
 					}
 				}
 				clients.remove(this);
+				//if the current thread should await on the barrier, pass it
+				if(connectionCalculating.containsKey(this)) {
+					passBarrier();
+				}
+			}
+		}
+		
+		private void passBarrier() {
+			if(barrier != null) {
+				try {
+					barrier.await(0, TimeUnit.MILLISECONDS);
+				}
+				catch(InterruptedException e) {
+					e.printStackTrace();
+				}
+				catch(BrokenBarrierException e) {
+					//thrown when any awaiting thread is interrupted
+					//OR
+					//the barrier is reset
+				}
+				catch(TimeoutException e) {/*DON'T DO ANYTHING: this is expected*/}
 			}
 		}
 	}
