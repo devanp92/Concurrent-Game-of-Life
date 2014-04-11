@@ -1,5 +1,6 @@
 package backend;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicReference;
@@ -8,9 +9,11 @@ import java.util.concurrent.atomic.AtomicReference;
  * Created by devan on 3/29/14.
  */
 
-public class Grid extends CoordinateCalculator {
+public class Grid extends CoordinateCalculator implements Serializable{
 
     private static AtomicReference[] grid;
+    private static final long serialVersionUID = 1L;
+
 
     public Grid(int numRows) throws Exception {
         if (numRows < 2) {
@@ -80,11 +83,12 @@ public class Grid extends CoordinateCalculator {
      * @return Cell[][]
      */
     public Cell[][] convertGridTo2DArray() {
-        Cell[][] cells = new Cell[(int) Math.sqrt(numRows)][];
+        Cell[][] cells = new Cell[numRows][numRows];
         for (int i = 0; i < numRows; i++) {
             for (int j = 0; j < numRows; j++) {
                 AtomicReference atomic = grid[convert2DCoordinateTo1D(i, j)];
-                cells[i][j] = (Cell) atomic.get();
+                Cell cell = (Cell) atomic.get();
+                cells[i][j] = cell;
             }
         }
         return cells;
