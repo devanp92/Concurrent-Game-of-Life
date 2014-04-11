@@ -7,10 +7,10 @@ import java.net.Socket;
 
 import backend.Grid;
 
-public class ClientConnection {
+public class ClientConnection extends Thread {
 	private Socket socket = null;
 	private ObjectOutputStream oos = null;
-	private InputHandler ih = null;
+	private ObjectInputStream ois = null;
 	private volatile Grid g;
 	public Grid getGrid() {
 		return g;
@@ -24,8 +24,7 @@ public class ClientConnection {
 		this.socket = s;
 		try {
 			oos = new ObjectOutputStream(s.getOutputStream());
-			ih = new InputHandler(s);
-			ih.start();
+			ois = new ObjectInputStream(s.getInputStream());
 		}
 		catch(IOException e) {
 			e.printStackTrace();
@@ -41,55 +40,43 @@ public class ClientConnection {
 		}
 	}
 	
-	class InputHandler extends Thread {
-		private ObjectInputStream ois = null;
-		public InputHandler(Socket s) {
-			try {
-				ois = new ObjectInputStream(s.getInputStream());
-			}
-			catch(IOException e) {
-				e.printStackTrace();
-			}
-		}
-		
-		@Override
-		public void run() {
-			boolean doLoop = true;
-			try {
-				Object recvObj;
-				while(doLoop) {
-					recvObj = ois.readObject();
-					if(recvObj != null) {
-						if(recvObj instanceof Grid) {
-							System.out.println("Received Grid");
-							g = (Grid) recvObj;
-							updateDisplay();
-						}
-						else if(recvObj instanceof Integer) {
-							System.out.println("Received Row to Calculate");
-							Integer rowToCalculate = (Integer) recvObj;
-							//calculate iteration on the row
-							//send back next iteration
-						}
-						
-						//send(recvObj);//TODO: perhaps make this a send on another thread
+	@Override
+	public void run() {
+		boolean doLoop = true;
+		try {
+			Object recvObj;
+			while(doLoop) {
+				recvObj = ois.readObject();
+				if(recvObj != null) {
+					if(recvObj instanceof Grid) {
+						System.out.println("Received Grid");
+						g = (Grid) recvObj;
+						updateDisplay();
 					}
-					else {
-						doLoop = false;
+					else if(recvObj instanceof Integer) {
+						System.out.println("Received Row to Calculate");
+						Integer rowToCalculate = (Integer) recvObj;
+						//calculate iteration on the row
+						//send back next iteration
 					}
+
+					//send(recvObj);//TODO: perhaps make this a send on another thread
+				}
+				else {
+					doLoop = false;
 				}
 			}
-			catch(ClassNotFoundException e) {
-				e.printStackTrace();
-			}
-			catch(IOException e) {
-				e.printStackTrace();
-			}
 		}
-		
-		public void updateDisplay() {
-			//TODO
+		catch(ClassNotFoundException e) {
+			e.printStackTrace();
 		}
+		catch(IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void updateDisplay() {
+		//TODO
 	}
 	
 
@@ -100,6 +87,7 @@ public class ClientConnection {
 		try {
 			Socket clientSocket = new Socket(serverIP, Server.port);
 			self = new ClientConnection(clientSocket);
+			self.start();
 			Thread.sleep(2000);
 			self.send(NetworkMessage.PLAY);
 			System.out.println("Client socket accepted");

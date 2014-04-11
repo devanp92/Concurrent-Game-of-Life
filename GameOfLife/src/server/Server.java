@@ -15,6 +15,7 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.TimeUnit;
@@ -27,15 +28,20 @@ public class Server implements Runnable {
 	private volatile ArrayList<Connection> clients = new ArrayList<Connection>();
 	boolean listening = true;
 	
+	/**Barrier to have merging thread await until all calculating clients have sent back a partialComponent*/
 	volatile CyclicBarrier barrier;
 
 	private Grid game;
-	private volatile ArrayList<QuadTreeElement> partialComponents = new ArrayList<QuadTreeElement>();
 	private volatile boolean isPlaying = false;
-	
 	private Thread playThread = new Thread();
-	private volatile ArrayList<Object> connectionLock = new ArrayList<Object>();
-
+	
+	/**A mapping between a connection and what component it is currently calculating*/
+	private HashMap<Connection, Integer> connectionCalculating = new HashMap<Connection, Integer>();
+	
+	/**A mapping between a component of the Grid to be calculated and the nextIteration*/
+	//TODO: change Grid to whatever a partialComponent is for Grid
+	private volatile HashMap<Integer, Grid> partialComponents = new HashMap<Integer, Grid>();
+	
     public Server(int numRows) throws Exception {
         game = new Grid(numRows);
     }
@@ -99,6 +105,7 @@ public class Server implements Runnable {
 						
 						barrier.await();
 						System.out.println("After barrier.await(): " + barrier);
+						mergeData();
 					}
 				}
 				catch(InterruptedException e) {
@@ -107,7 +114,6 @@ public class Server implements Runnable {
 					//if client connection lost, determine what needs recalculated
 				}
 				catch(BrokenBarrierException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				isPlaying = false;
@@ -131,17 +137,16 @@ public class Server implements Runnable {
 		partialComponents.clear();
 	}
 
-	class Connection {
+	class Connection extends Thread {
 		private Socket s = null;
 		private ObjectOutputStream oos = null;
-		private InputHandler ih = null;
+		private ObjectInputStream ois = null;
 
 		public Connection(Socket s) {
 			this.s = s;
 			try {
 				oos = new ObjectOutputStream(s.getOutputStream());
-				ih = new InputHandler(s);
-				ih.start();
+				ois = new ObjectInputStream(s.getInputStream());
 			}
 			catch(IOException e) {
 				e.printStackTrace();
@@ -157,113 +162,102 @@ public class Server implements Runnable {
 			}
 		}
 
-		class InputHandler extends Thread {
-			private ObjectInputStream ois = null;
-			public InputHandler(Socket s) {
-				try {
-					ois = new ObjectInputStream(s.getInputStream());
-				}
-				catch(IOException e) {
-					e.printStackTrace();
-				}
-			}
-			@Override
-			public void run() {
-				try {
-					while(true) {
-						Object o = ois.readObject();
-						System.out.println("Received Back a Part");
-						System.out.println("Barrier: " + barrier);
-						//TODO: use instanceof if necessary to distinguish returned object types
-						boolean maybe = true;
-						if(o instanceof NetworkMessage) {
-							NetworkMessage nm = (NetworkMessage) o;
-							switch(nm) {
-								case PLAY:
-									play();
-									break;
-								case PAUSE:
-									pause();
-									break;
-								case CLEAR:
-									pause();
-									clear();
-									break;
-							}
+		@Override
+		public void run() {
+			try {
+				while(true) {
+					Object o = ois.readObject();
+					System.out.println("Received Back a Part");
+					System.out.println("Barrier: " + barrier);
+					if(o instanceof NetworkMessage) {
+						NetworkMessage nm = (NetworkMessage) o;
+						switch(nm) {
+							case PLAY:
+								play();
+								break;
+							case PAUSE:
+								pause();
+								break;
+							case CLEAR:
+								pause();
+								clear();
+								break;
 						}
-						else if(o instanceof Cell) {
-							pause();
-							Cell c = (Cell) o;
-							game.getCell(c.y, c.x).setCellState(c.getCellState());
-							
-							/*if(c.isAlive == 1) {
+					}
+					else if(o instanceof Cell) {
+						pause();
+						Cell c = (Cell) o;
+						game.getCell(c.y, c.x).setCellState(c.getCellState());
+
+						/*if(c.isAlive == 1) {
 								game.insert(c);
 							}
 							else if(c.isAlive == 0) {
 								game.remove(c);
 							}*/
-						}
-						else if(o instanceof Grid) {
-							pause();
-                            game = (Grid) o;
-							//TODO: implement appropriate barrier synchronization
-						}
-						else if(o instanceof QuadTreeElement) {//TODO: move this to instanceof Grid
-							if(barrier != null) {
-								try {
-									barrier.await(0, TimeUnit.MILLISECONDS);
-								}
-								catch(InterruptedException e) {
-									e.printStackTrace();
-								}
-								catch(BrokenBarrierException e) {
-									//thrown when any awaiting thread is interrupted
-									//OR
-									//the barrier is reset
-								}
-								catch(TimeoutException e) {
-									//DON'T DO ANYTHING
-								}
-								//QuadTree qTree = (QuadTree) o;
-								//partialComponents.add(qTree);
+					}
+					else if(o instanceof Grid) {
+						pause();
+						Grid partialComponent = (Grid) o;
+						Integer item = connectionCalculating.get(this);
+						partialComponents.put(item, partialComponent);
+						//TODO: implement appropriate barrier synchronization
+					}
+					else if(o instanceof QuadTreeElement) {//TODO: move this to instanceof Grid
+						if(barrier != null) {
+							try {
+								barrier.await(0, TimeUnit.MILLISECONDS);
 							}
+							catch(InterruptedException e) {
+								e.printStackTrace();
+							}
+							catch(BrokenBarrierException e) {
+								//thrown when any awaiting thread is interrupted
+								//OR
+								//the barrier is reset
+							}
+							catch(TimeoutException e) {
+								//DON'T DO ANYTHING
+							}
+							//QuadTree qTree = (QuadTree) o;
+							//partialComponents.add(qTree);
 						}
+					}
 
-						//TODO: pass information received to another thread (MergerThread(?): would need to be created in Server())
-						//Other thread does merging, game object modification, resending next iteration
+					//TODO: pass information received to another thread (MergerThread(?): would need to be created in Server())
+					//Other thread does merging, game object modification, resending next iteration
+				}
+			}
+			catch(ClassNotFoundException e) {
+				//e.printStackTrace();
+			}
+			catch(IOException e) {
+				//e.printStackTrace();
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally {
+				if(ois != null) {
+					try {
+						ois.close();
+					}
+					catch(IOException e) {
+						e.printStackTrace();
 					}
 				}
-				catch(ClassNotFoundException e) {
-					//e.printStackTrace();
-				}
-				catch(IOException e) {
-					//e.printStackTrace();
-				} catch (Exception e) {
-                    e.printStackTrace();
-                } finally {
-					if(ois != null) {
-						try {
-							ois.close();
-						}
-						catch(IOException e) {
-							e.printStackTrace();
-						}
+				if(s != null) {
+					try {
+						s.close();
 					}
-					if(s != null) {
-						try {
-							s.close();
-						}
-						catch(IOException e) {
-							e.printStackTrace();
-						}
+					catch(IOException e) {
+						e.printStackTrace();
 					}
-					clients.remove(this);
 				}
+				clients.remove(this);
 			}
 		}
 	}
 
 	public static void main(String[] args) throws Exception {
-		new Thread(new Server(10)).start();
+		new Thread(new Server(10)).run();
 	}
 }
