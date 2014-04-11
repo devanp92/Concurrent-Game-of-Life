@@ -12,7 +12,7 @@ import java.util.HashMap;
 public abstract class CoordinateCalculator {
     int numRows;
 
-    protected int convert2DCoordinateTo1D(int x, int y) {
+    public int convert2DCoordinateTo1D(int x, int y) {
         return x * numRows + y;
     }
 
