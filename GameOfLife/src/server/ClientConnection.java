@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.ArrayList;
 
 import backend.Grid;
 
@@ -14,6 +15,13 @@ public class ClientConnection extends Thread {
 	private volatile Grid g;
 	public Grid getGrid() {
 		return g;
+	}
+	private ArrayList<UICallback> subscribedUI = new ArrayList<UICallback>();
+	public void subscribe(UICallback e) {
+		subscribedUI.add(e);
+	}
+	public void unsubscribe(UICallback e) {
+		subscribedUI.remove(e);
 	}
 
     public void initializeGrid(int numRows) throws Exception {
@@ -51,7 +59,7 @@ public class ClientConnection extends Thread {
 					if(recvObj instanceof Grid) {
 						System.out.println("Received Grid");
 						g = (Grid) recvObj;
-						updateDisplay();
+						updateDisplays();
 					}
 					else if(recvObj instanceof Integer) {
 						System.out.println("Received Row to Calculate");
@@ -101,10 +109,11 @@ public class ClientConnection extends Thread {
 		}
 	}
 
-	public void updateDisplay() {
-		//TODO
+	public void updateDisplays() {
+		for(UICallback uic : subscribedUI) {
+			uic.updateGame();
+		}
 	}
-	
 
 	
 	public static void main(String[] args) {
