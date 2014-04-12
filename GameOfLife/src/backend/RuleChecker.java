@@ -7,6 +7,8 @@ public class RuleChecker extends CoordinateCalculator {
 
     private Cell currCell;
 
+    public RuleChecker() {
+    }
 
     public Cell determineCellsNextState(Cell cellToCheck) throws Exception {
         this.currCell = cellToCheck;
@@ -14,7 +16,7 @@ public class RuleChecker extends CoordinateCalculator {
         NeighborFinder neighborFinder = new NeighborFinder(currCell, numRows);
         int numAliveNeighbors = numOfAliveCellsAroundCurrentCell(neighborFinder.findNeighbors());
 
-           return setCurrCellsNextStateDependingOnNumAliveNeighbors(numAliveNeighbors);
+        return setCurrCellsNextStateDependingOnNumAliveNeighbors(numAliveNeighbors);
     }
 
     private int numOfAliveCellsAroundCurrentCell(List<Cell> listOfNeighbors) {
@@ -27,16 +29,15 @@ public class RuleChecker extends CoordinateCalculator {
 
     private Cell setCurrCellsNextStateDependingOnNumAliveNeighbors(int numAliveNeighbors) throws Exception {
         int isCurrCellAliveOrDead = currCell.getCellState();
-        Cell cell = null;
         switch (isCurrCellAliveOrDead) {
             case 0:
-                cell = setDeadCellsNewState(numAliveNeighbors);
+                currCell = setDeadCellsNewState(numAliveNeighbors);
                 break;
             case 1:
-                cell = setAliveCellsNewState(numAliveNeighbors);
+                currCell = setAliveCellsNewState(numAliveNeighbors);
                 break;
         }
-        return cell;
+        return currCell;
     }
 
     private Cell setDeadCellsNewState(int numAliveNeighbors) throws Exception {

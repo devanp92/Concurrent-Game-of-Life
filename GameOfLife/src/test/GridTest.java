@@ -15,6 +15,7 @@ import static org.junit.Assert.*;
  * Created by devan on 4/9/14.
  */
 public class GridTest {
+
     private Grid grid;
     private final int NUM_ROWS = 4;
 
