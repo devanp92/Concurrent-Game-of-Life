@@ -135,4 +135,7 @@ public class ClientConnection extends Thread {
             System.out.println("Failed to create connection");
         }
 	}
+    public void startLife(int x, int y){
+        //courdinates of the cell that the user clicked to be the first cell
+    }
 }
