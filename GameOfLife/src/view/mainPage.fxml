@@ -34,7 +34,7 @@
                 <Button fx:id="pauseGameButton" onAction="#pauseGame" text="Pause" textAlignment="CENTER" GridPane.columnIndex="0" GridPane.halignment="LEFT" GridPane.rowIndex="3" visible="false"/>
                 <Button fx:id="resumeGameButton" onAction="#resumeGame" text="Resume" textAlignment="CENTER" GridPane.columnIndex="0" GridPane.halignment="LEFT" GridPane.rowIndex="3" visible="false"/>
                 <Button onAction="#quit" text="Quit" textAlignment="CENTER" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.rowIndex="3"/>
-                <!--Row #4 -->
+                <!--Row # 4 -->
                 <Label fx:id="statusLabel" visible="false" textAlignment="CENTER" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="4"/>
             </children>
         </GridPane>
