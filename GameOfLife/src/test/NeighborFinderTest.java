@@ -35,24 +35,24 @@ public class NeighborFinderTest {
 
     }
 
-    @Test
-    public void testFindNeighborForTopLeftCornerCell() throws Exception {
-        cell = new Cell(0, 0);
-        neighborFinder = new NeighborFinder(cell);
-        List<Cell> list = neighborFinder.findNeighborsForTopLeftCornerCell();
-        Cell cell0 = list.get(0);
-        Cell cell1 = list.get(1);
-        Cell cell2 = list.get(2);
-        assertEquals(CellCase.TOP_BORDER, cell0.getCellCase());
-        assertEquals(0, cell0.x);
-        assertEquals(1, cell0.y);
-        assertEquals(CellCase.LEFT_BORDER, cell1.getCellCase());
-        assertEquals(1, cell1.x);
-        assertEquals(0, cell1.y);
+//    @Test
+//    public void testFindNeighborForTopLeftCornerCell() throws Exception {
+//        cell = new Cell(0, 0);
+//        neighborFinder = new NeighborFinder(cell);
+//        List<Cell> list = neighborFinder.findNeighborsForTopLeftCornerCell();
+//        Cell cell0 = list.get(0);
+//        Cell cell1 = list.get(1);
+//        Cell cell2 = list.get(2);
+//        assertEquals(CellCase.TOP_BORDER, cell0.getCellCase());
+//        assertEquals(0, cell0.x);
+//        assertEquals(1, cell0.y);
+//        assertEquals(CellCase.LEFT_BORDER, cell1.getCellCase());
+//        assertEquals(1, cell1.x);
+//        assertEquals(0, cell1.y);
 //        assertEquals( , cell2.getCellCase());
 //        assertEquals( , cell2.x);
 //        assertEquals( , cell2.y);
-    }
+//    }
 //
 //    @Test
 //    public void testFindNeighborForTopRightCornerCell() throws Exception {
@@ -146,8 +146,9 @@ public class NeighborFinderTest {
 //
 //    }
 //
-//    @Test
-//    public void testInitializeCellsNeighborPositions() throws Exception {
-//
-//    }
+    @Test
+    public void testInitializeCellsNeighborPositions() throws Exception {
+
+
+    }
 }
