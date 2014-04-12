@@ -195,6 +195,10 @@ public class mainPageController implements UICallback {
 
     @Override
     public void updateGame() {
+    	//TODO: check if old gridSize is equivalent to connection.getGrid().getNumRows()
+    	//if not: recall intializeGrid with connection.getGrid().getNumRows()
+    	
+    	//set gridSize to connection.getGrid().getNumRows(): then no other changes are necessary to the following code  
         for(int i = 0; i < gridSize; i++)
         {
             for(int j = 0; j < gridSize; j++)
