@@ -129,8 +129,8 @@ public class mainPageController implements UICallback {
         try {
             connection = new ClientConnection(new Socket(serverIpAddress.getText(), Server.port));
             connection.subscribe(this);
+            connection.start();
             setStatusLabel("Server Connection Started");
-
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -149,6 +149,11 @@ public class ClientConnection extends Thread {
 	public void pause() {
 		send(NetworkMessage.PAUSE);
 	}
+	
+	//For resizes, or clearing of the Grid
+	public void newGame(Grid g) {
+		send(g);
+	}
 
 	
 	public static void main(String[] args) {
