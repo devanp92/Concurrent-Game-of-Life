@@ -6,6 +6,7 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
 
+import backend.Cell;
 import backend.Grid;
 
 public class ClientConnection extends Thread {
@@ -39,7 +40,7 @@ public class ClientConnection extends Thread {
 		}
 	}
 	
-	public void send(Object o) {
+	private void send(Object o) {
 		try {
 			oos.writeObject(o);
 		}
@@ -114,6 +115,40 @@ public class ClientConnection extends Thread {
 			uic.updateGame();
 		}
 	}
+	
+	public void startLife(int x, int y){
+        //courdinates of the cell that the user clicked to be the first cell
+		Cell c = null;
+		try {
+			c = new Cell(x,y);
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+		}
+		if(c != null) {
+			c.setCellState(1);
+		}
+		send(c);
+    }
+	
+	public void stopLife(int x, int y) {
+		Cell c = null;
+		try {
+			c = new Cell(x,y);
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+		}
+		send(c);
+	}
+	
+	public void play() {
+		send(NetworkMessage.PLAY);
+	}
+	
+	public void pause() {
+		send(NetworkMessage.PAUSE);
+	}
 
 	
 	public static void main(String[] args) {
@@ -135,7 +170,5 @@ public class ClientConnection extends Thread {
             System.out.println("Failed to create connection");
         }
 	}
-    public void startLife(int x, int y){
-        //courdinates of the cell that the user clicked to be the first cell
-    }
+    
 }
