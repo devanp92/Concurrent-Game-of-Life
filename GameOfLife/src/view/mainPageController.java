@@ -169,7 +169,7 @@ public class mainPageController implements UICallback {
     }
 
     public void pauseGame(ActionEvent event) {
-        //TO DO pause functionality needs to be implemented
+        connection.pause();
         statusLabel.setText("The game is paused");
         pauseGameButton.setVisible(false);
         resumeGameButton.setVisible(true);
@@ -177,6 +177,7 @@ public class mainPageController implements UICallback {
     }
 
     public void resumeGame(ActionEvent event) {
+    	connection.play();
         resumeGameButton.setVisible(false);
         pauseGameButton.setVisible(true);
         statusLabel.setText("The game has resumed");
