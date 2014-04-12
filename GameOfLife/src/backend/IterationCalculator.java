@@ -13,7 +13,7 @@ public class IterationCalculator {
     private Grid grid;
     private Grid newGridToSet;
 
-    private Calculator[] calculators;
+    private Thread[] calculators;
 
     public IterationCalculator(Grid grid) throws Exception {
         if (grid == null) {
@@ -26,21 +26,37 @@ public class IterationCalculator {
 
     public void calculateNewIteration() throws Exception {
         initializeCalculators();
+        startThreads();
     }
 
-    private void initializeCalculators() throws Exception {
+    public Cell[][] joinThreads() throws InterruptedException {
+        for(Thread calculator: calculators){
+            calculator.join();
+        }
+        return grid.convertGridTo2DArray();
+    }
+
+    private void startThreads(){
+        for(Thread calculator : calculators){
+             calculator.start();
+        }
+    }
+
+    private void initializeCalculators() throws RuntimeException, InterruptedException {
         int numThreads = numThreads();
-        calculators = new Calculator[numThreads];
+        calculators = new Thread[numThreads];
         List<AtomicReference[]> listOfSubSets = findSubSetsOfCellsForThread(numThreads, grid.numRows * grid.numRows);
 
+        RuleChecker ruleChecker = new RuleChecker();
         for (int i = 0; i < numThreads; i++) {
             AtomicReference[] cells = listOfSubSets.get(i);
-            calculators[i] = new Calculator(cells, new RuleChecker());
+            Calculator calculator = new Calculator(cells, ruleChecker);
+            calculators[i] = new Thread(calculator);
         }
     }
 
     private List<AtomicReference[]> findSubSetsOfCellsForThread(int numThreads, int numCells) {
-        List<AtomicReference[]> list = new ArrayList<AtomicReference[]>();
+        List<AtomicReference[]> list = new ArrayList<>();
         for (int i = 0; i < numCells; i += numThreads) {
             AtomicReference[] subSet = grid.getSubSetOfGrid(i, Math.min(numCells, i + numThreads));
             list.add(subSet);
@@ -48,16 +64,12 @@ public class IterationCalculator {
         return list;
     }
 
-    private int numThreads() throws Exception {
+    private int numThreads() throws RuntimeException {
         int cores = Runtime.getRuntime().availableProcessors();
         if (cores < 1) {
-            throw new Exception("Number of processors is less than 1");
+            throw new RuntimeException("Number of processors is less than 1");
         }
         return cores;
-    }
-
-    public Calculator[] getCalculators() {
-        return calculators;
     }
 
     public class Calculator implements Runnable {

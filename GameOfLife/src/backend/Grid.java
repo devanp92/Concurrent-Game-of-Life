@@ -76,11 +76,14 @@ public class Grid extends CoordinateCalculator implements Serializable{
         return Arrays.copyOfRange(grid, start, end);
     }
 
-    /**
-     * Get grid in 2D of cells
-     *
-     * @return Cell[][]
-     */
+    public void setGrid(Cell[][] cells) {
+        for (int i = 0; i < cells.length; i++) {
+            for (int j = 0; j < cells[0].length; j++) {
+                setCell(convert2DCoordinateTo1D(i, j), cells[i][j]);
+            }
+        }
+    }
+
     public Cell[][] convertGridTo2DArray() {
         Cell[][] cells = new Cell[numRows][numRows];
         for (int i = 0; i < numRows; i++) {
@@ -91,18 +94,5 @@ public class Grid extends CoordinateCalculator implements Serializable{
             }
         }
         return cells;
-    }
-
-    /**
-     * setting new grid
-     *
-     * @param cells grid to atomic reference
-     */
-    public void setGrid(Cell[][] cells) {
-        for (int i = 0; i < cells.length; i++) {
-            for (int j = 0; j < cells[0].length; j++) {
-                setCell(convert2DCoordinateTo1D(i, j), cells[i][j]);
-            }
-        }
     }
 }

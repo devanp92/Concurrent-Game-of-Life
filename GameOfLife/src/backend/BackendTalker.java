@@ -48,4 +48,16 @@ public class BackendTalker {
         Cell cell = grid.getCell(x, y);
         cell.setCellState(state);
     }
+
+    /**
+     * Starts threads and calculates the new iteration. Sets the new grid to grid
+     * @param grid old grid to calculate the iteration on
+     * @throws Exception
+     */
+    public void startIteration(Grid grid) throws Exception {
+        IterationCalculator iterationCalculator = new IterationCalculator(grid);
+        iterationCalculator.calculateNewIteration();
+        Cell[][] cells = iterationCalculator.joinThreads();
+        grid.setGrid(cells);
+    }
 }
