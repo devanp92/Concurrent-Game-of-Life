@@ -40,7 +40,6 @@ public class mainPageController implements UICallback {
     public Label statusLabel;
     public Button resumeGameButton;
     public TextField serverIpAddress;
-    //Private class properties
     ClientConnection connection = null;
     private boolean connectionStarted = false;
     private int gridSize = 0;
@@ -71,10 +70,13 @@ public class mainPageController implements UICallback {
         catch (java.net.UnknownHostException e)
         {
             setStatusLabel("Not a valid IP Address", "red");
+            serverIpAddress.clear();
+            serverIpAddress.setText("127.0.0.1");
         }
         catch (java.net.ConnectException e)
         {
             setStatusLabel("Server has not been initialized!","red");
+
         }
         catch (IOException e) {
             setStatusLabel("Connection to server Failed","red");
