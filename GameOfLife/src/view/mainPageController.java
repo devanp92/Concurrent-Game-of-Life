@@ -84,7 +84,9 @@ public class mainPageController implements UICallback {
             e.printStackTrace();
         }
     }
-
+    /*
+        Sets up the grid after user defines a size for the
+     */
     public void setUpNewGame(ActionEvent event) {
         if(connectionStarted)
         {
@@ -161,26 +163,29 @@ public class mainPageController implements UICallback {
         pauseGameButton.setVisible(true);
         initializedBoardDimensionsLabel.setText(initializedBoardDimensionsLabel.getText() + gridSize +" X " + gridSize);
     }
-    private void setStatusLabel(String newSatus, String txtFill){
+    private void setStatusLabel(String newSatus, String txtFill)
+    {
         statusLabel.setText(newSatus);
         //setting the color of the status label
         statusLabel.setStyle("-fx-font-size: 18pt;-fx-text-fill: " + txtFill);
         statusLabel.setVisible(true);
     }
 
-    public void pauseGame(ActionEvent event) {
-        connection.pause();
-        statusLabel.setText("The game is paused");
+    public void pauseGame(ActionEvent event)
+    {
+        setStatusLabel("The game is paused", "yellow");
         pauseGameButton.setVisible(false);
         resumeGameButton.setVisible(true);
+        connection.pause();
         System.out.println("pause functionality needs to be implemented");
     }
 
-    public void resumeGame(ActionEvent event) {
-    	connection.play();
+    public void resumeGame(ActionEvent event)
+    {
         resumeGameButton.setVisible(false);
         pauseGameButton.setVisible(true);
-        statusLabel.setText("The game has resumed");
+        setStatusLabel("The game has resumed", "green");
+        connection.play();
         System.out.println("resume functionality needs to be implemented");
     }
 
