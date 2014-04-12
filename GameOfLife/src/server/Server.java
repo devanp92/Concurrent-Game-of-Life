@@ -68,6 +68,7 @@ public class Server implements Runnable {
 			try {
 				Connection c = new Connection(serverSocket.accept());
 				clients.add(c);
+				c.start();
 				c.send(game);
 				System.out.println("Client Connected");
 			}
@@ -305,6 +306,6 @@ public class Server implements Runnable {
 	}
 
 	public static void main(String[] args) throws Exception {
-		new Thread(new Server(10)).run();
+		new Thread(new Server(10)).start();
 	}
 }

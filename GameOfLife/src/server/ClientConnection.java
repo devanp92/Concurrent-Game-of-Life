@@ -116,6 +116,20 @@ public class ClientConnection extends Thread {
 		}
 	}
 	
+	public void changeCellState(int x, int y, int state) {
+		Cell c = null;
+		try {
+			c = new Cell(x,y);
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+		}
+		if(c != null) {
+			c.setCellState(state);
+		}
+		send(c);
+	}
+	
 	public void startLife(int x, int y){
         //courdinates of the cell that the user clicked to be the first cell
 		Cell c = null;

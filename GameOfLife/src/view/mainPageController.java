@@ -144,6 +144,10 @@ public class mainPageController implements UICallback {
                                 recta.setFill(Color.BLACK);
                             }
                         }
+                        String xy = recta.getId();
+                        int x = Integer.valueOf(xy.split(",")[0]);
+                        int y = Integer.valueOf(xy.split(",")[1]);
+                        connection.changeCellState(x,y,(recta.getFill() == Color.BLACK) ? 1 : 0);
                     }
                 });
                 recta.setFill(Color.WHITE);
