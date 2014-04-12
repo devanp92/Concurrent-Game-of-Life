@@ -24,8 +24,9 @@ public class NeighborFinder extends CoordinateCalculator {
     public Cell cell;
     public AtomicReference[] grid = Grid.getGrid();
 
-    public NeighborFinder(Cell cell) {
+    public NeighborFinder(Cell cell, int numRows) {
         this.cell = cell;
+        super.numRows = numRows;
         initializeCellsNeighborPositions();
     }
 
@@ -71,7 +72,7 @@ public class NeighborFinder extends CoordinateCalculator {
 
         Cell rightNeighbor = (Cell) grid[CENTER_RIGHT_NEIGHBOR].get();
         Cell bottomNeighbor = (Cell) grid[DOWN_RIGHT_NEIGHBOR].get();
-        Cell diagonalNeighbor = (Cell) grid[DOWN_RIGHT_NEIGHBOR].get();
+        Cell diagonalNeighbor = (Cell) grid[DOWN_CENTER_NEIGHBOR].get();
 
         list.add(rightNeighbor);
         list.add(bottomNeighbor);

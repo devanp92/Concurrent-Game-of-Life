@@ -11,7 +11,7 @@ public class RuleChecker extends CoordinateCalculator {
     public Cell determineCellsNextState(Cell cellToCheck) throws Exception {
         this.currCell = cellToCheck;
 
-        NeighborFinder neighborFinder = new NeighborFinder(currCell);
+        NeighborFinder neighborFinder = new NeighborFinder(currCell, numRows);
         int numAliveNeighbors = numOfAliveCellsAroundCurrentCell(neighborFinder.findNeighbors());
 
            return setCurrCellsNextStateDependingOnNumAliveNeighbors(numAliveNeighbors);
