@@ -1,10 +1,12 @@
 package backend;
 
+import java.io.Serializable;
 import java.util.InputMismatchException;
 
-public class Cell extends QuadTreeElement {
-
-    private int cellState;
+public class Cell extends QuadTreeElement implements Serializable {
+	private static final long serialVersionUID = 1L;
+	
+	private int cellState;
     private CellCase cellCase;
 
     public Cell(int x, int y) throws Exception {
