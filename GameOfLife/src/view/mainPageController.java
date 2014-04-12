@@ -27,11 +27,11 @@ import java.util.ResourceBundle;
  * Created by Daniel on 4/5/2014.
  */
 public class mainPageController implements UICallback {
+    //FXML NODES
     public Button connectButton;
-    ClientConnection connection = null;
+    public Label serverIpAddressPrompt;
     public Label title;
     public Label boardDimensionsLabel;
-    //private Map<String,Rectangle> gridMap;
     public TextField size;
     public GridPane displayGrid;
     public Label initializedBoardDimensionsLabel;
@@ -40,23 +40,82 @@ public class mainPageController implements UICallback {
     public Label statusLabel;
     public Button resumeGameButton;
     public TextField serverIpAddress;
+    ClientConnection connection = null;
+    private boolean connectionStarted = false;
     private int gridSize = 0;
     private boolean gridClickedOn = false;
+    private String serverIP = "";
 
-    public void startNewGame(ActionEvent event) {
-        if(!size.getText().isEmpty()) {
-            gridSize = Integer.parseInt(size.getText());
-            size.clear();
-            initializeBoard(gridSize);
-            inGameStatus();
-            setStatusLabel("Click on board to start Game!");
+    public void startConnection(ActionEvent actionEvent)
+    {
+        try {
+            connection = new ClientConnection(new Socket(serverIpAddress.getText(), Server.port));
+            connection.subscribe(this);
+            connection.start();
+            if(connection != null)
+            {
+                setStatusLabel("Server Connection Started", "green");
+                connectionStarted = true;
+                serverIP = serverIpAddress.getText();
+                serverIpAddress.setDisable(true);
+                connectButton.setVisible(false);
+                boardDimensionsLabel.setVisible(true);
+                size.setVisible(true);
+                buildGridButton.setVisible(true);
+            }
+            else
+            {
+                setStatusLabel("Server Connection did not start","red");
+            }
         }
-        else
+        catch (java.net.UnknownHostException e)
         {
-            setStatusLabel("Please input a Grid size!!");
+            setStatusLabel("Not a valid IP Address", "red");
+            serverIpAddress.clear();
+            serverIpAddress.setText("127.0.0.1");
+        }
+        catch (java.net.ConnectException e)
+        {
+            setStatusLabel("Server has not been initialized!","red");
+
+        }
+        catch (IOException e) {
+            setStatusLabel("Connection to server Failed","red");
+            e.printStackTrace();
         }
     }
 
+    public void setUpNewGame(ActionEvent event) {
+        if(connectionStarted)
+        {
+            try
+            {
+                if (!size.getText().isEmpty())
+                {
+                    gridSize = Integer.parseInt(size.getText());
+                    size.clear();
+                    connection.initializeGrid(gridSize);
+                    initializeBoard(gridSize);
+                    inGameStatus();
+                    setStatusLabel("Click on board to start Game!", "green");
+                } else
+                {
+                    setStatusLabel("Please input a Grid size!!", "red");
+                }
+            }
+            catch (Exception e)
+            {
+                setStatusLabel("Not valid a valid grid size","red");
+                size.clear();
+            }
+        }
+    }
+    private void beginTheGame(Rectangle rectangle)
+    {
+        String[] indices = rectangle.getId().split(",");
+        connection.startLife(Integer.parseInt(indices[0]), Integer.parseInt(indices[1]));
+
+    }
     public void quit() {
         System.exit(0);
     }
@@ -69,19 +128,17 @@ public class mainPageController implements UICallback {
             for (Integer j = 0; j <size; j++)
             {
                 final Rectangle recta = new Rectangle(20,20);
-                recta.setOnMouseClicked(new EventHandler<Event>(){
+                recta.setId(i.toString() + "," + j.toString());
+                recta.setOnMouseClicked(new EventHandler<Event>() {
                     @Override
                     public void handle(Event event) {
-                        if(!gridClickedOn)
-                        {
+                        if (!gridClickedOn) {
                             gridClickedOn = true;
-                            statusLabel.setText("The Game has started!!!");
-                            if (recta.getFill().equals(Color.BLACK))
-                            {
+                            setStatusLabel("The Game has started!", "green");
+                            beginTheGame((Rectangle) event.getSource());
+                            if (recta.getFill().equals(Color.BLACK)) {
                                 recta.setFill(Color.WHITE);
-                            }
-                            else
-                            {
+                            } else {
                                 recta.setFill(Color.BLACK);
                             }
                         }
@@ -104,9 +161,11 @@ public class mainPageController implements UICallback {
         pauseGameButton.setVisible(true);
         initializedBoardDimensionsLabel.setText(initializedBoardDimensionsLabel.getText() + gridSize +" X " + gridSize);
     }
-    private void setStatusLabel(String newSatus){
-        statusLabel.setVisible(true);
+    private void setStatusLabel(String newSatus, String txtFill){
         statusLabel.setText(newSatus);
+        //setting the color of the status label
+        statusLabel.setStyle("-fx-font-size: 18pt;-fx-text-fill: " + txtFill);
+        statusLabel.setVisible(true);
     }
 
     public void pauseGame(ActionEvent event) {
@@ -122,18 +181,6 @@ public class mainPageController implements UICallback {
         pauseGameButton.setVisible(true);
         statusLabel.setText("The game has resumed");
         System.out.println("resume functionality needs to be implemented");
-    }
-
-    public void startConnection(ActionEvent actionEvent)
-    {
-        try {
-            connection = new ClientConnection(new Socket(serverIpAddress.getText(), Server.port));
-            connection.subscribe(this);
-            connection.start();
-            setStatusLabel("Server Connection Started");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     @Override
