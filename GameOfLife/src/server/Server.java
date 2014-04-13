@@ -43,6 +43,7 @@ public class Server implements Runnable {
 	
     public Server(int numRows) throws Exception {
         game = new Grid(numRows);
+        System.out.println(game.getNumRows());
     }
 
     @Override
@@ -103,7 +104,7 @@ public class Server implements Runnable {
 				for(Connection c : connectionCalculating.keySet()) {
 					c.send(connectionCalculating.get(c));
 				}
-				
+				System.out.println(game.getNumRows());
 				barrier = new CyclicBarrier(connectionCalculating.size() + 1);
 			}
 			
@@ -187,6 +188,7 @@ public class Server implements Runnable {
 		public void send(Object o) {
 			try {
 				oos.writeObject(o);
+				oos.reset();
 			}
 			catch(IOException e) {
 				e.printStackTrace();

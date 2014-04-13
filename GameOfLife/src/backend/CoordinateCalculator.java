@@ -1,5 +1,6 @@
 package backend;
 
+import java.io.Serializable;
 import java.util.HashMap;
 
 /**
@@ -9,8 +10,10 @@ import java.util.HashMap;
 /**
  * Converts 2D coordinates and 1D coordinates
  */
-public abstract class CoordinateCalculator {
-    int numRows;
+public abstract class CoordinateCalculator implements Serializable {
+	private static final long serialVersionUID = 1L;
+	
+	int numRows;
 
     public int convert2DCoordinateTo1D(int x, int y) {
         return x * numRows + y;

@@ -13,7 +13,7 @@ public class ClientConnection extends Thread {
 	private Socket s = null;
 	private ObjectOutputStream oos = null;
 	private ObjectInputStream ois = null;
-	private volatile Grid g;
+	private volatile Grid g = null;
 	public Grid getGrid() {
 		return g;
 	}
@@ -43,6 +43,7 @@ public class ClientConnection extends Thread {
 	private void send(Object o) {
 		try {
 			oos.writeObject(o);
+			oos.reset();
 		}
 		catch(IOException e) {
 			e.printStackTrace();
@@ -60,6 +61,7 @@ public class ClientConnection extends Thread {
 					if(recvObj instanceof Grid) {
 						System.out.println("Received Grid");
 						g = (Grid) recvObj;
+						System.out.println(g.getNumRows());
 						updateDisplays();
 					}
 					else if(recvObj instanceof Integer) {
@@ -177,7 +179,7 @@ public class ClientConnection extends Thread {
 			Socket clientSocket = new Socket(serverIP, Server.port);
 			self = new ClientConnection(clientSocket);
 			self.start();
-			Thread.sleep(2000);
+			Thread.sleep(10000);
 			self.send(NetworkMessage.PLAY);
 			System.out.println("Client socket accepted");
 			System.out.println("Created I/O streams");
