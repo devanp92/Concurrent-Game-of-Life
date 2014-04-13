@@ -207,7 +207,7 @@ public class mainPageController implements UICallback {
     public void updateGame()
     {
         System.out.println("updateGame called, GridSize: " + connection.getGrid().getNumRows());
-        if(connection.getGrid().getNumRows() != gridSize && gridInitialized)
+        if(connection.getGrid().getNumRows() != gridSize && !gridInitialized)
         {
             displayGrid.getChildren().removeAll(displayGrid.getChildren());
             gridSize = connection.getGrid().getNumRows();
