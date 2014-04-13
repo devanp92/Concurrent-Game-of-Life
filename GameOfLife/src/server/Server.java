@@ -206,12 +206,15 @@ public class Server implements Runnable {
 						NetworkMessage nm = (NetworkMessage) o;
 						switch(nm) {
 							case PLAY:
+								System.out.println("Received PLAY");
 								play();
 								break;
 							case PAUSE:
+								System.out.println("Received PAUSE");
 								pause();
 								break;
 							case CLEAR:
+								System.out.println("Received CLEAR");
 								pause();
 								clear();
 								break;
@@ -220,6 +223,7 @@ public class Server implements Runnable {
 					else if(o instanceof Cell) {
 						pause();
 						Cell c = (Cell) o;
+						System.out.println("Received Cell " + c);
 						game.getCell(c.y, c.x).setCellState(c.getCellState());
 
 						/*if(c.isAlive == 1) {

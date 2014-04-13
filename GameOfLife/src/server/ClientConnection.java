@@ -129,6 +129,7 @@ public class ClientConnection extends Thread {
 		if(c != null) {
 			c.setCellState(state);
 		}
+		System.out.println("Sent cell (" + x + "," + y + ") " + ((state == 1) ? "alive":"dead") + " to server");
 		send(c);
 	}
 	
