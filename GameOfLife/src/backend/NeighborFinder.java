@@ -25,6 +25,9 @@ public class NeighborFinder extends CoordinateCalculator {
     private AtomicReference[] grid = Grid.getGrid();
 
     public NeighborFinder(Cell cell, int numRows) {
+        if(cell == null){
+            throw new NullPointerException("Cell is null");
+        }
         this.cell = cell;
         super.numRows = numRows;
         initializeCellsNeighborPositions();

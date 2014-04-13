@@ -12,7 +12,6 @@ public class IterationCalculator {
 
     private Grid grid;
     private Grid newGridToSet;
-
     private Thread[] calculators;
 
     public IterationCalculator(Grid grid) throws Exception {
@@ -30,7 +29,7 @@ public class IterationCalculator {
         grid.setGrid(joinThreads());
     }
 
-    public Cell[][] joinThreads() throws InterruptedException {
+    private Cell[][] joinThreads() throws InterruptedException {
         for(Thread calculator: calculators){
             calculator.join();
         }
@@ -73,7 +72,7 @@ public class IterationCalculator {
         return cores;
     }
 
-    public class Calculator implements Runnable {
+    private class Calculator implements Runnable {
         private AtomicReference[] cells;
         private RuleChecker ruleChecker;
 

@@ -9,15 +9,15 @@ import java.util.concurrent.atomic.AtomicReference;
  * Created by devan on 3/29/14.
  */
 
-public class Grid extends CoordinateCalculator implements Serializable{
+public class Grid extends CoordinateCalculator implements Serializable {
 
     private static AtomicReference[] grid;
     private static final long serialVersionUID = 1L;
 
 
     public Grid(int numRows) throws Exception {
-        if (numRows < 2) {
-            throw new Exception("Grid has less than 2 rows");
+        if (numRows < 2 || numRows >= 80) {
+            throw new IllegalArgumentException("numRows is out of bounds");
         }
         this.numRows = numRows;
         Grid.grid = initializeGrid(numRows);
@@ -41,16 +41,18 @@ public class Grid extends CoordinateCalculator implements Serializable{
         return cells;
     }
 
-    public static AtomicReference[] getGrid() {
-        return grid;
-    }
-
     public Cell getCell(int row, int column) {
+        if (row < 0 || row >= numRows || column < 0 || column >= numRows) {
+            throw new IllegalArgumentException("Row or column is out of bounds");
+        }
         AtomicReference atomicReferences = grid[super.convert2DCoordinateTo1D(row, column)];
         return (Cell) atomicReferences.get();
     }
 
     public Cell getCell(int index1D) {
+        if (index1D < 0 || index1D >= Math.pow(numRows, 2)) {
+            throw new IllegalArgumentException("Index is either below 0 or higher than number of cells");
+        }
         AtomicReference atomicReferences = grid[index1D];
         return (Cell) atomicReferences.get();
     }
@@ -60,6 +62,12 @@ public class Grid extends CoordinateCalculator implements Serializable{
     }
 
     public void setCell(int index, Cell cell) {
+        if (index < 0 || index >= Math.pow(numRows, 2)) {
+            throw new IllegalArgumentException("Index is either below 0 or higher than number of cells");
+        }
+        if (cell == null) {
+            throw new NullPointerException("cell is null");
+        }
         AtomicReference<Cell> cellAtomicReference = new AtomicReference<>(cell);
         grid[index] = cellAtomicReference;
     }
@@ -68,15 +76,17 @@ public class Grid extends CoordinateCalculator implements Serializable{
         if (cellState < 0 || cellState > 1) {
             throw new Exception("Incorrect cell state. Must be either 0 or 1");
         }
+        if (index < 0 || index >= Math.pow(numRows, 2)) {
+            throw new IllegalArgumentException("Index is either below 0 or higher than number of cells");
+        }
         Cell cell = getCell(index);
         cell.setCellState(cellState);
     }
 
-    public AtomicReference[] getSubSetOfGrid(int start, int end) {
-        return Arrays.copyOfRange(grid, start, end);
-    }
-
     public void setGrid(Cell[][] cells) {
+        if(cells == null){
+            throw new NullPointerException("Grid is null");
+        }
         for (int i = 0; i < cells.length; i++) {
             for (int j = 0; j < cells[0].length; j++) {
                 setCell(convert2DCoordinateTo1D(i, j), cells[i][j]);
@@ -94,5 +104,13 @@ public class Grid extends CoordinateCalculator implements Serializable{
             }
         }
         return cells;
+    }
+
+    public AtomicReference[] getSubSetOfGrid(int start, int end) {
+        return Arrays.copyOfRange(grid, start, end);
+    }
+
+    public static AtomicReference[] getGrid() {
+        return grid;
     }
 }

@@ -53,6 +53,9 @@ public class Cell extends QuadTreeElement implements Serializable {
      * @param cellState 1 if it is alive, 0 if dead.
      */
     public void setCellState(int cellState) {
+        if(cellState < 0 || cellState > 1){
+            throw new IllegalArgumentException("Illegal cell state");
+        }
         this.cellState = cellState;
     }
 
