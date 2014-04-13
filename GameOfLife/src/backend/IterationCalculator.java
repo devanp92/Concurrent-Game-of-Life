@@ -27,6 +27,7 @@ public class IterationCalculator {
     public void calculateNewIteration() throws Exception {
         initializeCalculators();
         startThreads();
+        grid.setGrid(joinThreads());
     }
 
     public Cell[][] joinThreads() throws InterruptedException {
