@@ -40,10 +40,12 @@ public class mainPageController implements UICallback {
     public Label statusLabel;
     public Button resumeGameButton;
     public TextField serverIpAddress;
+    //Local variables
     ClientConnection connection = null;
     private boolean connectionStarted = false;
     private int gridSize = 0;
     private boolean gridClickedOn = false;
+    private boolean gridInitialized = false;
     private String serverIP = "";
 
     public void startConnection(ActionEvent actionEvent)
@@ -120,27 +122,35 @@ public class mainPageController implements UICallback {
     }
     public void quit() {
         System.exit(0);
+        System.out.println(displayGrid.getChildren().removeAll(displayGrid.getChildren()));
+        System.out.println(displayGrid.getChildren().size());
     }
 
     private void initializeBoard(int size)
     {
-       statusLabel.setVisible(false);
-       for(Integer i = 0; i < size; i++)
-       {
+        statusLabel.setVisible(false);
+        for(Integer i = 0; i < size; i++)
+        {
             for (Integer j = 0; j <size; j++)
             {
                 final Rectangle recta = new Rectangle(20,20);
                 recta.setId(i.toString() + "," + j.toString());
-                recta.setOnMouseClicked(new EventHandler<Event>() {
+                recta.setOnMouseClicked(new EventHandler<Event>()
+                {
                     @Override
-                    public void handle(Event event) {
-                        if (!gridClickedOn) {
+                    public void handle(Event event)
+                    {
+                        if (!gridClickedOn)
+                        {
                             gridClickedOn = true;
                             setStatusLabel("The Game has started!", "green");
                             beginTheGame((Rectangle) event.getSource());
-                            if (recta.getFill().equals(Color.BLACK)) {
+                            if (recta.getFill().equals(Color.BLACK))
+                            {
                                 recta.setFill(Color.WHITE);
-                            } else {
+                            }
+                            else
+                            {
                                 recta.setFill(Color.BLACK);
                             }
                         }
@@ -194,26 +204,58 @@ public class mainPageController implements UICallback {
     }
 
     @Override
-    public void updateGame() {
-    	//TODO: check if old gridSize is equivalent to connection.getGrid().getNumRows()
-    	//if not: recall intializeGrid with connection.getGrid().getNumRows()
-    	
-    	//set gridSize to connection.getGrid().getNumRows(): then no other changes are necessary to the following code  
-        for(int i = 0; i < gridSize; i++)
+    public void updateGame()
+    {
+        System.out.println("updateGame called, GridSize: " + connection.getGrid().getNumRows());
+        if(connection.getGrid().getNumRows() != gridSize && gridInitialized)
         {
-            for(int j = 0; j < gridSize; j++)
+            displayGrid.getChildren().removeAll(displayGrid.getChildren());
+            gridSize = connection.getGrid().getNumRows();
+            /*TODO: check if old gridSize is equivalent to connection.getGrid().getNumRows()
+    	    if not: recall intializeGrid with connection.getGrid().getNumRows()
+    		set gridSize to connection.getGrid().getNumRows(): then no other changes are necessary to the following code*/
+            for (Integer i = 0; i < gridSize; i++)
             {
-                if(connection.getGrid().convertGridTo2DArray()[i][j].getCellState() == 0)
+                for (Integer j = 0; j < gridSize; j++)
                 {
-                    Rectangle rectangle = (Rectangle) displayGrid.getChildren().get((i*gridSize)+ j);
-                    rectangle.setFill(Color.WHITE);
-                }
-                else
-                {
-                    Rectangle rectangle = (Rectangle) displayGrid.getChildren().get((i*gridSize)+ j);
-                    rectangle.setFill(Color.BLACK);
+                    final Rectangle recta = new Rectangle(20,20);
+                    recta.setId(i.toString() + "," + j.toString());
+                    recta.setOnMouseClicked(new EventHandler<Event>() {
+                        @Override
+                        public void handle(Event event) {
+                            if (!gridClickedOn) {
+                                gridClickedOn = true;
+                                setStatusLabel("The Game has started!", "green");
+                                if (recta.getFill().equals(Color.BLACK)) {
+                                    recta.setFill(Color.WHITE);
+                                } else {
+                                    recta.setFill(Color.BLACK);
+                                }
+                            }
+                            String xy = recta.getId();
+                            int x = Integer.valueOf(xy.split(",")[0]);
+                            int y = Integer.valueOf(xy.split(",")[1]);
+                            connection.changeCellState(x, y, (recta.getFill() == Color.BLACK) ? 1 : 0);
+                        }
+                    });
+                    recta.setFill(Color.WHITE);
+                    displayGrid.add(recta,i,j);
+                    if (connection.getGrid().convertGridTo2DArray()[i][j].getCellState() == 0)
+                    {
+                        Rectangle rectangle = (Rectangle) displayGrid.getChildren().get((i * gridSize) + j);
+                        rectangle.setFill(Color.WHITE);
+                    }
+                    else
+                    {
+                        Rectangle rectangle = (Rectangle) displayGrid.getChildren().get((i * gridSize) + j);
+                        rectangle.setFill(Color.BLACK);
+                    }
                 }
             }
+            displayGrid.setVisible(true);
+            displayGrid.setMaxHeight(gridSize*20);
+            displayGrid.setMaxWidth(gridSize*20);
         }
     }
+    //private void iterateAndDisplayGrid
 }
