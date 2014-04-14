@@ -1,5 +1,6 @@
 package view;
 
+import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
@@ -211,6 +212,7 @@ public class mainPageController implements UICallback {
         {
             displayGrid.getChildren().removeAll(displayGrid.getChildren());
             gridSize = connection.getGrid().getNumRows();
+            gridInitialized = true;
             /*TODO: check if old gridSize is equivalent to connection.getGrid().getNumRows()
     	    if not: recall intializeGrid with connection.getGrid().getNumRows()
     		set gridSize to connection.getGrid().getNumRows(): then no other changes are necessary to the following code*/
@@ -219,16 +221,23 @@ public class mainPageController implements UICallback {
                 for (Integer j = 0; j < gridSize; j++)
                 {
                     final Rectangle recta = new Rectangle(20,20);
+                    final int xcord = i;
+                    final int ycord = j;
                     recta.setId(i.toString() + "," + j.toString());
                     recta.setOnMouseClicked(new EventHandler<Event>() {
                         @Override
-                        public void handle(Event event) {
-                            if (!gridClickedOn) {
+                        public void handle(Event event)
+                        {
+                            if (!gridClickedOn)
+                            {
                                 gridClickedOn = true;
                                 setStatusLabel("The Game has started!", "green");
-                                if (recta.getFill().equals(Color.BLACK)) {
+                                if (recta.getFill().equals(Color.BLACK))
+                                {
                                     recta.setFill(Color.WHITE);
-                                } else {
+                                }
+                                else
+                                {
                                     recta.setFill(Color.BLACK);
                                 }
                             }
@@ -239,22 +248,32 @@ public class mainPageController implements UICallback {
                         }
                     });
                     recta.setFill(Color.WHITE);
-                    displayGrid.add(recta,i,j);
-                    if (connection.getGrid().convertGridTo2DArray()[i][j].getCellState() == 0)
+                    /*
+                        This call and everything inside it will update the FX thread still need some tweaking to do.
+                     */
+                    Platform.runLater(new Runnable()
                     {
-                        Rectangle rectangle = (Rectangle) displayGrid.getChildren().get((i * gridSize) + j);
-                        rectangle.setFill(Color.WHITE);
-                    }
-                    else
-                    {
-                        Rectangle rectangle = (Rectangle) displayGrid.getChildren().get((i * gridSize) + j);
-                        rectangle.setFill(Color.BLACK);
-                    }
+                        @Override
+                        public void run()
+                        {
+                            displayGrid.add(recta,xcord,ycord);
+                            /*if (connection.getGrid().convertGridTo2DArray()[xcord][ycord].getCellState() == 0)
+                            {
+                                Rectangle rectangle = (Rectangle) displayGrid.getChildren().get((xcord * gridSize) + ycord);
+                                rectangle.setFill(Color.WHITE);
+                            }
+                            else
+                            {
+                                Rectangle rectangle = (Rectangle) displayGrid.getChildren().get((xcord * gridSize) + ycord);
+                                rectangle.setFill(Color.BLACK);
+                            }*/
+                            displayGrid.setVisible(true);
+                            displayGrid.setMaxHeight(gridSize*20);
+                            displayGrid.setMaxWidth(gridSize*20);
+                        }
+                    });
                 }
             }
-            displayGrid.setVisible(true);
-            displayGrid.setMaxHeight(gridSize*20);
-            displayGrid.setMaxWidth(gridSize*20);
         }
     }
     //private void iterateAndDisplayGrid
