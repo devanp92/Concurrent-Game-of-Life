@@ -29,20 +29,20 @@ public class IterationCalculator {
         grid.setGrid(joinThreads());
     }
 
-    private Cell[][] joinThreads() throws InterruptedException {
+    public Cell[][] joinThreads() throws InterruptedException {
         for(Thread calculator: calculators){
             calculator.join();
         }
         return grid.convertGridTo2DArray();
     }
 
-    private void startThreads(){
+    public void startThreads(){
         for(Thread calculator : calculators){
              calculator.start();
         }
     }
 
-    private void initializeCalculators() throws RuntimeException, InterruptedException {
+    public void initializeCalculators() throws RuntimeException, InterruptedException {
         int numThreads = numThreads();
         calculators = new Thread[numThreads];
         List<AtomicReference[]> listOfSubSets = findSubSetsOfCellsForThread(numThreads, grid.numRows * grid.numRows);
@@ -55,7 +55,7 @@ public class IterationCalculator {
         }
     }
 
-    private List<AtomicReference[]> findSubSetsOfCellsForThread(int numThreads, int numCells) {
+    public List<AtomicReference[]> findSubSetsOfCellsForThread(int numThreads, int numCells) {
         List<AtomicReference[]> list = new ArrayList<>();
         for (int i = 0; i < numCells; i += numThreads) {
             AtomicReference[] subSet = grid.getSubSetOfGrid(i, Math.min(numCells, i + numThreads));
