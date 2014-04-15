@@ -221,23 +221,27 @@ public class Server implements Runnable {
 						}
 					}
 					else if(o instanceof Cell) {
-						pause();
-						Cell c = (Cell) o;
-						System.out.println("Received Cell " + c);
-						game.getCell(c.y, c.x).setCellState(c.getCellState());
-
-						/*if(c.isAlive == 1) {
-								game.insert(c);
-							}
-							else if(c.isAlive == 0) {
-								game.remove(c);
-							}*/
-						sendGameToAll();
+						if(!isPlaying) {
+							//pause();
+							Cell c = (Cell) o;
+							System.out.println("Received Cell " + c);
+							game.getCell(c.y, c.x).setCellState(c.getCellState());
+	
+							/*if(c.isAlive == 1) {
+									game.insert(c);
+								}
+								else if(c.isAlive == 0) {
+									game.remove(c);
+								}*/
+							sendGameToAll();
+						}
 					}
 					else if(o instanceof Grid) {
-						pause();
-						game = (Grid) o;
-						sendGameToAll();
+						if(!isPlaying) {
+							//pause();
+							game = (Grid) o;
+							sendGameToAll();
+						}
 					}
 					else if(o instanceof ArrayList<?>) {
 						pause();

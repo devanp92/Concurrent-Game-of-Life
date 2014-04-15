@@ -14,6 +14,11 @@ public class ClientConnection extends Thread {
 	private ObjectOutputStream oos = null;
 	private ObjectInputStream ois = null;
 	private volatile Grid g = null;
+	private volatile boolean isPlaying = false;
+	public boolean getIsPlaying() {
+		return isPlaying;
+	}
+	
 	public Grid getGrid() {
 		return g;
 	}
@@ -54,21 +59,34 @@ public class ClientConnection extends Thread {
 	public void run() {
 		boolean doLoop = true;
 		try {
-			Object recvObj;
+			Object rcvObj;
 			while(doLoop) {
-				recvObj = ois.readObject();
-				if(recvObj != null) {
-					if(recvObj instanceof Grid) {
+				rcvObj = ois.readObject();
+				if(rcvObj != null) {
+					if(rcvObj instanceof Grid) {
 						System.out.println("Received Grid");
-						g = (Grid) recvObj;
+						g = (Grid) rcvObj;
 						System.out.println(g.getNumRows());
 						updateDisplays();
 					}
-					else if(recvObj instanceof Integer) {
+					else if(rcvObj instanceof Integer) {
 						System.out.println("Received Row to Calculate");
-						Integer rowToCalculate = (Integer) recvObj;
+						Integer rowToCalculate = (Integer) rcvObj;
 						//calculate iteration on the row
 						//send back next iteration
+					}
+					else if(rcvObj instanceof NetworkMessage) {
+						NetworkMessage nm = (NetworkMessage) rcvObj;
+						switch(nm) {
+							case PLAY:
+								System.out.println("Received PLAY");
+								isPlaying = true;
+								break;
+							case PAUSE:
+								System.out.println("Received PAUSE");
+								isPlaying = false;
+								break;
+						}
 					}
 
 					//send(recvObj);//TODO: perhaps make this a send on another thread

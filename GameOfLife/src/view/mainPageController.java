@@ -228,23 +228,24 @@ public class mainPageController implements UICallback {
                         @Override
                         public void handle(Event event)
                         {
-                            if (!gridClickedOn)
+                        	String xy = recta.getId();
+                            int x = Integer.valueOf(xy.split(",")[0]);
+                            int y = Integer.valueOf(xy.split(",")[1]);
+                            if (!connection.getIsPlaying())
                             {
                                 gridClickedOn = true;
                                 setStatusLabel("The Game has started!", "green");
                                 if (recta.getFill().equals(Color.BLACK))
                                 {
                                     recta.setFill(Color.WHITE);
+                                    connection.changeCellState(x, y, 0);
                                 }
                                 else
                                 {
                                     recta.setFill(Color.BLACK);
+                                    connection.changeCellState(x, y, 1);
                                 }
                             }
-                            String xy = recta.getId();
-                            int x = Integer.valueOf(xy.split(",")[0]);
-                            int y = Integer.valueOf(xy.split(",")[1]);
-                            connection.changeCellState(x, y, (recta.getFill() == Color.BLACK) ? 1 : 0);
                         }
                     });
                     recta.setFill(Color.WHITE);
@@ -275,6 +276,30 @@ public class mainPageController implements UICallback {
                 }
             }
         }
+        
+        for (Integer i = 0; i < gridSize; i++)
+        {
+            for (Integer j = 0; j < gridSize; j++)
+            {
+            	final int row = i;
+            	final int col = j;
+            	Platform.runLater(new Runnable()
+                {
+                    @Override
+                    public void run()
+                    {
+                    	/*Throws a NullPointerException right now because Grid.grid is null
+                    	Rectangle rectangle = (Rectangle) displayGrid.getChildren().get((row * gridSize) + col);
+                    	if(connection.getGrid().convertGridTo2DArray()[row][col].getCellState() == 1) {
+                    		rectangle.setFill(Color.BLACK);
+                    	}
+                    	*/
+                    }
+                });
+            	
+            }
+        }
+        
     }
     //private void iterateAndDisplayGrid
 }
