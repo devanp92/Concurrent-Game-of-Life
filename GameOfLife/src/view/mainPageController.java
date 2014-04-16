@@ -53,6 +53,7 @@ public class mainPageController implements UICallback {
     {
         try {
             connection = new ClientConnection(new Socket(serverIpAddress.getText(), Server.port));
+            connection.setDaemon(true);
             connection.subscribe(this);
             connection.start();
             if(connection != null)
