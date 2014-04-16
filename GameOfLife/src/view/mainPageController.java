@@ -221,16 +221,13 @@ public class mainPageController implements UICallback {
                 for (Integer j = 0; j < gridSize; j++)
                 {
                     final Rectangle recta = new Rectangle(20,20);
-                    final int xcord = i;
-                    final int ycord = j;
+                    final int xcord = j;
+                    final int ycord = i;
                     recta.setId(i.toString() + "," + j.toString());
                     recta.setOnMouseClicked(new EventHandler<Event>() {
                         @Override
                         public void handle(Event event)
                         {
-                        	String xy = recta.getId();
-                            int x = Integer.valueOf(xy.split(",")[0]);
-                            int y = Integer.valueOf(xy.split(",")[1]);
                             if (!connection.getIsPlaying())
                             {
                                 gridClickedOn = true;
@@ -238,12 +235,12 @@ public class mainPageController implements UICallback {
                                 if (recta.getFill().equals(Color.BLACK))
                                 {
                                     recta.setFill(Color.WHITE);
-                                    connection.changeCellState(x, y, 0);
+                                    connection.changeCellState(xcord, ycord, 0);
                                 }
                                 else
                                 {
                                     recta.setFill(Color.BLACK);
-                                    connection.changeCellState(x, y, 1);
+                                    connection.changeCellState(xcord, ycord, 1);
                                 }
                             }
                         }
