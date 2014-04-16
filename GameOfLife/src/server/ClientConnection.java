@@ -32,6 +32,7 @@ public class ClientConnection extends Thread {
 
     public void initializeGrid(int numRows) throws Exception {
         this.g = new Grid(numRows);
+        send(g);
     }
 
 	public ClientConnection(Socket s) {
@@ -85,14 +86,12 @@ public class ClientConnection extends Thread {
 								System.out.println("Received PAUSE");
 								isPlaying = false;
 								break;
-							case CLEAR:
+							case CLEAR://probably won't be used
 								break;
 							default:
 								break;
 						}
 					}
-
-					//send(recvObj);//TODO: perhaps make this a send on another thread
 				}
 				else {
 					doLoop = false;
@@ -150,7 +149,7 @@ public class ClientConnection extends Thread {
 		if(c != null) {
 			c.setCellState(state);
 		}
-		System.out.println("Sent cell (" + x + "," + y + ") " + ((state == 1) ? "alive":"dead") + " to server");
+		System.out.println("Sent cell " + c + " " + ((state == 1) ? "alive":"dead") + " to server");
 		send(c);
 	}
 	

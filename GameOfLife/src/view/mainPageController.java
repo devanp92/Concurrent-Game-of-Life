@@ -291,7 +291,9 @@ public class mainPageController implements UICallback {
                     	if(connection.getGrid().convertGridTo2DArray()[row][col].getCellState() == 1) {
                     		rectangle.setFill(Color.BLACK);
                     	}
-                    	
+                    	else {
+                    		rectangle.setFill(Color.WHITE);
+                    	}
                     }
                 });
             	

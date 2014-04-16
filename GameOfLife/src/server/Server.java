@@ -32,7 +32,7 @@ public class Server implements Runnable {
 	volatile CyclicBarrier barrier;
 
 	private Grid game;
-	private volatile boolean isPlaying = false;
+	private volatile boolean isPlaying = false;//TODO: this is a bad primitive: ex rcvGame, then rcvPLAY
 	private Thread playThread = new Thread();
 	
 	/**A mapping between a connection and what component it is currently calculating*/
@@ -129,7 +129,7 @@ public class Server implements Runnable {
 						while(!connectionCalculating.isEmpty()) {
 							resendRemainingPartialComponents();
 						}
-						System.out.println("After barrier.await(): " + barrier);
+						System.out.println("After barrier.await()");
 						mergeData();
 						sendGameToAll();
 						Thread.sleep(1000);//TODO: use appropriate timeout if necessary 
@@ -224,7 +224,7 @@ public class Server implements Runnable {
 						if(!isPlaying) {
 							//pause();
 							Cell c = (Cell) o;
-							System.out.println("Received Cell " + c);
+							System.out.println("Received Cell " + c + " " + ((c.getCellState() == 1) ? "alive":"dead"));
 							game.getCell(c.y, c.x).setCellState(c.getCellState());
 	
 							/*if(c.isAlive == 1) {
