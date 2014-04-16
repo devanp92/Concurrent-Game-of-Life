@@ -22,18 +22,8 @@ public class NeighborFinder extends CoordinateCalculator {
     private int UP_CENTER_NEIGHBOR;
 
     private Cell cell;
-    private AtomicReference[] grid/* = Grid.getGrid()*/;
+    private AtomicReference[] grid;
 
-    /*
-    public NeighborFinder(Cell cell, int numRows) {
-        if(cell == null){
-            throw new NullPointerException("Cell is null");
-        }
-        this.cell = cell;
-        super.numRows = numRows;
-        initializeCellsNeighborPositions();
-    }
-    */
     public NeighborFinder(Grid grid, Cell cell) {
     	this.grid = grid.getGrid();
         if(cell == null){

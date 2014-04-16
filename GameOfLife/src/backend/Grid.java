@@ -11,7 +11,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class Grid extends CoordinateCalculator implements Serializable {
 
-    private /*static*/ AtomicReference[] grid;
+    private AtomicReference[] grid;
     private static final long serialVersionUID = 1L;
 
 
