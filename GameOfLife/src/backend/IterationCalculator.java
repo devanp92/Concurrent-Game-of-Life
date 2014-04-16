@@ -47,7 +47,6 @@ public class IterationCalculator {
         calculators = new Thread[numThreads];
         List<AtomicReference[]> listOfSubSets = findSubSetsOfCellsForThread(numThreads, grid.numRows * grid.numRows);
 
-        //RuleChecker ruleChecker = new RuleChecker();
         RuleChecker ruleChecker = new RuleChecker(grid);
         for (int i = 0; i < numThreads; i++) {
             AtomicReference[] cells = listOfSubSets.get(i);
