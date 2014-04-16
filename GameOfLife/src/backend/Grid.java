@@ -11,7 +11,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class Grid extends CoordinateCalculator implements Serializable {
 
-    private static AtomicReference[] grid;
+    private /*static*/ AtomicReference[] grid;
     private static final long serialVersionUID = 1L;
 
 
@@ -20,7 +20,7 @@ public class Grid extends CoordinateCalculator implements Serializable {
             throw new IllegalArgumentException("numRows is out of bounds");
         }
         this.numRows = numRows;
-        Grid.grid = initializeGrid(numRows);
+        /*Grid.*/grid = initializeGrid(numRows);
         super.numRows = numRows;
     }
 
@@ -110,7 +110,8 @@ public class Grid extends CoordinateCalculator implements Serializable {
         return Arrays.copyOfRange(grid, start, end);
     }
 
-    public static AtomicReference[] getGrid() {
+    public /*static*/ AtomicReference[] getGrid() {
         return grid;
     }
+    
 }

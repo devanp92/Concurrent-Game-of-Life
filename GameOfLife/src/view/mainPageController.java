@@ -288,12 +288,12 @@ public class mainPageController implements UICallback {
                     @Override
                     public void run()
                     {
-                    	/*Throws a NullPointerException right now because Grid.grid is null
+                    	//Throws a NullPointerException right now because Grid.grid is null
                     	Rectangle rectangle = (Rectangle) displayGrid.getChildren().get((row * gridSize) + col);
                     	if(connection.getGrid().convertGridTo2DArray()[row][col].getCellState() == 1) {
                     		rectangle.setFill(Color.BLACK);
                     	}
-                    	*/
+                    	
                     }
                 });
             	

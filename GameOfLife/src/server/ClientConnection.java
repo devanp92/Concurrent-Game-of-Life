@@ -64,9 +64,8 @@ public class ClientConnection extends Thread {
 				rcvObj = ois.readObject();
 				if(rcvObj != null) {
 					if(rcvObj instanceof Grid) {
-						System.out.println("Received Grid");
 						g = (Grid) rcvObj;
-						System.out.println(g.getNumRows());
+						System.out.println("Received Grid. Size: " + g.getNumRows());
 						updateDisplays();
 					}
 					else if(rcvObj instanceof Integer) {
@@ -85,6 +84,10 @@ public class ClientConnection extends Thread {
 							case PAUSE:
 								System.out.println("Received PAUSE");
 								isPlaying = false;
+								break;
+							case CLEAR:
+								break;
+							default:
 								break;
 						}
 					}
