@@ -66,8 +66,14 @@ public class ClientConnection extends Thread {
 				if(rcvObj != null) {
 					if(rcvObj instanceof Grid) {
 						g = (Grid) rcvObj;
-						System.out.println("Received Grid. Size: " + g.getNumRows());
+						System.out.println("Received Cell Size: " + g.getNumRows());
 						updateDisplays();
+					}
+					else if(rcvObj instanceof Cell) {
+						Cell c = (Cell) rcvObj;
+						g.setCell(g.convert2DCoordinateTo1D(c.x, c.y), c);//TODO: ensure that this works: Check with Devan about the exceptions thrown
+						System.out.println("Received Cell " + c + " " + ((c.getCellState() == 1) ? "alive":"dead"));
+						updateCell(c);
 					}
 					else if(rcvObj instanceof Integer) {
 						System.out.println("Received Row to Calculate");
@@ -135,6 +141,11 @@ public class ClientConnection extends Thread {
 	public void updateDisplays() {
 		for(UICallback uic : subscribedUI) {
 			uic.updateGame();
+		}
+	}
+	public void updateCell(Cell c) {
+		for(UICallback uic : subscribedUI) {
+			uic.updateCell(c);
 		}
 	}
 	

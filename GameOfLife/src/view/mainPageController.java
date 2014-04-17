@@ -23,6 +23,8 @@ import java.net.URL;
 import java.util.Map;
 import java.util.ResourceBundle;
 
+import backend.Cell;
+
 
 /**
  * Created by Daniel on 4/5/2014.
@@ -128,7 +130,7 @@ public class mainPageController implements UICallback {
         System.out.println(displayGrid.getChildren().size());
     }
 
-    private void initializeBoard(int size)
+    private void initializeBoard(int size)//TODO: I think this might need to be removed. Or at least should use the Platform.runLater() pattern
     {
         statusLabel.setVisible(false);
         for(Integer i = 0; i < size; i++)
@@ -286,7 +288,6 @@ public class mainPageController implements UICallback {
                     @Override
                     public void run()
                     {
-                    	//Throws a NullPointerException right now because Grid.grid is null
                     	Rectangle rectangle = (Rectangle) displayGrid.getChildren().get((row * gridSize) + col);
                     	if(connection.getGrid().convertGridTo2DArray()[row][col].getCellState() == 1) {
                     		rectangle.setFill(Color.BLACK);
@@ -302,4 +303,21 @@ public class mainPageController implements UICallback {
         
     }
     //private void iterateAndDisplayGrid
+    
+    @Override
+    public void updateCell(Cell c) {
+    	final int row = c.y;
+    	final int col = c.x;
+    	final int cellState = c.getCellState();
+    	Platform.runLater(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+            	//Throws a NullPointerException right now because Grid.grid is null
+            	Rectangle rectangle = (Rectangle) displayGrid.getChildren().get((row * gridSize) + col);
+            	rectangle.setFill((cellState == 1) ? Color.BLACK:Color.WHITE);
+            }
+        });
+    }
 }

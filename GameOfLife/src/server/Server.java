@@ -164,8 +164,24 @@ public class Server implements Runnable {
 	}
 	
 	public void sendGameToAll() {
+		sendGameToAll(null);
+	}
+	private void sendGameToAll(Connection exception) {
 		for(Connection c : clients) {
-			c.send(game);
+			if(c != exception) {
+				c.send(game);
+			}
+		}
+	}
+	
+	public void sendCellToAll(Cell cell) {
+		sendCellToAll(cell, null);
+	}
+	private void sendCellToAll(Cell cell, Connection exception) {
+		for(Connection c : clients) {
+			if(c != exception) {
+				c.send(cell);
+			}
 		}
 	}
 
@@ -233,14 +249,15 @@ public class Server implements Runnable {
 								else if(c.isAlive == 0) {
 									game.remove(c);
 								}*/
-							sendGameToAll();
+							//sendGameToAll();
+							sendCellToAll(c, this);
 						}
 					}
 					else if(o instanceof Grid) {
 						if(!isPlaying) {
 							//pause();
 							game = (Grid) o;
-							sendGameToAll();
+							sendGameToAll(this);
 						}
 					}
 					else if(o instanceof ArrayList<?>) {
