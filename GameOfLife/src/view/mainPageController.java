@@ -48,7 +48,7 @@ public class mainPageController implements UICallback {
     private boolean connectionStarted = false;
     private int gridSize = 0;
     private boolean gridClickedOn = false;
-    private boolean gridInitialized = false;
+    //private boolean gridInitialized = false;
     private String serverIP = "";
 
     public void startConnection(ActionEvent actionEvent)
@@ -206,103 +206,106 @@ public class mainPageController implements UICallback {
     }
 
     @Override
+    /*update gama is called when the server sends a new "grid" to the user, init connect, resize, during play(iteration action process)*/
     public void updateGame()
     {
         System.out.println("updateGame called, GridSize: " + connection.getGrid().getNumRows());
-        if(connection.getGrid().getNumRows() != gridSize && !gridInitialized)
+        //if the size of the client is not the same as the size in the server the board will readjust
+        if(connection.getGrid().getNumRows() != gridSize)
         {
-            displayGrid.getChildren().removeAll(displayGrid.getChildren());
-            gridSize = connection.getGrid().getNumRows();
-            gridInitialized = true;
-            /*TODO: check if old gridSize is equivalent to connection.getGrid().getNumRows()
-    	    if not: recall intializeGrid with connection.getGrid().getNumRows()
-    		set gridSize to connection.getGrid().getNumRows(): then no other changes are necessary to the following code*/
-            for (Integer i = 0; i < gridSize; i++)
+            Platform.runLater(new Runnable()
             {
-                for (Integer j = 0; j < gridSize; j++)
+                @Override
+                public void run()
                 {
-                    final Rectangle recta = new Rectangle(20,20);
-                    final int xcord = j;
-                    final int ycord = i;
-                    recta.setId(i.toString() + "," + j.toString());
-                    recta.setOnMouseClicked(new EventHandler<Event>() {
-                        @Override
-                        public void handle(Event event)
-                        {
-                            if (!connection.getIsPlaying())
-                            {
-                                gridClickedOn = true;
-                                setStatusLabel("The Game has started!", "green");
-                                if (recta.getFill().equals(Color.BLACK))
-                                {
-                                    recta.setFill(Color.WHITE);
-                                    connection.changeCellState(xcord, ycord, 0);
-                                }
-                                else
-                                {
-                                    recta.setFill(Color.BLACK);
-                                    connection.changeCellState(xcord, ycord, 1);
-                                }
-                            }
-                        }
-                    });
-                    recta.setFill(Color.WHITE);
-                    /*
-                        This call and everything inside it will update the FX thread still need some tweaking to do.
-                     */
-                    Platform.runLater(new Runnable()
+                    displayGrid.getChildren().removeAll(displayGrid.getChildren());
+                    gridSize=connection.getGrid().getNumRows();
+                    /*TODO: check if old gridSize is equivalent to connection.getGrid().getNumRows()
+                    if not: recall initializeGrid with connection.getGrid().getNumRows()
+                    set gridSize to connection.getGrid().getNumRows(): then no other changes are necessary to the following code*/
+                    for(Integer i = 0; i < gridSize; i++)
                     {
-                        @Override
-                        public void run()
+                        for (Integer j = 0; j < gridSize; j++)
                         {
-                            displayGrid.add(recta,xcord,ycord);
-                            /*if (connection.getGrid().convertGridTo2DArray()[xcord][ycord].getCellState() == 0)
+                            final Rectangle recta = new Rectangle(20, 20);
+                            final int xcord = j;
+                            final int ycord = i;
+                            recta.setId(i.toString() + "," + j.toString());
+                            recta.setOnMouseClicked(new EventHandler<Event>()
                             {
-                                Rectangle rectangle = (Rectangle) displayGrid.getChildren().get((xcord * gridSize) + ycord);
-                                rectangle.setFill(Color.WHITE);
-                            }
-                            else
+                                @Override
+                                public void handle(Event event)
+                                {
+                                    if (!connection.getIsPlaying())
+                                    {
+                                        gridClickedOn = true;
+                                        setStatusLabel("The Game has started!", "green");
+                                        if (recta.getFill().equals(Color.BLACK))
+                                        {
+                                            recta.setFill(Color.WHITE);
+                                            connection.changeCellState(xcord, ycord, 0);
+                                        }
+                                        else
+                                        {
+                                            recta.setFill(Color.BLACK);
+                                            connection.changeCellState(xcord, ycord, 1);
+                                        }
+                                    }
+                                }
+                            });
+                            recta.setFill(Color.WHITE);
+                        /*
+                            This call and everything inside it will update the FX thread still need some tweaking to do.
+                         */
+                            Platform.runLater(new Runnable()
                             {
-                                Rectangle rectangle = (Rectangle) displayGrid.getChildren().get((xcord * gridSize) + ycord);
-                                rectangle.setFill(Color.BLACK);
-                            }*/
-                            displayGrid.setVisible(true);
-                            displayGrid.setMaxHeight(gridSize*20);
-                            displayGrid.setMaxWidth(gridSize*20);
+                               @Override
+                                public void run()
+                               {
+                                    displayGrid.add(recta, xcord, ycord);
+                                    displayGrid.setVisible(true);
+                                    displayGrid.setMaxHeight(gridSize * 20);
+                                    displayGrid.setMaxWidth(gridSize * 20);
+                                }
+                            });
                         }
-                    });
+                    }
                 }
-            }
+            });
+            //after changing the dimension of the grid color the grid
+            colorDisplayGrid();
         }
-        
+        else
+        {
+            colorDisplayGrid();
+        }
+    }
+    private void colorDisplayGrid()
+    {
+        //Will color the board respectively to the states of the cells
         for (Integer i = 0; i < gridSize; i++)
         {
             for (Integer j = 0; j < gridSize; j++)
             {
-            	final int row = i;
-            	final int col = j;
-            	Platform.runLater(new Runnable()
+                final int row = i;
+                final int col = j;
+                Platform.runLater(new Runnable()
                 {
                     @Override
                     public void run()
                     {
-                    	Rectangle rectangle = (Rectangle) displayGrid.getChildren().get((row * gridSize) + col);
-                    	if(connection.getGrid().convertGridTo2DArray()[row][col].getCellState() == 1) {
-                    		rectangle.setFill(Color.BLACK);
-                    	}
-                    	else {
-                    		rectangle.setFill(Color.WHITE);
-                    	}
+                        Rectangle rectangle = (Rectangle) displayGrid.getChildren().get((row * gridSize) + col);
+                        rectangle.setFill((connection.getGrid().convertGridTo2DArray()[row][col].getCellState() == 1)? Color.BLACK : Color.WHITE );
                     }
                 });
-            	
             }
         }
-        
     }
+
     //private void iterateAndDisplayGrid
     
     @Override
+    /*update cell is called when another client changes the state of a cell and updates the board in each of the other clients*/
     public void updateCell(Cell c) {
     	final int row = c.y;
     	final int col = c.x;
