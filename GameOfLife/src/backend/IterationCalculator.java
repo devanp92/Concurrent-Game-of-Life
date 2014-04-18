@@ -2,6 +2,7 @@ package backend;
 
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -31,22 +32,23 @@ public class IterationCalculator {
     }
 
     private Cell[][] joinThreads() throws InterruptedException {
-        for(Thread calculator: calculators){
+        for (Thread calculator : calculators) {
             calculator.join();
         }
         return newGridToSet.convertGridTo2DArray();
     }
 
-    private void startThreads(){
-        for(Thread calculator : calculators){
-             calculator.start();
+    private void startThreads() {
+        for (Thread calculator : calculators) {
+            calculator.start();
         }
     }
 
     public void initializeCalculators() throws RuntimeException, InterruptedException {
         int numThreads = numThreads();
         calculators = new Thread[numThreads];
-        List<AtomicReference[]> listOfSubSets = findSubSetsOfCellsForThread(numThreads);
+        int numCellsPerThread = grid.numRows * grid.numRows / numThreads;
+        List<AtomicReference[]> listOfSubSets = findSubSetsOfCellsForThread(numCellsPerThread);
 
         RuleChecker ruleChecker = new RuleChecker(grid);
         for (int i = 0; i < numThreads; i++) {
@@ -56,17 +58,49 @@ public class IterationCalculator {
         }
     }
 
-    public List<AtomicReference[]> findSubSetsOfCellsForThread(int numCellsPerThread) {
-        int numCells = grid.numRows * grid.numRows;
+    /**
+     * Finds subsets of cells from grid depending on how many cells per set
+     *
+     * @param numThreads How many cells you want per array
+     * @return List of arrays that contains an array of cells
+     */
+    public List<AtomicReference[]> findSubSetsOfCellsForThread(int numThreads) {
+//        int numCells = grid.numRows * grid.numRows;
+//        for (int i = 0; i < numCells; i += numThreads) {
+//            AtomicReference[] subSet = grid.getSubSetOfGrid(i, Math.min(numCells, i + numThreads));
+//            list.add(subSet);
+//        }
         List<AtomicReference[]> list = new ArrayList<>();
-        for (int i = 0; i < numCells; i += numCellsPerThread) {
-            AtomicReference[] subSet = grid.getSubSetOfGrid(i, Math.min(numCells, i + numCellsPerThread));
+        for (int i = 0; i < Math.pow(grid.numRows, 2); i += numThreads) {
+            int a = (int) (i + Math.min(numThreads, Math.pow(grid.numRows, 2) - i));
+            AtomicReference[] subSet = grid.getSubSetOfGrid(i, a);
             list.add(subSet);
-        }
-        return list;
-    }
 
-    private int numThreads() throws RuntimeException {
+        }
+
+        if (list.size() > numThreads) {
+            List<AtomicReference> l = Arrays.asList(list.get(numThreads));
+            ArrayList<AtomicReference> atomicReferences = new ArrayList<>(l);
+            for (int i = numThreads + 1; i < list.size(); i++) {
+                for (int j = 0; j < list.get(i).length; j++) {
+                    atomicReferences.add(list.get(i)[j]);
+                }
+                list.remove(i);
+            }
+        }
+
+        return list;
+
+
+    }
+    /*
+    for (int i = 0; i < originalList.size(); i += partitionSize) {
+    partitions.add(originalList.subList(i,
+            i + Math.min(partitionSize, originalList.size() - i)));
+}
+     */
+
+    public int numThreads() throws RuntimeException {
         int cores = Runtime.getRuntime().availableProcessors();
         if (cores < 1) {
             throw new RuntimeException("Number of processors is less than 1");
