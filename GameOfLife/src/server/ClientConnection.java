@@ -34,7 +34,7 @@ public class ClientConnection extends Thread {
 
     public void initializeGrid(int numRows) throws Exception {
         this.g = new Grid(numRows);
-        send(g);
+        send(g);//TODO: do we want this behavior
     }
 
 	public ClientConnection(Socket s) {
@@ -48,7 +48,7 @@ public class ClientConnection extends Thread {
 		}
 	}
 	
-	private void send(Object o) {
+	private synchronized void send(Object o) {
 		try {
 			oos.writeObject(o);
 			oos.reset();
