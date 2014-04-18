@@ -46,7 +46,7 @@ public class IterationCalculator {
     public void initializeCalculators() throws RuntimeException, InterruptedException {
         int numThreads = numThreads();
         calculators = new Thread[numThreads];
-        List<AtomicReference[]> listOfSubSets = findSubSetsOfCellsForThread(numThreads, grid.numRows * grid.numRows);
+        List<AtomicReference[]> listOfSubSets = findSubSetsOfCellsForThread(numThreads);
 
         RuleChecker ruleChecker = new RuleChecker(grid);
         for (int i = 0; i < numThreads; i++) {
@@ -56,7 +56,8 @@ public class IterationCalculator {
         }
     }
 
-    public List<AtomicReference[]> findSubSetsOfCellsForThread(int numThreads, int numCells) {
+    public List<AtomicReference[]> findSubSetsOfCellsForThread(int numThreads) {
+        int numCells = grid.numRows * grid.numRows;
         List<AtomicReference[]> list = new ArrayList<>();
         for (int i = 0; i < numCells; i += numThreads) {
             AtomicReference[] subSet = grid.getSubSetOfGrid(i, Math.min(numCells, i + numThreads));
