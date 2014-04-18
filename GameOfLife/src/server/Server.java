@@ -32,7 +32,6 @@ public class Server implements Runnable {
 	volatile CyclicBarrier barrier;
 
 	private Grid game;
-	private volatile boolean isPlaying = false;//TODO: this is a bad primitive: ex rcvGame, then rcvPLAY
 	private Thread playThread = new Thread();
 	
 	/**A mapping between a connection and what component it is currently calculating*/
@@ -65,17 +64,17 @@ public class Server implements Runnable {
 			System.exit(-1);
 		}
 
-		while(listening) {
-			try {
+		try {
+			while(!Thread.currentThread().isInterrupted()) {
 				Connection c = new Connection(serverSocket.accept());
 				clients.add(c);
 				c.start();
 				c.send(game);
 				System.out.println("Client Connected");
 			}
-			catch(IOException e) {
-				e.printStackTrace();
-			}
+		}
+		catch(IOException e) {
+			//e.printStackTrace();
 		}
 
 		try {
@@ -109,7 +108,6 @@ public class Server implements Runnable {
 			}
 			
 			public void run() {
-				isPlaying = true;
 				try {
 					while(!Thread.interrupted()) {
 						Collection<Connection> clientCopy;
@@ -142,7 +140,6 @@ public class Server implements Runnable {
 				catch(BrokenBarrierException e) {
 					e.printStackTrace();
 				}
-				isPlaying = false;
 			}
 		};
 		playThread = new Thread(r);
@@ -237,24 +234,17 @@ public class Server implements Runnable {
 						}
 					}
 					else if(o instanceof Cell) {
-						if(!isPlaying) {
+						if(!playThread.isAlive()) {
 							//pause();
 							Cell c = (Cell) o;
 							System.out.println("Received Cell " + c + " " + ((c.getCellState() == 1) ? "alive":"dead"));
 							game.getCell(c.y, c.x).setCellState(c.getCellState());
 	
-							/*if(c.isAlive == 1) {
-									game.insert(c);
-								}
-								else if(c.isAlive == 0) {
-									game.remove(c);
-								}*/
-							//sendGameToAll();
 							sendCellToAll(c, this);
 						}
 					}
 					else if(o instanceof Grid) {
-						if(!isPlaying) {
+						if(!playThread.isAlive()) {
 							//pause();
 							game = (Grid) o;
 							sendGameToAll(this);
@@ -267,11 +257,8 @@ public class Server implements Runnable {
 						partialComponents.put(item, partialComponent);
 						passBarrier();
 					}
-					else if(o instanceof QuadTreeElement) {//TODO: move this to instanceof Grid
-						passBarrier();
-						//QuadTree qTree = (QuadTree) o;
-							//partialComponents.add(qTree);
-					}
+					
+					
 				}
 			}
 			catch(ClassNotFoundException e) {
@@ -280,8 +267,9 @@ public class Server implements Runnable {
 			catch(IOException e) {
 				//e.printStackTrace();
 			} catch (Exception e) {
-				e.printStackTrace();
+				e.printStackTrace();//TODO: comment this out
 			} finally {
+				clients.remove(this);
 				if(ois != null) {
 					try {
 						ois.close();
@@ -306,7 +294,6 @@ public class Server implements Runnable {
 						e.printStackTrace();
 					}
 				}
-				clients.remove(this);
 				//if the current thread should await on the barrier, pass it
 				if(connectionCalculating.containsKey(this)) {
 					passBarrier();

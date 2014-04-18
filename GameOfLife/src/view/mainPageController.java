@@ -195,7 +195,6 @@ public class mainPageController implements UICallback {
         pauseGameButton.setVisible(false);
         resumeGameButton.setVisible(true);
         connection.pause();
-        System.out.println("pause functionality needs to be implemented");
     }
 
     public void resumeGame(ActionEvent event)
@@ -204,7 +203,6 @@ public class mainPageController implements UICallback {
         pauseGameButton.setVisible(true);
         setStatusLabel("The game has resumed", "green");
         connection.play();
-        System.out.println("resume functionality needs to be implemented");
     }
 
     @Override
