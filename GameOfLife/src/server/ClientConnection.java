@@ -72,7 +72,7 @@ public class ClientConnection extends Thread {
 					}
 					else if(rcvObj instanceof Cell) {
 						Cell c = (Cell) rcvObj;
-						g.setCell(g.convert2DCoordinateTo1D(c.x, c.y), c);//TODO: ensure that this works: Check with Devan about the exceptions thrown
+						g.setCell(c);
 						System.out.println("Received Cell " + c + " " + ((c.getCellState() == 1) ? "alive":"dead"));
 						updateCell(c);
 					}

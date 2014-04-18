@@ -49,7 +49,7 @@ public class GridTest {
     @Test
     public void testSetCell() throws Exception {
         Cell cell = new Cell(0,1);
-        grid.setCell(1, cell);
+        grid.setCell(cell);
         Cell newCell = grid.getCell(1);
         assertEquals(cell, newCell);
     }
