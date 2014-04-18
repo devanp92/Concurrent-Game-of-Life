@@ -13,6 +13,7 @@ public class IterationCalculator {
 
     private Grid grid;
     private Grid newGridToSet;
+
     private Thread[] calculators;
 
     public IterationCalculator(Grid grid) throws Exception {
@@ -23,13 +24,13 @@ public class IterationCalculator {
         this.newGridToSet = new Grid(grid.getNumRows());
     }
 
-
     public Cell[][] calculateNewIteration() throws Exception {
         initializeCalculators();
         startThreads();
         newGridToSet.setGrid(joinThreads());
         return joinThreads();
     }
+
 
     private Cell[][] joinThreads() throws InterruptedException {
         for (Thread calculator : calculators) {
@@ -93,12 +94,6 @@ public class IterationCalculator {
 
 
     }
-    /*
-    for (int i = 0; i < originalList.size(); i += partitionSize) {
-    partitions.add(originalList.subList(i,
-            i + Math.min(partitionSize, originalList.size() - i)));
-}
-     */
 
     public int numThreads() throws RuntimeException {
         int cores = Runtime.getRuntime().availableProcessors();
@@ -106,6 +101,16 @@ public class IterationCalculator {
             throw new RuntimeException("Number of processors is less than 1");
         }
         return cores;
+    }
+
+    /*
+    for (int i = 0; i < originalList.size(); i += partitionSize) {
+    partitions.add(originalList.subList(i,
+            i + Math.min(partitionSize, originalList.size() - i)));
+}
+     */
+    public Thread[] getCalculators() {
+        return calculators;
     }
 
     private class Calculator implements Runnable {
