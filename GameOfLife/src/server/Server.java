@@ -28,8 +28,7 @@ public class Server implements Runnable {
 	public static final int port = 44445;
 
 	private ServerSocket serverSocket = null;
-	private volatile ArrayList<Connection> clients = new ArrayList<Connection>();
-	boolean listening = true;
+	private ArrayList<Connection> clients = new ArrayList<Connection>();
 	
 	/**Barrier to have merging thread await until all calculating clients have sent back a partialComponent*/
 	volatile CyclicBarrier barrier;
@@ -189,8 +188,26 @@ public class Server implements Runnable {
 	}
 	
 	public void mergeData() {
-		//TODO
-		partialComponents.clear();
+		Grid tempGrid = null;
+		try {
+			tempGrid = new Grid(game.getNumRows());
+		}
+		catch(Exception e) {
+			e.printStackTrace();//TODO: remove
+		}
+		
+		Collection<AtomicReference[]> components = null;
+		//Note: connectionCalculating acts as a lock on itself and partialComponents
+		synchronized(connectionCalculating) {
+			components = Collections.unmodifiableCollection(partialComponents.values());
+			partialComponents.clear();
+		}
+		for(AtomicReference[] ar : components) {
+			for(Object o : ar) {
+				Cell c = (Cell) o;
+				tempGrid.setCell(c);
+			}
+		}
 	}
 	
 	public void sendGameToAll() {
