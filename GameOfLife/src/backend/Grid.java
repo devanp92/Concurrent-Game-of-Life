@@ -61,6 +61,10 @@ public class Grid extends CoordinateCalculator implements Serializable {
         return numRows;
     }
 
+    public void setCell(Cell cell){
+        grid[convert2DCoordinateTo1D(cell.x, cell.y)] = new AtomicReference(cell);
+    }
+
     public void setCell(int index, Cell cell) {
         if (index < 0 || index >= Math.pow(numRows, 2)) {
             throw new IllegalArgumentException("Index is either below 0 or higher than number of cells");
