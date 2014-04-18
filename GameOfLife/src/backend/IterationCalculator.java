@@ -23,20 +23,21 @@ public class IterationCalculator {
     }
 
 
-    public void calculateNewIteration() throws Exception {
+    public Cell[][] calculateNewIteration() throws Exception {
         initializeCalculators();
         startThreads();
         grid.setGrid(joinThreads());
+        return joinThreads();
     }
 
-    public Cell[][] joinThreads() throws InterruptedException {
+    private Cell[][] joinThreads() throws InterruptedException {
         for(Thread calculator: calculators){
             calculator.join();
         }
         return grid.convertGridTo2DArray();
     }
 
-    public void startThreads(){
+    private void startThreads(){
         for(Thread calculator : calculators){
              calculator.start();
         }
