@@ -80,19 +80,26 @@ public class IterationCalculator {
         }
 
         if (list.size() > numThreads) {
-            List<AtomicReference> l = Arrays.asList(list.get(numThreads));
+            List<AtomicReference> l = Arrays.asList(list.get(numThreads - 1));
             ArrayList<AtomicReference> atomicReferences = new ArrayList<>(l);
-            for (int i = numThreads + 1; i < list.size(); i++) {
+            for (int i = numThreads; i < list.size(); i++) {
                 for (int j = 0; j < list.get(i).length; j++) {
                     atomicReferences.add(list.get(i)[j]);
                 }
                 list.remove(i);
             }
+            list.remove(numThreads);
+            AtomicReference[] atomicReferences1 = new AtomicReference[atomicReferences.size()];
+            for (int i = 0; i < atomicReferences.size(); i++) {
+                atomicReferences1[i] = atomicReferences.get(i);
+            }
+            list.remove(numThreads - 1);
+            list.add(atomicReferences1);
+        } else if(list.size() < numThreads){
+            //TODO need to fix
         }
 
         return list;
-
-
     }
 
     public int numThreads() throws RuntimeException {
@@ -113,6 +120,7 @@ public class IterationCalculator {
         return calculators;
     }
 
+    //TODO make it extend thread and add method to return new cells
     private class Calculator implements Runnable {
         private AtomicReference[] cells;
         private RuleChecker ruleChecker;
