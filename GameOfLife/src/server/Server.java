@@ -102,16 +102,18 @@ public class Server implements Runnable {
 				
 				HashMap<Connection, Integer> newConnectionCalculating = new HashMap<Connection, Integer>();
 				int i = 0;
-				for(Connection c : connectionCalculating.keySet()) {
-					newConnectionCalculating.put(clientCopy.get(i), connectionCalculating.get(c));
-					i++;
+				synchronized(connectionCalculating) {
+					for(Connection c : connectionCalculating.keySet()) {
+						newConnectionCalculating.put(clientCopy.get(i), connectionCalculating.get(c));
+						i++;
+					}
+					connectionCalculating = newConnectionCalculating;
+					for(Connection c : connectionCalculating.keySet()) {
+						c.send(connectionCalculating.get(c));
+					}
+					System.out.println(game.getNumRows());
+					barrier = new CyclicBarrier(connectionCalculating.size() + 1);
 				}
-				connectionCalculating = newConnectionCalculating;
-				for(Connection c : connectionCalculating.keySet()) {
-					c.send(connectionCalculating.get(c));
-				}
-				System.out.println(game.getNumRows());
-				barrier = new CyclicBarrier(connectionCalculating.size() + 1);
 			}
 			
 			public void run() {
@@ -125,27 +127,29 @@ public class Server implements Runnable {
 						try {
 							ic = new IterationCalculator(game);
 							List<AtomicReference[]> cellList = ic.findSubSetsOfCellsForThread(clientCopy.size());
-							for(int i = 0;i<clientCopy.size();i++) {
-								connectionCalculating.put(clientCopy.get(i), new Integer(i));
-								partialComponents.put(new Integer(i), cellList.get(i));
+							synchronized(connectionCalculating) {
+								for(int i = 0;i<clientCopy.size();i++) {
+									connectionCalculating.put(clientCopy.get(i), new Integer(i));
+									partialComponents.put(new Integer(i), cellList.get(i));
+								}
 							}
 						}
 						catch(Exception e) {
 							//TODO: maybe?
 						}
 						
-						//TODO: initialize partialComponents
-						//TODO: initialize connectionCalculating
-						barrier = new CyclicBarrier(connectionCalculating.size() + 1);
-						
-						for(Connection c : connectionCalculating.keySet()) {
-							c.send(partialComponents.get(connectionCalculating.get(c)));
-						}
-						
-						barrier.await();
+						synchronized(connectionCalculating) {
+							barrier = new CyclicBarrier(connectionCalculating.size() + 1);
 
-						while(!connectionCalculating.isEmpty()) {
-							resendRemainingPartialComponents();
+							for(Connection c : connectionCalculating.keySet()) {
+								c.send(partialComponents.get(connectionCalculating.get(c)));
+							}
+
+							barrier.await();
+
+							while(!connectionCalculating.isEmpty()) {
+								resendRemainingPartialComponents();
+							}
 						}
 						System.out.println("After barrier.await()");
 						mergeData();
@@ -281,8 +285,10 @@ public class Server implements Runnable {
 					else if(o instanceof AtomicReference[]) {
 						pause();
 						AtomicReference[] partialComponent = (AtomicReference[]) o;//TODO: reflection?
-						Integer item = connectionCalculating.get(this);
-						partialComponents.put(item, partialComponent);
+						synchronized(connectionCalculating) {
+							Integer item = connectionCalculating.get(this);
+							partialComponents.put(item, partialComponent);
+						}
 						passBarrier();
 					}
 					
@@ -325,8 +331,10 @@ public class Server implements Runnable {
 					}
 				}
 				//if the current thread should await on the barrier, pass it
-				if(connectionCalculating.containsKey(this)) {
-					passBarrier();
+				synchronized(connectionCalculating) {
+					if(connectionCalculating.containsKey(this)) {
+						passBarrier();
+					}
 				}
 			}
 		}
