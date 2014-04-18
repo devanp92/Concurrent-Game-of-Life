@@ -25,7 +25,7 @@ public class startGame extends Application{
         Parent root = FXMLLoader.load(getClass().getResource("mainPage.fxml"));
         //root.getStylesheets().add("sample/myStyle.css");
         primaryStage.setTitle("Game of Life");
-        primaryStage.setScene(new Scene(root, 800, 800));
+        primaryStage.setScene(new Scene(root, 550, 550));
         primaryStage.show();
     }
 }

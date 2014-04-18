@@ -4,7 +4,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane maxHeight="800" maxWidth="600" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800" prefWidth="600" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.mainPageController">
+<BorderPane maxHeight="550" maxWidth="550" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400" prefWidth="550" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.mainPageController">
     <padding>
         <Insets top="20.0"/>
     </padding>
