@@ -9,6 +9,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import backend.Cell;
 import backend.Grid;
+import backend.IterationCalculator;
 
 public class ClientConnection extends Thread {
 	private Socket s = null;
@@ -76,8 +77,14 @@ public class ClientConnection extends Thread {
 						System.out.println("Received Cell " + c + " " + ((c.getCellState() == 1) ? "alive":"dead"));
 						updateCell(c);
 					}
-					else if(rcvObj instanceof AtomicReference[]) {
-						AtomicReference[] list = (AtomicReference[]) rcvObj;
+					else if(rcvObj instanceof Thread) {
+						//AtomicReference[] list = (AtomicReference[]) rcvObj;
+						Thread t = (Thread) rcvObj;
+						t.start();
+						//TODO: receive a Calculator extends Thread: create ConnectionCallback method, 
+						//which the Calculator calls when it is done.
+						//set the callback for a function that sends back the AtomicReference[]
+						
 						//TODO: figure out how to calculate using this
 						//TODO: send back calculation to server
 					}

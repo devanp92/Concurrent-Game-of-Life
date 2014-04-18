@@ -40,9 +40,11 @@ public class Server implements Runnable {
 	//making it easier to reassign a component to another Connection if a Connection drops before returning
 	//its assignment
 	/**A mapping between a connection and what component it is currently calculating*/
-	private volatile HashMap<Connection, Integer> connectionCalculating = new HashMap<Connection, Integer>();
-	/**A mapping between a component of the Grid to be calculated and the nextIteration*/
-	private volatile HashMap<Integer, AtomicReference[]> partialComponents = new HashMap<Integer, AtomicReference[]>();
+	private HashMap<Connection, Integer> connectionCalculating = new HashMap<Connection, Integer>();
+	/**A mapping between a component of the Grid to be calculated and the calculator thread for the nextIteration*/
+	private HashMap<Integer, Thread> calculatorThreads = new HashMap<Integer, Thread>();
+	/**A mapping between a component of the Grid and the returned partial components*/
+	private HashMap<Integer, AtomicReference[]> partialComponents = new HashMap<Integer, AtomicReference[]>();
 	
     public Server(int numRows) throws Exception {
         game = new Grid(numRows);
@@ -111,7 +113,7 @@ public class Server implements Runnable {
 					//initialize barrier before resending components
 					barrier = new CyclicBarrier(connectionCalculating.size() + 1);
 					for(Connection c : connectionCalculating.keySet()) {
-						c.send(partialComponents.get(connectionCalculating.get(c)));
+						c.send(calculatorThreads.get(connectionCalculating.get(c)));
 					}
 					barrier.await();
 				}
@@ -127,11 +129,13 @@ public class Server implements Runnable {
 						IterationCalculator ic = null;
 						try {
 							ic = new IterationCalculator(game);
-							List<AtomicReference[]> cellList = ic.findSubSetsOfCellsForThread(clientCopy.size());
+							ic.initializeCalculators();
+							Thread[] threadList = ic.getCalculators();
+							
 							synchronized(connectionCalculating) {
 								for(int i = 0;i<clientCopy.size();i++) {
 									connectionCalculating.put(clientCopy.get(i), new Integer(i));
-									partialComponents.put(new Integer(i), cellList.get(i));
+									calculatorThreads.put(new Integer(i), threadList[i]);
 								}
 							}
 						}
@@ -142,7 +146,7 @@ public class Server implements Runnable {
 						synchronized(connectionCalculating) {
 							barrier = new CyclicBarrier(connectionCalculating.size() + 1);
 							for(Connection c : connectionCalculating.keySet()) {
-								c.send(partialComponents.get(connectionCalculating.get(c)));
+								c.send(calculatorThreads.get(connectionCalculating.get(c)));
 							}
 						}
 								
@@ -201,6 +205,7 @@ public class Server implements Runnable {
 		synchronized(connectionCalculating) {
 			components = Collections.unmodifiableCollection(partialComponents.values());
 			partialComponents.clear();
+			calculatorThreads.clear();
 		}
 		for(AtomicReference[] ar : components) {
 			for(Object o : ar) {
@@ -305,7 +310,7 @@ public class Server implements Runnable {
 						if(!playThread.isAlive()) {
 							//pause();
 							game = (Grid) o;
-							sendGameToAll(this);
+							sendGameToAll();
 						}
 					}
 					else if(o instanceof AtomicReference[]) {
