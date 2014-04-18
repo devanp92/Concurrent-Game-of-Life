@@ -33,7 +33,7 @@ public class Server implements Runnable {
 	/**Barrier to have merging thread await until all calculating clients have sent back a partialComponent*/
 	volatile CyclicBarrier barrier;
 
-	private Grid game;
+	private volatile Grid game;
 	private Thread playThread = new Thread();
 	
 	//Note: the next two are separated because it more easily separates a Connection from its list,

@@ -46,7 +46,7 @@ public class mainPageController implements UICallback {
     //Local variables
     ClientConnection connection = null;
     private boolean connectionStarted = false;
-    private int gridSize = 0;
+    private volatile int gridSize = 0;
     private boolean gridClickedOn = false;
     private boolean displayInitialized = false;
     //private boolean gridInitialized = false;
@@ -212,10 +212,21 @@ public class mainPageController implements UICallback {
     {
         System.out.println("updateGame called, GridSize: " + connection.getGrid().getNumRows());
         //if the size of the client is not the same as the size in the server the board will readjust
-        if((connection.getGrid().getNumRows() != gridSize) && !displayInitialized)
+        if((connection.getGrid().getNumRows() != gridSize)/* || !displayInitialized*/)
         {
                     displayInitialized = true;
-                    displayGrid.getChildren().removeAll(displayGrid.getChildren());
+                    //displayGrid.getChildren().removeAll(displayGrid.getChildren());
+                    
+                    Platform.runLater(new Runnable()
+                    {
+                    	@Override
+                    	public void run()
+                    	{
+                    		displayGrid.getChildren().clear();
+                    	}
+                    });
+                    
+
                     gridSize=connection.getGrid().getNumRows();
                     /*TODO: check if old gridSize is equivalent to connection.getGrid().getNumRows()
                     if not: recall initializeGrid with connection.getGrid().getNumRows()
@@ -280,6 +291,7 @@ public class mainPageController implements UICallback {
     private void colorDisplayGrid()
     {
         //Will color the board respectively to the states of the cells
+    	System.out.println(displayGrid.getChildren().size());
         for (Integer i = 0; i < gridSize; i++)
         {
             for (Integer j = 0; j < gridSize; j++)
@@ -312,7 +324,6 @@ public class mainPageController implements UICallback {
             @Override
             public void run()
             {
-            	//Throws a NullPointerException right now because Grid.grid is null
             	Rectangle rectangle = (Rectangle) displayGrid.getChildren().get((row * gridSize) + col);
             	rectangle.setFill((cellState == 1) ? Color.BLACK:Color.WHITE);
             }
