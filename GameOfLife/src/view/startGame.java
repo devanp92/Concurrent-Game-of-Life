@@ -6,11 +6,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import server.ClientConnection;
-import server.Server;
-
-import java.io.IOException;
-import java.net.Socket;
 
 /**
  * Created by Daniel on 3/29/2014.
