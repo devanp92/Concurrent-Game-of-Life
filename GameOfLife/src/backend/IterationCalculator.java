@@ -26,7 +26,7 @@ public class IterationCalculator {
     public Cell[][] calculateNewIteration() throws Exception {
         initializeCalculators();
         startThreads();
-        grid.setGrid(joinThreads());
+        newGridToSet.setGrid(joinThreads());
         return joinThreads();
     }
 
@@ -34,7 +34,7 @@ public class IterationCalculator {
         for(Thread calculator: calculators){
             calculator.join();
         }
-        return grid.convertGridTo2DArray();
+        return newGridToSet.convertGridTo2DArray();
     }
 
     private void startThreads(){
