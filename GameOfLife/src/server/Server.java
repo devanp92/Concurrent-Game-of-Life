@@ -3,6 +3,7 @@ package server;
 
 import backend.Cell;
 import backend.Grid;
+import backend.IterationCalculator;
 import backend.QuadTreeElement;
 
 import java.io.IOException;
@@ -16,10 +17,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class Server implements Runnable {
 	public static final int port = 44445;
@@ -34,11 +37,13 @@ public class Server implements Runnable {
 	private Grid game;
 	private Thread playThread = new Thread();
 	
+	//Note: the next two are separated because it more easily separates a Connection from its list,
+	//making it easier to reassign a component to another Connection if a Connection drops before returning
+	//its assignment
 	/**A mapping between a connection and what component it is currently calculating*/
 	private volatile HashMap<Connection, Integer> connectionCalculating = new HashMap<Connection, Integer>();
-	
 	/**A mapping between a component of the Grid to be calculated and the nextIteration*/
-	private volatile HashMap<Integer, ArrayList<Cell>> partialComponents = new HashMap<Integer, ArrayList<Cell>>();
+	private volatile HashMap<Integer, AtomicReference[]> partialComponents = new HashMap<Integer, AtomicReference[]>();
 	
     public Server(int numRows) throws Exception {
         game = new Grid(numRows);
@@ -67,7 +72,9 @@ public class Server implements Runnable {
 		try {
 			while(!Thread.currentThread().isInterrupted()) {
 				Connection c = new Connection(serverSocket.accept());
-				clients.add(c);
+				synchronized(clients) {
+					clients.add(c);
+				}
 				c.start();
 				c.send(game);
 				System.out.println("Client Connected");
@@ -110,16 +117,29 @@ public class Server implements Runnable {
 			public void run() {
 				try {
 					while(!Thread.interrupted()) {
-						Collection<Connection> clientCopy;
+						ArrayList<Connection> clientCopy;
 						synchronized(clients) {
-							clientCopy = Collections.unmodifiableCollection(clients);
+							clientCopy = new ArrayList<Connection>(Collections.unmodifiableCollection(clients));
 						}
+						IterationCalculator ic = null;
+						try {
+							ic = new IterationCalculator(game);
+							List<AtomicReference[]> cellList = ic.findSubSetsOfCellsForThread(clientCopy.size());
+							for(int i = 0;i<clientCopy.size();i++) {
+								connectionCalculating.put(clientCopy.get(i), new Integer(i));
+								partialComponents.put(new Integer(i), cellList.get(i));
+							}
+						}
+						catch(Exception e) {
+							//TODO: maybe?
+						}
+						
 						//TODO: initialize partialComponents
 						//TODO: initialize connectionCalculating
 						barrier = new CyclicBarrier(connectionCalculating.size() + 1);
 						
 						for(Connection c : connectionCalculating.keySet()) {
-							//c.send(partialComponent)
+							c.send(partialComponents.get(connectionCalculating.get(c)));
 						}
 						
 						barrier.await();
@@ -164,7 +184,11 @@ public class Server implements Runnable {
 		sendGameToAll(null);
 	}
 	private void sendGameToAll(Connection exception) {
-		for(Connection c : clients) {
+		ArrayList<Connection> clientCopy;
+		synchronized(clients) {
+			clientCopy = new ArrayList<Connection>(Collections.unmodifiableCollection(clients));
+		}
+		for(Connection c : clientCopy) {
 			if(c != exception) {
 				c.send(game);
 			}
@@ -175,7 +199,11 @@ public class Server implements Runnable {
 		sendCellToAll(cell, null);
 	}
 	private void sendCellToAll(Cell cell, Connection exception) {
-		for(Connection c : clients) {
+		ArrayList<Connection> clientCopy;
+		synchronized(clients) {
+			clientCopy = new ArrayList<Connection>(Collections.unmodifiableCollection(clients));
+		}
+		for(Connection c : clientCopy) {
 			if(c != exception) {
 				c.send(cell);
 			}
@@ -250,9 +278,9 @@ public class Server implements Runnable {
 							sendGameToAll(this);
 						}
 					}
-					else if(o instanceof ArrayList<?>) {
+					else if(o instanceof AtomicReference[]) {
 						pause();
-						ArrayList<Cell> partialComponent = (ArrayList<Cell>) o;//TODO: reflection again?
+						AtomicReference[] partialComponent = (AtomicReference[]) o;//TODO: reflection?
 						Integer item = connectionCalculating.get(this);
 						partialComponents.put(item, partialComponent);
 						passBarrier();
@@ -269,7 +297,9 @@ public class Server implements Runnable {
 			} catch (Exception e) {
 				e.printStackTrace();//TODO: comment this out
 			} finally {
-				clients.remove(this);
+				synchronized(clients) {
+					clients.remove(this);
+				}
 				if(ois != null) {
 					try {
 						ois.close();
