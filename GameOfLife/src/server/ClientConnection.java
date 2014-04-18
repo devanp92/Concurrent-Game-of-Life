@@ -5,6 +5,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicReference;
 
 import backend.Cell;
 import backend.Grid;
@@ -75,11 +76,10 @@ public class ClientConnection extends Thread {
 						System.out.println("Received Cell " + c + " " + ((c.getCellState() == 1) ? "alive":"dead"));
 						updateCell(c);
 					}
-					else if(rcvObj instanceof Integer) {
-						System.out.println("Received Row to Calculate");
-						Integer rowToCalculate = (Integer) rcvObj;
-						//calculate iteration on the row
-						//send back next iteration
+					else if(rcvObj instanceof AtomicReference[]) {
+						AtomicReference[] list = (AtomicReference[]) rcvObj;
+						//TODO: figure out how to calculate using this
+						//TODO: send back calculation to server
 					}
 					else if(rcvObj instanceof NetworkMessage) {
 						NetworkMessage nm = (NetworkMessage) rcvObj;
@@ -98,6 +98,7 @@ public class ClientConnection extends Thread {
 								break;
 						}
 					}
+					
 				}
 				else {
 					doLoop = false;

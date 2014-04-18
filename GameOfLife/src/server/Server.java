@@ -94,7 +94,7 @@ public class Server implements Runnable {
 	
 	public void play() {
 		final Runnable r = new Runnable() {
-			public void resendRemainingPartialComponents() {
+			public void resendRemainingPartialComponents() throws InterruptedException, BrokenBarrierException {
 				ArrayList<Connection> clientCopy;
 				synchronized(clients) {
 					clientCopy = new ArrayList<Connection>(Collections.unmodifiableCollection(clients));
@@ -108,11 +108,13 @@ public class Server implements Runnable {
 						i++;
 					}
 					connectionCalculating = newConnectionCalculating;
-					for(Connection c : connectionCalculating.keySet()) {
-						c.send(connectionCalculating.get(c));
-					}
-					System.out.println(game.getNumRows());
+					
+					//initialize barrier before resending components
 					barrier = new CyclicBarrier(connectionCalculating.size() + 1);
+					for(Connection c : connectionCalculating.keySet()) {
+						c.send(partialComponents.get(connectionCalculating.get(c)));
+					}
+					barrier.await();
 				}
 			}
 			
@@ -140,17 +142,24 @@ public class Server implements Runnable {
 						
 						synchronized(connectionCalculating) {
 							barrier = new CyclicBarrier(connectionCalculating.size() + 1);
-
 							for(Connection c : connectionCalculating.keySet()) {
 								c.send(partialComponents.get(connectionCalculating.get(c)));
 							}
+						}
+								
+						barrier.await();
 
-							barrier.await();
-
-							while(!connectionCalculating.isEmpty()) {
-								resendRemainingPartialComponents();
+						boolean isEmpty;
+						synchronized(connectionCalculating) {
+							isEmpty = connectionCalculating.isEmpty();
+						}
+						while(!isEmpty) {
+							resendRemainingPartialComponents();
+							synchronized(connectionCalculating) {
+								isEmpty = connectionCalculating.isEmpty();
 							}
 						}
+						
 						System.out.println("After barrier.await()");
 						mergeData();
 						sendGameToAll();
@@ -288,6 +297,7 @@ public class Server implements Runnable {
 						synchronized(connectionCalculating) {
 							Integer item = connectionCalculating.get(this);
 							partialComponents.put(item, partialComponent);
+							connectionCalculating.remove(this);
 						}
 						passBarrier();
 					}
@@ -330,10 +340,11 @@ public class Server implements Runnable {
 						e.printStackTrace();
 					}
 				}
-				//if the current thread should await on the barrier, pass it
+				//if the current thread should await on the barrier, pass it to not create deadlock
 				synchronized(connectionCalculating) {
 					if(connectionCalculating.containsKey(this)) {
 						passBarrier();
+						//Don't remove this from connectionCalculating
 					}
 				}
 			}
