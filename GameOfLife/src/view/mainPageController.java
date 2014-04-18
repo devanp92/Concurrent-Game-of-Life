@@ -48,6 +48,7 @@ public class mainPageController implements UICallback {
     private boolean connectionStarted = false;
     private int gridSize = 0;
     private boolean gridClickedOn = false;
+    private boolean displayInitialized = false;
     //private boolean gridInitialized = false;
     private String serverIP = "";
 
@@ -211,13 +212,9 @@ public class mainPageController implements UICallback {
     {
         System.out.println("updateGame called, GridSize: " + connection.getGrid().getNumRows());
         //if the size of the client is not the same as the size in the server the board will readjust
-        if(connection.getGrid().getNumRows() != gridSize)
+        if((connection.getGrid().getNumRows() != gridSize) && !displayInitialized)
         {
-            Platform.runLater(new Runnable()
-            {
-                @Override
-                public void run()
-                {
+                    displayInitialized = true;
                     displayGrid.getChildren().removeAll(displayGrid.getChildren());
                     gridSize=connection.getGrid().getNumRows();
                     /*TODO: check if old gridSize is equivalent to connection.getGrid().getNumRows()
@@ -253,7 +250,7 @@ public class mainPageController implements UICallback {
                                     }
                                 }
                             });
-                            recta.setFill(Color.WHITE);
+                            recta.setFill((connection.getGrid().convertGridTo2DArray()[ycord][xcord].getCellState() == 1)? Color.BLACK : Color.WHITE );
                         /*
                             This call and everything inside it will update the FX thread still need some tweaking to do.
                          */
@@ -270,8 +267,8 @@ public class mainPageController implements UICallback {
                             });
                         }
                     }
-                }
-            });
+
+
             //after changing the dimension of the grid color the grid
             colorDisplayGrid();
         }
