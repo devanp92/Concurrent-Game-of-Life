@@ -62,18 +62,10 @@ public class Grid extends CoordinateCalculator implements Serializable {
     }
 
     public void setCell(Cell cell){
-        grid[convert2DCoordinateTo1D(cell.x, cell.y)] = new AtomicReference(cell);
-    }
 
-    public void setCell(int index, Cell cell) {
-        if (index < 0 || index >= Math.pow(numRows, 2)) {
-            throw new IllegalArgumentException("Index is either below 0 or higher than number of cells");
+        if (cell != null) {
+            grid[convert2DCoordinateTo1D(cell.x, cell.y)] = new AtomicReference<>(cell);
         }
-        if (cell == null) {
-            throw new NullPointerException("cell is null");
-        }
-        AtomicReference<Cell> cellAtomicReference = new AtomicReference<>(cell);
-        grid[index] = cellAtomicReference;
     }
 
     public void setCellState(int index, int cellState) throws Exception {
@@ -91,9 +83,9 @@ public class Grid extends CoordinateCalculator implements Serializable {
         if(cells == null){
             throw new NullPointerException("Grid is null");
         }
-        for (int i = 0; i < cells.length; i++) {
+        for (Cell[] cell : cells) {
             for (int j = 0; j < cells[0].length; j++) {
-                setCell(convert2DCoordinateTo1D(i, j), cells[i][j]);
+                setCell(cell[j]);
             }
         }
     }

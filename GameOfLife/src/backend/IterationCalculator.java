@@ -128,8 +128,7 @@ public class IterationCalculator {
                     e.printStackTrace();
                 }
                 assert nextIterationCell != null;
-                int cellIndex = grid.convert2DCoordinateTo1D(nextIterationCell.x, nextIterationCell.y);
-                newGridToSet.setCell(cellIndex, nextIterationCell);
+                newGridToSet.setCell(nextIterationCell);
             }
         }
     }
