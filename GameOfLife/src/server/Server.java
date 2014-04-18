@@ -28,8 +28,7 @@ public class Server implements Runnable {
 	public static final int port = 44445;
 
 	private ServerSocket serverSocket = null;
-	private volatile ArrayList<Connection> clients = new ArrayList<Connection>();
-	boolean listening = true;
+	private ArrayList<Connection> clients = new ArrayList<Connection>();
 	
 	/**Barrier to have merging thread await until all calculating clients have sent back a partialComponent*/
 	volatile CyclicBarrier barrier;
