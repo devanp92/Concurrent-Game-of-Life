@@ -56,11 +56,11 @@ public class IterationCalculator {
         }
     }
 
-    public List<AtomicReference[]> findSubSetsOfCellsForThread(int numThreads) {
+    public List<AtomicReference[]> findSubSetsOfCellsForThread(int numCellsPerThread) {
         int numCells = grid.numRows * grid.numRows;
         List<AtomicReference[]> list = new ArrayList<>();
-        for (int i = 0; i < numCells; i += numThreads) {
-            AtomicReference[] subSet = grid.getSubSetOfGrid(i, Math.min(numCells, i + numThreads));
+        for (int i = 0; i < numCells; i += numCellsPerThread) {
+            AtomicReference[] subSet = grid.getSubSetOfGrid(i, Math.min(numCells, i + numCellsPerThread));
             list.add(subSet);
         }
         return list;
