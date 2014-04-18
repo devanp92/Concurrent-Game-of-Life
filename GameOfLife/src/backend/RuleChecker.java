@@ -8,17 +8,14 @@ public class RuleChecker extends CoordinateCalculator {
     private Cell currCell;
     private Grid grid;
 
-    /*public RuleChecker() {
-    }*/
-    
+
     public RuleChecker(Grid g) {
-    	this.grid = g;
+        this.grid = g;
     }
 
     public Cell determineCellsNextState(Cell cellToCheck) throws Exception {
         this.currCell = cellToCheck;
 
-        //NeighborFinder neighborFinder = new NeighborFinder(currCell, numRows);
         NeighborFinder neighborFinder = new NeighborFinder(grid, currCell);
         int numAliveNeighbors = numOfAliveCellsAroundCurrentCell(neighborFinder.findNeighbors());
 

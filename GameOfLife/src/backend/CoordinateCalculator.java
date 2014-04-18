@@ -20,7 +20,7 @@ public abstract class CoordinateCalculator implements Serializable {
     }
 
     public HashMap<Character, Integer> convert1DCoordinateTo2D(int i) {
-        HashMap<Character, Integer> hashMap = new HashMap<Character, Integer>();
+        HashMap<Character, Integer> hashMap = new HashMap<>();
         int row, column;
 
         if (i == 0) {
