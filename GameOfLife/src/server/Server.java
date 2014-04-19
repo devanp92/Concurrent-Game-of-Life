@@ -2,8 +2,8 @@ package server;
 
 
 import backend.Cell;
+import backend.DistributiveIterationCalculator;
 import backend.Grid;
-import backend.fallback.IterationCalculator;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.TimeUnit;
@@ -39,10 +40,11 @@ public class Server implements Runnable {
 	//its assignment
 	/**A mapping between a connection and what component it is currently calculating*/
 	private HashMap<Connection, Integer> connectionCalculating = new HashMap<Connection, Integer>();
-	/**A mapping between a component of the Grid to be calculated and the calculator thread for the nextIteration*/
-	private HashMap<Integer, Thread> calculatorThreads = new HashMap<Integer, Thread>();
-	/**A mapping between a component of the Grid and the returned partial components*/
+	///**A mapping between a component of the Grid to be calculated and the calculator thread for the nextIteration*/
+	//private HashMap<Integer, Thread> calculatorThreads = new HashMap<Integer, Thread>();
+	/**A mapping between a component of the Grid and the partial components*/
 	private HashMap<Integer, AtomicReference[]> partialComponents = new HashMap<Integer, AtomicReference[]>();
+	private HashMap<Integer, ArrayList<Cell>> completePartialComponents = new HashMap<Integer, ArrayList<Cell>>();
 	
     public Server(int numRows) throws Exception {
         g = new Grid(numRows);
@@ -98,20 +100,20 @@ public class Server implements Runnable {
 			public void run() {
 				try {
 					while(!Thread.interrupted()) {
+						System.out.println("Calculating New Iteration");
 						ArrayList<Connection> clientCopy;
 						synchronized(clients) {
 							clientCopy = new ArrayList<Connection>(Collections.unmodifiableCollection(clients));
 						}
-						IterationCalculator ic = null;
+						DistributiveIterationCalculator dic = null;
 						try {
-							ic = new IterationCalculator(g);
-							ic.initializeCalculators();
-							Thread[] threadList = ic.getCalculators();
+							dic = new DistributiveIterationCalculator(g);
+							List<AtomicReference[]> components = dic.findSubSetsOfCellsForClients(clientCopy.size());
 							
 							synchronized(connectionCalculating) {
 								for(int i = 0;i<clientCopy.size();i++) {
 									connectionCalculating.put(clientCopy.get(i), new Integer(i));
-									calculatorThreads.put(new Integer(i), threadList[i]);
+									partialComponents.put(new Integer(i), components.get(i));
 								}
 							}
 						}
@@ -122,10 +124,10 @@ public class Server implements Runnable {
 						synchronized(connectionCalculating) {
 							barrier = new CyclicBarrier(connectionCalculating.size() + 1);
 							for(Connection c : connectionCalculating.keySet()) {
-								c.send(calculatorThreads.get(connectionCalculating.get(c)));
+								c.send(partialComponents.get(connectionCalculating.get(c)));
 							}
 						}
-								
+						System.out.println("WAITING ON BARRIER");		
 						barrier.await();
 
 						boolean isEmpty;
@@ -141,6 +143,7 @@ public class Server implements Runnable {
 						
 						System.out.println("After barrier.await()");
 						mergeData();
+						System.out.println("DONE Calculating New Iteration: sending merge to all Clients");
 						sendGameToAll();
 						Thread.sleep(1000);//TODO: use appropriate timeout if necessary, make this editable in the GUI 
 					}
@@ -172,7 +175,7 @@ public class Server implements Runnable {
 					//initialize barrier before resending components
 					barrier = new CyclicBarrier(connectionCalculating.size() + 1);
 					for(Connection c : connectionCalculating.keySet()) {
-						c.send(calculatorThreads.get(connectionCalculating.get(c)));
+						c.send(partialComponents.get(connectionCalculating.get(c)));
 					}
 					barrier.await();
 				}
@@ -200,19 +203,18 @@ public class Server implements Runnable {
 			e.printStackTrace();//TODO: remove
 		}
 		
-		Collection<AtomicReference[]> components = null;
+		Collection<ArrayList<Cell>> components = null;
 		//Note: connectionCalculating acts as a lock on itself and partialComponents
 		synchronized(connectionCalculating) {
-			components = Collections.unmodifiableCollection(partialComponents.values());
+			components = Collections.unmodifiableCollection(completePartialComponents.values());
 			partialComponents.clear();
-			calculatorThreads.clear();
 		}
-		for(AtomicReference[] ar : components) {
-			for(Object o : ar) {
-				Cell c = (Cell) o;
+		for(ArrayList<Cell> cells : components) {
+			for(Cell c : cells) {
 				tempGrid.setCell(c);
 			}
 		}
+		g = tempGrid;
 	}
 	
 	private void sendGameToAll() {
@@ -277,8 +279,6 @@ public class Server implements Runnable {
 			try {
 				while(true) {
 					Object rcvObj = ois.readObject();
-					System.out.println("Received Back a Part");
-					System.out.println("Barrier: " + barrier);
 					if(rcvObj instanceof NetworkMessage) {
 						NetworkMessage nm = (NetworkMessage) rcvObj;
 						switch(nm) {
@@ -311,18 +311,21 @@ public class Server implements Runnable {
 						if(!playThread.isAlive()) {
 							//pause();
 							g = (Grid) rcvObj;
+							System.out.println("Received Grid: " + g.getNumRows());
 							sendGameToAll(this);
 						}
 					}
-					else if(rcvObj instanceof AtomicReference[]) {
-						pause();
-						AtomicReference[] partialComponent = (AtomicReference[]) rcvObj;//TODO: reflection?
-						synchronized(connectionCalculating) {
-							Integer item = connectionCalculating.get(this);
-							partialComponents.put(item, partialComponent);
-							connectionCalculating.remove(this);
+					else if(rcvObj instanceof ArrayList<?>) {
+						if(playThread.isAlive()) {
+							System.out.println("Received Completed PartialComponent");
+							ArrayList<Cell> partialComponent = (ArrayList<Cell>) rcvObj;//TODO: reflection?
+							synchronized(connectionCalculating) {
+								Integer item = connectionCalculating.get(this);
+								completePartialComponents.put(item, partialComponent);
+								connectionCalculating.remove(this);
+							}
+							passBarrier();
 						}
-						passBarrier();
 					}
 					
 					

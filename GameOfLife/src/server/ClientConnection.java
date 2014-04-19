@@ -5,8 +5,10 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicReference;
 
 import backend.Cell;
+import backend.ClientIterationCalculator;
 import backend.Grid;
 
 public class ClientConnection extends Thread {
@@ -66,7 +68,7 @@ public class ClientConnection extends Thread {
 				if(rcvObj != null) {
 					if(rcvObj instanceof Grid) {
 						g = (Grid) rcvObj;
-						System.out.println("Received Cell Size: " + g.getNumRows());
+						System.out.println("Received Grid Size: " + g.getNumRows() + " rows");
 						updateDisplays();
 					}
 					else if(rcvObj instanceof Cell) {
@@ -75,10 +77,20 @@ public class ClientConnection extends Thread {
 						System.out.println("Received Cell " + c + " " + ((c.getCellState() == 1) ? "alive":"dead"));
 						updateCell(c);
 					}
-					else if(rcvObj instanceof Thread) {
-						//AtomicReference[] list = (AtomicReference[]) rcvObj;
-						Thread t = (Thread) rcvObj;
-						t.start();
+					else if(rcvObj instanceof AtomicReference[]) {
+						AtomicReference[] list = (AtomicReference[]) rcvObj;
+						System.out.println("Received partialComponent of size: " + list.length);
+						
+						ClientIterationCalculator cic = null;
+						try {
+							cic = new ClientIterationCalculator(list, g, this);
+						}
+						catch(Exception e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						cic.start();//This should make the callback when done.
+						
 						//TODO: receive a Calculator extends Thread: create ConnectionCallback method, 
 						//which the Calculator calls when it is done.
 						//set the callback for a function that sends back the AtomicReference[]
@@ -212,6 +224,7 @@ public class ClientConnection extends Thread {
 	}
 	
 	public void sendPartialComponent(ArrayList<Cell> component) {
+		System.out.println("Sending component of size: " + component.size());
 		send(component);
 	}
 
@@ -223,7 +236,7 @@ public class ClientConnection extends Thread {
 			Socket clientSocket = new Socket(serverIP, Server.port);
 			self = new ClientConnection(clientSocket);
 			self.start();
-			Thread.sleep(10000);
+			Thread.sleep(5000);
 			self.send(NetworkMessage.PLAY);
 			System.out.println("Client socket accepted");
 			System.out.println("Created I/O streams");

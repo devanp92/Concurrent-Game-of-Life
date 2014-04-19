@@ -24,7 +24,7 @@ public class DistributiveIterationCalculator {
 	 */
 	//probably should be a method of Grid
 	//alternatively inherit from an abstract parent class
-	public List<AtomicReference[]> findSubSetsOfCellsForThread(int numClients) {
+	public List<AtomicReference[]> findSubSetsOfCellsForClients(int numClients) {
 		int gridSize = (int) Math.pow(grid.numRows, 2);
 		int numCellsPerThread = gridSize / numClients;
 		List<AtomicReference[]> list = new ArrayList<>();
