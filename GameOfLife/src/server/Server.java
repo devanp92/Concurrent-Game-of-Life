@@ -138,13 +138,20 @@ public class Server implements Runnable {
 						}
 
 						boolean isEmpty;
+						int clientCount;
 						synchronized(connectionCalculating) {
 							isEmpty = connectionCalculating.isEmpty();
 						}
-						while(!isEmpty) {
+						synchronized(clients) {
+							clientCount = clients.size();
+						}
+						while(!isEmpty && clientCount > 0) {
 							resendRemainingPartialComponents();
 							synchronized(connectionCalculating) {
 								isEmpty = connectionCalculating.isEmpty();
+							}
+							synchronized(clients) {
+								clientCount = clients.size();
 							}
 						}
 						
@@ -174,7 +181,7 @@ public class Server implements Runnable {
 				synchronized(clients) {
 					clientCopy = new ArrayList<Connection>(Collections.unmodifiableCollection(clients));
 				}
-				
+				if(clientCopy.size() == 0) return;
 				HashMap<Connection, Integer> newConnectionCalculating = new HashMap<Connection, Integer>();
 				int i = 0;
 				synchronized(connectionCalculating) {
