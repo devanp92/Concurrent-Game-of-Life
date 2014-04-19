@@ -3,8 +3,7 @@ package server;
 
 import backend.Cell;
 import backend.Grid;
-import backend.IterationCalculator;
-import backend.QuadTreeElement;
+import backend.fallback.IterationCalculator;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -17,7 +16,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.TimeUnit;
