@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class QuadTree extends QuadTreeElement implements Serializable {
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = -569223146956393874L;
 
 	HashMap<QuadrantID, QuadTreeElement> quadrants = new HashMap<QuadrantID, QuadTreeElement>();
 

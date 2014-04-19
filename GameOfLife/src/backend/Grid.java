@@ -10,9 +10,9 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 
 public class Grid extends CoordinateCalculator implements Serializable {
-
-    private AtomicReference[] grid;
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 7022186285671636304L;
+	
+	private AtomicReference[] grid;
 
 
     public Grid(int numRows) throws Exception {
