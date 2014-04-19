@@ -2,7 +2,6 @@ package backend;
 
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -66,39 +65,22 @@ public class IterationCalculator {
      * @return List of arrays that contains an array of cells
      */
     public List<AtomicReference[]> findSubSetsOfCellsForThread(int numThreads) {
-//        int numCells = grid.numRows * grid.numRows;
-//        for (int i = 0; i < numCells; i += numThreads) {
-//            AtomicReference[] subSet = grid.getSubSetOfGrid(i, Math.min(numCells, i + numThreads));
-//            list.add(subSet);
-//        }
+
+        int gridSize = (int) Math.pow(grid.numRows, 2);
+        int numCellsPerThread = gridSize / numThreads;
         List<AtomicReference[]> list = new ArrayList<>();
-        for (int i = 0; i < Math.pow(grid.numRows, 2); i += numThreads) {
-            int a = (int) (i + Math.min(numThreads, Math.pow(grid.numRows, 2) - i));
-            AtomicReference[] subSet = grid.getSubSetOfGrid(i, a);
-            list.add(subSet);
 
-        }
-
-        if (list.size() > numThreads) {
-            List<AtomicReference> l = Arrays.asList(list.get(numThreads - 1));
-            ArrayList<AtomicReference> atomicReferences = new ArrayList<>(l);
-            for (int i = numThreads; i < list.size(); i++) {
-                for (int j = 0; j < list.get(i).length; j++) {
-                    atomicReferences.add(list.get(i)[j]);
-                }
-                list.remove(i);
+        for (int i = 0; i < gridSize; i += numCellsPerThread) {
+            AtomicReference[] subSet;
+            if (list.size() + 1 == numThreads) {
+                subSet = grid.getSubSetOfGrid(i, gridSize);
+                list.add(subSet);
+                break;
+            } else {
+                subSet = grid.getSubSetOfGrid(i, i + numCellsPerThread);
+                list.add(subSet);
             }
-            list.remove(numThreads);
-            AtomicReference[] atomicReferences1 = new AtomicReference[atomicReferences.size()];
-            for (int i = 0; i < atomicReferences.size(); i++) {
-                atomicReferences1[i] = atomicReferences.get(i);
-            }
-            list.remove(numThreads - 1);
-            list.add(atomicReferences1);
-        } else if(list.size() < numThreads){
-            //TODO need to fix
         }
-
         return list;
     }
 
@@ -110,12 +92,6 @@ public class IterationCalculator {
         return cores;
     }
 
-    /*
-    for (int i = 0; i < originalList.size(); i += partitionSize) {
-    partitions.add(originalList.subList(i,
-            i + Math.min(partitionSize, originalList.size() - i)));
-}
-     */
     public Thread[] getCalculators() {
         return calculators;
     }

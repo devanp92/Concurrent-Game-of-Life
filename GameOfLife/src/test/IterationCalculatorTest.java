@@ -9,6 +9,9 @@ import org.junit.Test;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 /**
  * Created by devan on 4/14/14.
  */
@@ -51,16 +54,19 @@ public class IterationCalculatorTest {
 
     @Test
     public void testFindSubSetsOfCellsForThread() throws Exception {
-        List<AtomicReference[]> list = iterationCalculator.findSubSetsOfCellsForThread(5);
+        int numThreads = 10;
+        List<AtomicReference[]> list = iterationCalculator.findSubSetsOfCellsForThread(numThreads);
         for (AtomicReference[] l : list) {
             for (AtomicReference cell : l) {
                 Cell c = (Cell) cell.get();
                 System.out.println(c.x + ", " + c.y);
             }
             System.out.println("----------");
-            //assertEquals(4, list.get(0).length);
+            assertNotNull(l);
         }
+        assertEquals(numThreads, list.size());
     }
+
 
 
 }
