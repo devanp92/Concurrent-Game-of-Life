@@ -32,9 +32,9 @@ public class ClientConnection extends Thread {
 		subscribedUI.remove(e);
 	}
 
-    public void initializeGrid(int numRows) throws Exception {
-        Grid g = new Grid(numRows);
-        send(g);//TODO: do we want this behavior
+    public void resizeGrid(int numRows) throws Exception {
+        g = new Grid(numRows);
+        send(g);
     }
 
 	public ClientConnection(Socket s) {
@@ -199,10 +199,12 @@ public class ClientConnection extends Thread {
 	}
 	
 	public void play() {
+		//DON'T set isPlaying (let the receive set it)
 		send(NetworkMessage.PLAY);
 	}
 	
 	public void pause() {
+		//DON'T set isPlaying (let the receive set it)
 		send(NetworkMessage.PAUSE);
 	}
 	

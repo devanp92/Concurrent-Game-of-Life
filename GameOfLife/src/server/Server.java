@@ -33,7 +33,7 @@ public class Server implements Runnable {
 	/**Barrier to have merging thread await until all calculating clients have sent back a partialComponent*/
 	volatile CyclicBarrier barrier;
 
-	private volatile Grid game;
+	private volatile Grid g;
 	private Thread playThread = new Thread();
 	
 	//Note: the next two are separated because it more easily separates a Connection from its list,
@@ -47,8 +47,8 @@ public class Server implements Runnable {
 	private HashMap<Integer, AtomicReference[]> partialComponents = new HashMap<Integer, AtomicReference[]>();
 	
     public Server(int numRows) throws Exception {
-        game = new Grid(numRows);
-        System.out.println(game.getNumRows());
+        g = new Grid(numRows);
+        System.out.println(g.getNumRows());
     }
 
     @Override
@@ -77,7 +77,7 @@ public class Server implements Runnable {
 					clients.add(c);
 				}
 				c.start();
-				c.send(game);
+				c.send(g);
 				System.out.println("Client Connected");
 			}
 		}
@@ -128,7 +128,7 @@ public class Server implements Runnable {
 						}
 						IterationCalculator ic = null;
 						try {
-							ic = new IterationCalculator(game);
+							ic = new IterationCalculator(g);
 							ic.initializeCalculators();
 							Thread[] threadList = ic.getCalculators();
 							
@@ -188,13 +188,13 @@ public class Server implements Runnable {
 	}
 	
 	public void clear() throws Exception {
-		game = new Grid(game.getNumRows());
+		g = new Grid(g.getNumRows());
 	}
 	
 	public void mergeData() {
 		Grid tempGrid = null;
 		try {
-			tempGrid = new Grid(game.getNumRows());
+			tempGrid = new Grid(g.getNumRows());
 		}
 		catch(Exception e) {
 			e.printStackTrace();//TODO: remove
@@ -226,7 +226,7 @@ public class Server implements Runnable {
 		for(Connection c : clientCopy) {
 			if(c != exception) {
 				System.out.println(c);
-				c.send(game);
+				c.send(g);
 			}
 		}
 	}
@@ -276,11 +276,11 @@ public class Server implements Runnable {
 		public void run() {
 			try {
 				while(true) {
-					Object o = ois.readObject();
+					Object rcvObj = ois.readObject();
 					System.out.println("Received Back a Part");
 					System.out.println("Barrier: " + barrier);
-					if(o instanceof NetworkMessage) {
-						NetworkMessage nm = (NetworkMessage) o;
+					if(rcvObj instanceof NetworkMessage) {
+						NetworkMessage nm = (NetworkMessage) rcvObj;
 						switch(nm) {
 							case PLAY:
 								System.out.println("Received PLAY");
@@ -297,26 +297,26 @@ public class Server implements Runnable {
 								break;
 						}
 					}
-					else if(o instanceof Cell) {
+					else if(rcvObj instanceof Cell) {
 						if(!playThread.isAlive()) {
 							//pause();
-							Cell c = (Cell) o;
+							Cell c = (Cell) rcvObj;
 							System.out.println("Received Cell " + c + " " + ((c.getCellState() == 1) ? "alive":"dead"));
-							game.getCell(c.y, c.x).setCellState(c.getCellState());
+							g.getCell(c.y, c.x).setCellState(c.getCellState());
 	
 							sendCellToAll(c, this);
 						}
 					}
-					else if(o instanceof Grid) {
+					else if(rcvObj instanceof Grid) {
 						if(!playThread.isAlive()) {
 							//pause();
-							game = (Grid) o;
-							sendGameToAll();
+							g = (Grid) rcvObj;
+							sendGameToAll(this);
 						}
 					}
-					else if(o instanceof AtomicReference[]) {
+					else if(rcvObj instanceof AtomicReference[]) {
 						pause();
-						AtomicReference[] partialComponent = (AtomicReference[]) o;//TODO: reflection?
+						AtomicReference[] partialComponent = (AtomicReference[]) rcvObj;//TODO: reflection?
 						synchronized(connectionCalculating) {
 							Integer item = connectionCalculating.get(this);
 							partialComponents.put(item, partialComponent);

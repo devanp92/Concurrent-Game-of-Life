@@ -101,10 +101,8 @@ public class mainPageController implements UICallback {
             {
                 if (!size.getText().isEmpty())
                 {
-                    gridSize = Integer.parseInt(size.getText());
+                    connection.resizeGrid(Integer.parseInt(size.getText()));
                     size.clear();
-                    connection.initializeGrid(gridSize);
-                    //initializeBoard(gridSize);
                     updateGame();
                     inGameStatus();
                     setStatusLabel("Click on board to start Game!", "green");
@@ -128,11 +126,12 @@ public class mainPageController implements UICallback {
     }
     public void quit() {
         System.exit(0);
+        //TODO: these never get executed, remove or call Platform.runLater() before System.exit(0)
         System.out.println(displayGrid.getChildren().removeAll(displayGrid.getChildren()));
         System.out.println(displayGrid.getChildren().size());
     }
 
-    private void initializeBoard(int size)//TODO: I think this might need to be removed. Or at least should use the Platform.runLater() pattern
+    private void initializeBoard(int size)//TODO: REMOVE
     {
         statusLabel.setVisible(false);
         for(Integer i = 0; i < size; i++)
@@ -229,9 +228,6 @@ public class mainPageController implements UICallback {
                     
 
                     gridSize=connection.getGrid().getNumRows();
-                    /*TODO: check if old gridSize is equivalent to connection.getGrid().getNumRows()
-                    if not: recall initializeGrid with connection.getGrid().getNumRows()
-                    set gridSize to connection.getGrid().getNumRows(): then no other changes are necessary to the following code*/
                     for(Integer i = 0; i < gridSize; i++)
                     {
                         for (Integer j = 0; j < gridSize; j++)
