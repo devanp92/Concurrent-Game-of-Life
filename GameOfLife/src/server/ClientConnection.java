@@ -33,7 +33,7 @@ public class ClientConnection extends Thread {
 	}
 
     public void initializeGrid(int numRows) throws Exception {
-        this.g = new Grid(numRows);
+        Grid g = new Grid(numRows);
         send(g);//TODO: do we want this behavior
     }
 
@@ -116,7 +116,7 @@ public class ClientConnection extends Thread {
 			e.printStackTrace();
 		}
 		catch(IOException e) {
-			e.printStackTrace();
+			e.printStackTrace();//EOFException
 		}
 		finally {
 			if(ois != null) {

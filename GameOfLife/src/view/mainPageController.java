@@ -104,7 +104,8 @@ public class mainPageController implements UICallback {
                     gridSize = Integer.parseInt(size.getText());
                     size.clear();
                     connection.initializeGrid(gridSize);
-                    initializeBoard(gridSize);
+                    //initializeBoard(gridSize);
+                    updateGame();
                     inGameStatus();
                     setStatusLabel("Click on board to start Game!", "green");
                 } else
@@ -281,7 +282,7 @@ public class mainPageController implements UICallback {
 
 
             //after changing the dimension of the grid color the grid
-            colorDisplayGrid();
+            //colorDisplayGrid();
         }
         else
         {
@@ -290,7 +291,7 @@ public class mainPageController implements UICallback {
     }
     private void colorDisplayGrid()
     {
-        //Will color the board respectively to the states of the cells
+        //Fill color the board respectively to the states of the cells
     	System.out.println(displayGrid.getChildren().size());
         for (Integer i = 0; i < gridSize; i++)
         {

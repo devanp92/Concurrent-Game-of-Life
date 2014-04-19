@@ -225,6 +225,7 @@ public class Server implements Runnable {
 		}
 		for(Connection c : clientCopy) {
 			if(c != exception) {
+				System.out.println(c);
 				c.send(game);
 			}
 		}
