@@ -4,28 +4,42 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class ClientIterationCalculator {
+import server.ClientConnection;
+
+public class ClientIterationCalculator extends Thread {
 	private Grid oldGrid;
 	private AtomicReference[] oldCells;
 	private ArrayList<Cell> newCells;
 	private NextCellCalculator[] calculators;
+	private ClientConnection callback;
 	
-	public ClientIterationCalculator(AtomicReference[] ar, Grid g) throws Exception {
+	public ClientIterationCalculator(AtomicReference[] ar, Grid g, ClientConnection conn) throws Exception {
         if (ar == null) {
             throw new NullPointerException("The grid is null");
         }
         this.oldCells = ar;
         this.oldGrid = g;
+        this.callback = conn;
     }
 	
-	public ArrayList<Cell> calculateNewIteration() throws Exception {
+	@Override
+	public void run() {
+		try {
+			calculateNewIteration();
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+		}
+		callback.sendPartialComponent(newCells);
+	}
+	
+	private void calculateNewIteration() throws Exception {
         initializeCalculators();
         startThreads();
         newCells = joinThreads();
-        return newCells;
     }
 	
-	public void initializeCalculators() throws RuntimeException, InterruptedException {
+	private void initializeCalculators() throws RuntimeException, InterruptedException {
         int numThreads = numThreads();
         calculators = new NextCellCalculator[numThreads];
         int numCellsPerThread = oldCells.length / numThreads;
@@ -64,7 +78,7 @@ public class ClientIterationCalculator {
      * @param numThreads How many cells you want per array
      * @return List of arrays that contains an array of cells
      */
-    public List<AtomicReference[]> findSubSetsOfCellsForThread(int numThreads) {
+    private List<AtomicReference[]> findSubSetsOfCellsForThread(int numThreads) {
         int gridSize = (int) Math.pow(oldGrid.numRows, 2);
         int numCellsPerThread = gridSize / numThreads;
         List<AtomicReference[]> list = new ArrayList<>();
@@ -85,7 +99,7 @@ public class ClientIterationCalculator {
         return list;
     }
 
-    public int numThreads() throws RuntimeException {
+    private int numThreads() throws RuntimeException {
         int cores = Runtime.getRuntime().availableProcessors();
         if (cores < 1) {
             throw new RuntimeException("Number of processors is less than 1");

@@ -212,6 +212,10 @@ public class ClientConnection extends Thread {
 	public void newGame(Grid g) {
 		send(g);
 	}
+	
+	public void sendPartialComponent(ArrayList<Cell> component) {
+		send(component);
+	}
 
 	
 	public static void main(String[] args) {
