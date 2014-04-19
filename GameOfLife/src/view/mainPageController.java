@@ -220,7 +220,7 @@ public class mainPageController implements UICallback {
                 {
                     displayGrid.getChildren().clear();
                     //Displays the size of the grid to the user
-                    currentBoardDimensionsLabel.setText(currentBoardDimensionsLabel.getText() + gridSize + " X " + gridSize);
+                    currentBoardDimensionsLabel.setText("The grid size is: " + gridSize + " X " + gridSize);
                 }
             });
 
