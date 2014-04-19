@@ -18,9 +18,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.BrokenBarrierException;
-import java.util.concurrent.CyclicBarrier;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class Server implements Runnable {
@@ -30,7 +27,14 @@ public class Server implements Runnable {
 	private ArrayList<Connection> clients = new ArrayList<Connection>();
 	
 	/**Barrier to have merging thread await until all calculating clients have sent back a partialComponent*/
-	volatile CyclicBarrier barrier;
+	//volatile CyclicBarrier barrier;
+	
+	Object barrierLock = new Object();
+	/**An integer representing the number of responded clients
+	 * A client responds when it sends back partialComponent or it closes
+	 * Note: responded does not mean they have sent back their expected partialComponent
+	 */
+	int numOfRespondedClients;
 
 	private volatile Grid g;
 	private Thread playThread = new Thread();
@@ -40,15 +44,12 @@ public class Server implements Runnable {
 	//its assignment
 	/**A mapping between a connection and what component it is currently calculating*/
 	private HashMap<Connection, Integer> connectionCalculating = new HashMap<Connection, Integer>();
-	///**A mapping between a component of the Grid to be calculated and the calculator thread for the nextIteration*/
-	//private HashMap<Integer, Thread> calculatorThreads = new HashMap<Integer, Thread>();
 	/**A mapping between a component of the Grid and the partial components*/
 	private HashMap<Integer, AtomicReference[]> partialComponents = new HashMap<Integer, AtomicReference[]>();
 	private HashMap<Integer, ArrayList<Cell>> completePartialComponents = new HashMap<Integer, ArrayList<Cell>>();
 	
     public Server(int numRows) throws Exception {
         g = new Grid(numRows);
-        System.out.println(g.getNumRows());
     }
 
     @Override
@@ -99,7 +100,8 @@ public class Server implements Runnable {
 			/**run()*/
 			public void run() {
 				try {
-					while(!Thread.interrupted()) {
+					boolean gridChanged = true;
+					while(!Thread.interrupted() && gridChanged) {
 						System.out.println("Calculating New Iteration");
 						ArrayList<Connection> clientCopy;
 						synchronized(clients) {
@@ -121,14 +123,18 @@ public class Server implements Runnable {
 							//TODO: maybe?
 						}
 						
+						
 						synchronized(connectionCalculating) {
-							barrier = new CyclicBarrier(connectionCalculating.size() + 1);
 							for(Connection c : connectionCalculating.keySet()) {
 								c.send(partialComponents.get(connectionCalculating.get(c)));
 							}
 						}
-						System.out.println("WAITING ON BARRIER");		
-						barrier.await();
+						
+						System.out.println("WAITING ON BARRIER");
+						synchronized(barrierLock) {
+							while(numOfRespondedClients != clientCopy.size()) barrierLock.wait();
+							numOfRespondedClients = 0;
+						}
 
 						boolean isEmpty;
 						synchronized(connectionCalculating) {
@@ -141,8 +147,8 @@ public class Server implements Runnable {
 							}
 						}
 						
-						System.out.println("After barrier.await()");
-						mergeData();
+						System.out.println("After barrier WAITING()");
+						gridChanged = !mergeData();
 						System.out.println("DONE Calculating New Iteration: sending merge to all Clients");
 						sendGameToAll();
 						Thread.sleep(1000);//TODO: use appropriate timeout if necessary, make this editable in the GUI 
@@ -153,6 +159,13 @@ public class Server implements Runnable {
 				}
 				catch(BrokenBarrierException e) {
 					e.printStackTrace();
+				}
+				finally {
+					synchronized(clients) {
+						for(Connection c : clients) {
+							c.send(NetworkMessage.PAUSE);
+						}
+					}
 				}
 			}
 			
@@ -172,12 +185,15 @@ public class Server implements Runnable {
 					}
 					connectionCalculating = newConnectionCalculating;
 					
-					//initialize barrier before resending components
-					barrier = new CyclicBarrier(connectionCalculating.size() + 1);
 					for(Connection c : connectionCalculating.keySet()) {
 						c.send(partialComponents.get(connectionCalculating.get(c)));
 					}
-					barrier.await();
+					
+					System.out.println("WAITING ON BARRIER");
+					synchronized(barrierLock) {
+						while(numOfRespondedClients != clientCopy.size()) barrierLock.wait();
+						numOfRespondedClients = 0;
+					}
 				}
 			}
 		};
@@ -194,7 +210,8 @@ public class Server implements Runnable {
 		g = new Grid(g.getNumRows());
 	}
 	
-	private void mergeData() {
+	/**Returns true if the new Grid is identical to the old Grid*/
+	private boolean mergeData() {
 		Grid tempGrid = null;
 		try {
 			tempGrid = new Grid(g.getNumRows());
@@ -214,7 +231,16 @@ public class Server implements Runnable {
 				tempGrid.setCell(c);
 			}
 		}
+		boolean isSameGrid = true;
+		for(int i = 0;i<g.getNumRows();i++) {
+			for(int j = 0;j<g.getNumRows();j++) {
+				if(tempGrid.getCell(i, j).getCellState() != g.getCell(i,j).getCellState()) {
+					isSameGrid = false;
+				}
+			}
+		}
 		g = tempGrid;
+		return isSameGrid;
 	}
 	
 	private void sendGameToAll() {
@@ -227,7 +253,6 @@ public class Server implements Runnable {
 		}
 		for(Connection c : clientCopy) {
 			if(c != exception) {
-				System.out.println(c);
 				c.send(g);
 			}
 		}
@@ -377,19 +402,9 @@ public class Server implements Runnable {
 		}
 		
 		private void passBarrier() {
-			if(barrier != null) {
-				try {
-					barrier.await(0, TimeUnit.MILLISECONDS);
-				}
-				catch(InterruptedException e) {
-					e.printStackTrace();
-				}
-				catch(BrokenBarrierException e) {
-					//thrown when any awaiting thread is interrupted
-					//OR
-					//the barrier is reset
-				}
-				catch(TimeoutException e) {/*DON'T DO ANYTHING: this is expected*/}
+			synchronized(barrierLock) {
+				numOfRespondedClients++;
+				barrierLock.notifyAll();
 			}
 		}
 	}
