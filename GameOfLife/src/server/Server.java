@@ -77,7 +77,9 @@ public class Server implements Runnable {
 					clients.add(c);
 				}
 				c.start();
+				c.send((playThread.isAlive()) ? NetworkMessage.PLAY:NetworkMessage.PAUSE);
 				c.send(g);
+				
 				System.out.println("Client Connected");
 			}
 		}
@@ -122,7 +124,7 @@ public class Server implements Runnable {
 							//TODO: maybe?
 						}
 						
-						
+						g.printGrid();
 						synchronized(connectionCalculating) {
 							for(Connection c : connectionCalculating.keySet()) {
 								c.send(partialComponents.get(connectionCalculating.get(c)));
@@ -146,9 +148,10 @@ public class Server implements Runnable {
 							}
 						}
 						
-						System.out.println("After barrier WAITING()");
+						System.out.println("After barrier WAIT");
 						gridChanged = !mergeData();
 						System.out.println("DONE Calculating New Iteration: sending merge to all Clients");
+						g.printGrid();
 						sendGameToAll();
 						//Thread.sleep(1000);//TODO: use appropriate timeout if necessary, make this editable in the GUI 
 					}
@@ -193,6 +196,11 @@ public class Server implements Runnable {
 				}
 			}
 		};
+		synchronized(clients) {
+			for(Connection c : clients) {
+				c.send(NetworkMessage.PLAY);
+			}
+		}
 		playThread = new Thread(r);
 		playThread.setDaemon(true);
 		playThread.start();
@@ -200,6 +208,11 @@ public class Server implements Runnable {
 	
 	private void pause() {
 		playThread.interrupt();
+		synchronized(clients) {
+			for(Connection c : clients) {
+				c.send(NetworkMessage.PAUSE);
+			}
+		}
 	}
 	
 	private void clear() throws Exception {
@@ -333,7 +346,7 @@ public class Server implements Runnable {
 							//pause();
 							g = (Grid) rcvObj;
 							System.out.println("Received Grid: " + g.getNumRows());
-							sendGameToAll(this);
+							sendGameToAll();//TODO:sendGameToAll(this) test before using
 						}
 					}
 					else if(rcvObj instanceof ArrayList<?>) {

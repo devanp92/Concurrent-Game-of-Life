@@ -110,4 +110,13 @@ public class Grid extends CoordinateCalculator implements Serializable {
         return grid;
     }
     
+    public void printGrid() {
+    	for(int i = 0;i<getNumRows();i++) {
+    		for(int j = 0;j<getNumRows();j++) {
+    			System.out.print(getCell(i, j).getCellState());
+    		}
+    		System.out.print("\n");
+    	}
+    }
+    
 }

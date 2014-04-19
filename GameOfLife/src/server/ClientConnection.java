@@ -75,6 +75,7 @@ public class ClientConnection extends Thread {
 						Cell c = (Cell) rcvObj;
 						g.setCell(c);
 						System.out.println("Received Cell " + c + " " + ((c.getCellState() == 1) ? "alive":"dead"));
+						System.out.println(g.getCell(c.x, c.y)  + " : " + g.getCell(c.x, c.y).getCellState());
 						updateCell(c);
 					}
 					else if(rcvObj instanceof AtomicReference[]) {
@@ -115,6 +116,7 @@ public class ClientConnection extends Thread {
 								break;
 						}
 					}
+					g.printGrid();
 					
 				}
 				else {
@@ -179,6 +181,8 @@ public class ClientConnection extends Thread {
 			c.setCellState(state);
 		}
 		System.out.println("Sent cell " + c + " " + ((state == 1) ? "alive":"dead") + " to server");
+		g.getCell(c.y, c.x).setCellState(c.getCellState());
+		g.printGrid();
 		send(c);
 	}
 	
