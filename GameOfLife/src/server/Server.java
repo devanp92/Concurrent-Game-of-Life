@@ -17,7 +17,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class Server implements Runnable {
@@ -151,14 +150,11 @@ public class Server implements Runnable {
 						gridChanged = !mergeData();
 						System.out.println("DONE Calculating New Iteration: sending merge to all Clients");
 						sendGameToAll();
-						Thread.sleep(1000);//TODO: use appropriate timeout if necessary, make this editable in the GUI 
+						//Thread.sleep(1000);//TODO: use appropriate timeout if necessary, make this editable in the GUI 
 					}
 				}
 				catch(InterruptedException e) {
 					//interrupted via PAUSE, do nothing
-				}
-				catch(BrokenBarrierException e) {
-					e.printStackTrace();
 				}
 				finally {
 					synchronized(clients) {
@@ -170,7 +166,7 @@ public class Server implements Runnable {
 			}
 			
 			/**resendRemainingPartialComponents()*/
-			private void resendRemainingPartialComponents() throws InterruptedException, BrokenBarrierException {
+			private void resendRemainingPartialComponents() throws InterruptedException {
 				ArrayList<Connection> clientCopy;
 				synchronized(clients) {
 					clientCopy = new ArrayList<Connection>(Collections.unmodifiableCollection(clients));
@@ -344,6 +340,9 @@ public class Server implements Runnable {
 						if(playThread.isAlive()) {
 							System.out.println("Received Completed PartialComponent");
 							ArrayList<Cell> partialComponent = (ArrayList<Cell>) rcvObj;//TODO: reflection?
+							for(Cell c : partialComponent) {
+								System.out.println(c + " : " + c.getCellState());
+							}
 							synchronized(connectionCalculating) {
 								Integer item = connectionCalculating.get(this);
 								completePartialComponents.put(item, partialComponent);

@@ -37,14 +37,13 @@ public class ClientIterationCalculator extends Thread {
         initializeCalculators();
         startThreads();
         newCells = joinThreads();
-        System.out.println(newCells.size());
     }
 	
 	private void initializeCalculators() throws RuntimeException, InterruptedException {
         int numThreads = numThreads();
         calculators = new NextCellCalculator[numThreads];
-        int numCellsPerThread = oldCells.length / numThreads;
-        List<AtomicReference[]> listOfSubSets = findSubSetsOfCellsForThread(numCellsPerThread);
+        //int numCellsPerThread = oldCells.length / numThreads;
+        List<AtomicReference[]> listOfSubSets = findSubSetsOfCellsForThread(numThreads);
 
         for (int i = 0; i < numThreads; i++) {
             AtomicReference[] cells = listOfSubSets.get(i);
