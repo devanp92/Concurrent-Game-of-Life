@@ -26,16 +26,17 @@
                 <TextField fx:id="serverIpAddress" text="127.0.0.1" maxWidth="100" GridPane.rowIndex="1" GridPane.columnIndex="0" GridPane.halignment="CENTER"/>
                 <Button fx:id="connectButton" onAction="#startConnection" text="Connect" GridPane.columnIndex="0" GridPane.rowIndex="1" GridPane.halignment="RIGHT"/>
                 <!--Row #2 -->
-                <Label fx:id="boardDimensionsLabel" minWidth="200" style="-fx-font-size: 18pt" text="Enter grid size:" GridPane.columnIndex="0" GridPane.halignment="LEFT" GridPane.rowIndex="2" visible="false"/>
-                <Label fx:id="initializedBoardDimensionsLabel" minWidth="200" style="-fx-font-size: 20pt" text="The grid size is: " GridPane.columnIndex="0" GridPane.halignment="LEFT" GridPane.rowIndex="2" visible="false"/>
-                <TextField fx:id="size" maxWidth="60" promptText="Size" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="2" visible="false"/>
-                <Button fx:id="buildGridButton" onAction="#setUpNewGame" text="Build Grid" textAlignment="CENTER" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.rowIndex="2" visible="false"/>
+                <Label fx:id="currentBoardDimensionsLabel" minWidth="200" style="-fx-font-size: 20pt" text="The grid size is: " GridPane.columnIndex="0" GridPane.halignment="LEFT" GridPane.rowIndex="2" visible="false"/>
                 <!--Row #3 -->
-                <Button fx:id="pauseGameButton" onAction="#pauseGame" text="Pause" textAlignment="CENTER" GridPane.columnIndex="0" GridPane.halignment="LEFT" GridPane.rowIndex="3" visible="false"/>
-                <Button fx:id="resumeGameButton" onAction="#resumeGame" text="Resume" textAlignment="CENTER" GridPane.columnIndex="0" GridPane.halignment="LEFT" GridPane.rowIndex="3" visible="false"/>
-                <Button onAction="#quit" text="Quit" textAlignment="CENTER" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.rowIndex="3"/>
+                <Label fx:id="boardDimensionsLabel" minWidth="200" style="-fx-font-size: 18pt" text="Enter grid size:" GridPane.columnIndex="0" GridPane.halignment="LEFT" GridPane.rowIndex="3" visible="false"/>
+                <TextField fx:id="size" maxWidth="60" promptText="Size" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="3" visible="false"/>
+                <Button fx:id="buildGridButton" onAction="#resizeGridAction" text="Resize Grid" textAlignment="CENTER" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.rowIndex="3" visible="false"/>
+                <!--Row #4 -->
+                <Button fx:id="pauseGameButton" onAction="#pauseGame" text="Pause" textAlignment="CENTER" GridPane.columnIndex="0" GridPane.halignment="LEFT" GridPane.rowIndex="4" visible="false"/>
+                <Button fx:id="resumeGameButton" onAction="#resumeGame" text="Resume" textAlignment="CENTER" GridPane.columnIndex="0" GridPane.halignment="LEFT" GridPane.rowIndex="4" visible="false"/>
+                <Button onAction="#quit" text="Quit" textAlignment="CENTER" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.rowIndex="4"/>
                 <!--Row # 4 -->
-                <Label fx:id="statusLabel" visible="false" textAlignment="CENTER" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="4"/>
+                <Label fx:id="statusLabel" visible="false" textAlignment="CENTER" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="5"/>
             </children>
         </GridPane>
     </top>
