@@ -13,7 +13,7 @@ public class IterationCalculator {
     private Grid grid;
     private Grid newGridToSet;
 
-    private Thread[] calculators;
+    private Calculator[] calculators;
 
     public IterationCalculator(Grid grid) throws Exception {
         if (grid == null) {
@@ -46,15 +46,14 @@ public class IterationCalculator {
 
     public void initializeCalculators() throws RuntimeException, InterruptedException {
         int numThreads = numThreads();
-        calculators = new Thread[numThreads];
+        calculators = new Calculator[numThreads];
         int numCellsPerThread = grid.numRows * grid.numRows / numThreads;
         List<AtomicReference[]> listOfSubSets = findSubSetsOfCellsForThread(numCellsPerThread);
 
         RuleChecker ruleChecker = new RuleChecker(grid);
         for (int i = 0; i < numThreads; i++) {
             AtomicReference[] cells = listOfSubSets.get(i);
-            Calculator calculator = new Calculator(cells, ruleChecker);
-            calculators[i] = new Thread(calculator);
+            calculators[i] = new Calculator(cells, ruleChecker);
         }
     }
 
@@ -97,7 +96,7 @@ public class IterationCalculator {
     }
 
     //TODO make it extend thread and add method to return new cells
-    private class Calculator implements Runnable {
+    private class Calculator extends Thread{
         private AtomicReference[] cells;
         private RuleChecker ruleChecker;
 
@@ -119,6 +118,9 @@ public class IterationCalculator {
                 assert nextIterationCell != null;
                 newGridToSet.setCell(nextIterationCell);
             }
+        }
+        public AtomicReference[] getCells(){
+            return cells;
         }
     }
 
