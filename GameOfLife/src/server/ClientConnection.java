@@ -115,6 +115,7 @@ public class ClientConnection extends Thread {
 							default:
 								break;
 						}
+						updatePausePlay(nm);
 					}
 					if(g != null) g.printGrid();
 					
@@ -158,14 +159,19 @@ public class ClientConnection extends Thread {
 		}
 	}
 
-	public void updateDisplays() {
+	private void updateDisplays() {
 		for(UICallback uic : subscribedUI) {
 			uic.updateGame();
 		}
 	}
-	public void updateCell(Cell c) {
+	private void updateCell(Cell c) {
 		for(UICallback uic : subscribedUI) {
 			uic.updateCell(c);
+		}
+	}
+	private void updatePausePlay(NetworkMessage nm) {
+		for(UICallback uic : subscribedUI) {
+			uic.updatePausePlay(nm);
 		}
 	}
 	
