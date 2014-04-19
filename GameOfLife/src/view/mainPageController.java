@@ -1,12 +1,10 @@
 package view;
 
+import backend.Cell;
 import javafx.application.Platform;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
-import javafx.fxml.Initializable;
-import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -20,11 +18,6 @@ import server.UICallback;
 
 import java.io.IOException;
 import java.net.Socket;
-import java.net.URL;
-import java.util.Map;
-import java.util.ResourceBundle;
-
-import backend.Cell;
 
 
 /**
@@ -38,11 +31,11 @@ public class mainPageController implements UICallback {
     public Label boardDimensionsLabel;
     public TextField size;
     public GridPane displayGrid;
-    public Label initializedBoardDimensionsLabel;
+    public Label currentBoardDimensionsLabel;
     public Button buildGridButton;
     public Button pauseGameButton;
     public Label statusLabel;
-    public Button resumeGameButton;
+    public Button playGameButton;
     public TextField serverIpAddress;
     //Local variables
     ClientConnection connection = null;
@@ -67,6 +60,7 @@ public class mainPageController implements UICallback {
                 serverIP = serverIpAddress.getText();
                 serverIpAddress.setDisable(true);
                 connectButton.setVisible(false);
+                currentBoardDimensionsLabel.setVisible(true);
                 boardDimensionsLabel.setVisible(true);
                 size.setVisible(true);
                 buildGridButton.setVisible(true);
@@ -95,7 +89,7 @@ public class mainPageController implements UICallback {
     /*
         Sets up the grid after user defines a size for the
      */
-    public void setUpNewGame(ActionEvent event) {
+    public void resizeGridAction(ActionEvent event) {
         if(connectionStarted)
         {
             try
@@ -179,13 +173,13 @@ public class mainPageController implements UICallback {
         boardDimensionsLabel.setVisible(false);
         size.setVisible(false);
         buildGridButton.setVisible(false);
-        initializedBoardDimensionsLabel.setVisible(true);
+        //TODO initializedBoardDimensionsLabel.setVisible(true);
         pauseGameButton.setVisible(true);
-        initializedBoardDimensionsLabel.setText(initializedBoardDimensionsLabel.getText() + gridSize +" X " + gridSize);
+        //TODO initializedBoardDimensionsLabel.setText(initializedBoardDimensionsLabel.getText() + gridSize +" X " + gridSize);
     }
-    private void setStatusLabel(String newSatus, String txtFill)
+    private void setStatusLabel(String newStatus, String txtFill)
     {
-        statusLabel.setText(newSatus);
+        statusLabel.setText(newStatus);
         //setting the color of the status label
         statusLabel.setStyle("-fx-font-size: 18pt;-fx-text-fill: " + txtFill);
         statusLabel.setVisible(true);
@@ -195,87 +189,90 @@ public class mainPageController implements UICallback {
     {
         setStatusLabel("The game is paused", "yellow");
         pauseGameButton.setVisible(false);
-        resumeGameButton.setVisible(true);
+        playGameButton.setVisible(true);
         connection.pause();
     }
 
     public void resumeGame(ActionEvent event)
     {
-        resumeGameButton.setVisible(false);
+        playGameButton.setVisible(false);
         pauseGameButton.setVisible(true);
         setStatusLabel("The game has resumed", "green");
         connection.play();
     }
 
     @Override
-    /*update gama is called when the server sends a new "grid" to the user, init connect, resize, during play(iteration action process)*/
+    /*update game is called when the server sends a new "grid" to the user, init connect, resize, during play(iteration action process)*/
     public void updateGame()
     {
         System.out.println("updateGame called, GridSize: " + connection.getGrid().getNumRows());
         //if the size of the client is not the same as the size in the server the board will readjust
         if((connection.getGrid().getNumRows() != gridSize)/* || !displayInitialized*/)
         {
-                    displayInitialized = true;
-                    //displayGrid.getChildren().removeAll(displayGrid.getChildren());
-                    
-                    Platform.runLater(new Runnable()
-                    {
-                    	@Override
-                    	public void run()
-                    	{
-                    		displayGrid.getChildren().clear();
-                    	}
-                    });
-                    
+            displayInitialized = true;
+            gridSize = connection.getGrid().getNumRows();
+            //displayGrid.getChildren().removeAll(displayGrid.getChildren());
 
-                    gridSize=connection.getGrid().getNumRows();
-                    for(Integer i = 0; i < gridSize; i++)
+            Platform.runLater(new Runnable()
+            {
+                @Override
+                public void run()
+                {
+                    displayGrid.getChildren().clear();
+                    //Displays the size of the grid to the user
+                    currentBoardDimensionsLabel.setText(currentBoardDimensionsLabel.getText() + gridSize + " X " + gridSize);
+                }
+            });
+
+
+
+            for(Integer i = 0; i < gridSize; i++)
+            {
+                for (Integer j = 0; j < gridSize; j++)
+                {
+                    final Rectangle recta = new Rectangle(20, 20);
+                    final int xcord = j;
+                    final int ycord = i;
+                    recta.setId(i.toString() + "," + j.toString());
+                    recta.setOnMouseClicked(new EventHandler<Event>()
                     {
-                        for (Integer j = 0; j < gridSize; j++)
+                        @Override
+                        public void handle(Event event)
                         {
-                            final Rectangle recta = new Rectangle(20, 20);
-                            final int xcord = j;
-                            final int ycord = i;
-                            recta.setId(i.toString() + "," + j.toString());
-                            recta.setOnMouseClicked(new EventHandler<Event>()
+                            if (!connection.getIsPlaying())
                             {
-                                @Override
-                                public void handle(Event event)
+                                gridClickedOn = true;
+                                setStatusLabel("The Game has started!", "green");
+                                if (recta.getFill().equals(Color.BLACK))
                                 {
-                                    if (!connection.getIsPlaying())
-                                    {
-                                        gridClickedOn = true;
-                                        setStatusLabel("The Game has started!", "green");
-                                        if (recta.getFill().equals(Color.BLACK))
-                                        {
-                                            recta.setFill(Color.WHITE);
-                                            connection.changeCellState(xcord, ycord, 0);
-                                        }
-                                        else
-                                        {
-                                            recta.setFill(Color.BLACK);
-                                            connection.changeCellState(xcord, ycord, 1);
-                                        }
-                                    }
+                                    recta.setFill(Color.WHITE);
+                                    connection.changeCellState(xcord, ycord, 0);
                                 }
-                            });
-                            recta.setFill((connection.getGrid().convertGridTo2DArray()[ycord][xcord].getCellState() == 1)? Color.BLACK : Color.WHITE );
+                                else
+                                {
+                                    recta.setFill(Color.BLACK);
+                                    connection.changeCellState(xcord, ycord, 1);
+                                }
+                            }
+                        }
+                    });
+                    recta.setFill((connection.getGrid().convertGridTo2DArray()[ycord][xcord].getCellState() == 1)? Color.BLACK : Color.WHITE );
                         /*
                             This call and everything inside it will update the FX thread still need some tweaking to do.
                          */
-                            Platform.runLater(new Runnable()
-                            {
-                               @Override
-                                public void run()
-                               {
-                                    displayGrid.add(recta, xcord, ycord);
-                                    displayGrid.setVisible(true);
-                                    displayGrid.setMaxHeight(gridSize * 20);
-                                    displayGrid.setMaxWidth(gridSize * 20);
-                                }
-                            });
+                    Platform.runLater(new Runnable()
+                    {
+                        @Override
+                        public void run()
+                        {
+                            displayGrid.add(recta, xcord, ycord);
+                            displayGrid.setVisible(true);
+                            displayGrid.setMaxHeight(gridSize * 20);
+                            displayGrid.setMaxWidth(gridSize * 20);
                         }
-                    }
+                    });
+                }
+            }
 
 
             //after changing the dimension of the grid color the grid
@@ -289,7 +286,7 @@ public class mainPageController implements UICallback {
     private void colorDisplayGrid()
     {
         //Fill color the board respectively to the states of the cells
-    	System.out.println(displayGrid.getChildren().size());
+        System.out.println(displayGrid.getChildren().size());
         for (Integer i = 0; i < gridSize; i++)
         {
             for (Integer j = 0; j < gridSize; j++)
@@ -310,32 +307,46 @@ public class mainPageController implements UICallback {
     }
 
     //private void iterateAndDisplayGrid
-    
+
     @Override
     /*update cell is called when another client changes the state of a cell and updates the board in each of the other clients*/
     public void updateCell(Cell c) {
-    	final int row = c.y;
-    	final int col = c.x;
-    	final int cellState = c.getCellState();
-    	Platform.runLater(new Runnable()
+        final int row = c.y;
+        final int col = c.x;
+        final int cellState = c.getCellState();
+        Platform.runLater(new Runnable()
         {
             @Override
             public void run()
             {
-            	Rectangle rectangle = (Rectangle) displayGrid.getChildren().get((row * gridSize) + col);
-            	rectangle.setFill((cellState == 1) ? Color.BLACK:Color.WHITE);
+                Rectangle rectangle = (Rectangle) displayGrid.getChildren().get((row * gridSize) + col);
+                rectangle.setFill((cellState == 1) ? Color.BLACK:Color.WHITE);
             }
         });
     }
-    
+
     @Override
     public void updatePausePlay(NetworkMessage nm) {//TODO
     	switch(nm) {
 			case CLEAR:
 				break;
 			case PAUSE:
-				break;
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        pauseGameButton.setVisible(false);
+                        playGameButton.setVisible(true);
+                    }
+                });
+                break;
 			case PLAY:
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        pauseGameButton.setVisible(true);
+                        playGameButton.setVisible(false);
+                    }
+                });
 				break;
 			default:
 				break;
