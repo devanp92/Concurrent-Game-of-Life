@@ -14,6 +14,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import server.ClientConnection;
+import server.NetworkMessage;
 import server.Server;
 import server.UICallback;
 
@@ -325,5 +326,19 @@ public class mainPageController implements UICallback {
             	rectangle.setFill((cellState == 1) ? Color.BLACK:Color.WHITE);
             }
         });
+    }
+    
+    @Override
+    public void updatePausePlay(NetworkMessage nm) {//TODO
+    	switch(nm) {
+			case CLEAR:
+				break;
+			case PAUSE:
+				break;
+			case PLAY:
+				break;
+			default:
+				break;
+    	}
     }
 }
