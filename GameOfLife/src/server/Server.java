@@ -92,33 +92,11 @@ public class Server implements Runnable {
 			e.printStackTrace();
 		}
 	}
+    
 	
-	public void play() {
+	private void play() {
 		final Runnable r = new Runnable() {
-			public void resendRemainingPartialComponents() throws InterruptedException, BrokenBarrierException {
-				ArrayList<Connection> clientCopy;
-				synchronized(clients) {
-					clientCopy = new ArrayList<Connection>(Collections.unmodifiableCollection(clients));
-				}
-				
-				HashMap<Connection, Integer> newConnectionCalculating = new HashMap<Connection, Integer>();
-				int i = 0;
-				synchronized(connectionCalculating) {
-					for(Connection c : connectionCalculating.keySet()) {
-						newConnectionCalculating.put(clientCopy.get(i), connectionCalculating.get(c));
-						i++;
-					}
-					connectionCalculating = newConnectionCalculating;
-					
-					//initialize barrier before resending components
-					barrier = new CyclicBarrier(connectionCalculating.size() + 1);
-					for(Connection c : connectionCalculating.keySet()) {
-						c.send(calculatorThreads.get(connectionCalculating.get(c)));
-					}
-					barrier.await();
-				}
-			}
-			
+			/**run()*/
 			public void run() {
 				try {
 					while(!Thread.interrupted()) {
@@ -166,15 +144,39 @@ public class Server implements Runnable {
 						System.out.println("After barrier.await()");
 						mergeData();
 						sendGameToAll();
-						Thread.sleep(1000);//TODO: use appropriate timeout if necessary 
+						Thread.sleep(1000);//TODO: use appropriate timeout if necessary, make this editable in the GUI 
 					}
 				}
 				catch(InterruptedException e) {
-					//handle why we exited
-					//if PAUSE, do nothing;
+					//interrupted via PAUSE, do nothing
 				}
 				catch(BrokenBarrierException e) {
 					e.printStackTrace();
+				}
+			}
+			
+			/**resendRemainingPartialComponents()*/
+			private void resendRemainingPartialComponents() throws InterruptedException, BrokenBarrierException {
+				ArrayList<Connection> clientCopy;
+				synchronized(clients) {
+					clientCopy = new ArrayList<Connection>(Collections.unmodifiableCollection(clients));
+				}
+				
+				HashMap<Connection, Integer> newConnectionCalculating = new HashMap<Connection, Integer>();
+				int i = 0;
+				synchronized(connectionCalculating) {
+					for(Connection c : connectionCalculating.keySet()) {
+						newConnectionCalculating.put(clientCopy.get(i), connectionCalculating.get(c));
+						i++;
+					}
+					connectionCalculating = newConnectionCalculating;
+					
+					//initialize barrier before resending components
+					barrier = new CyclicBarrier(connectionCalculating.size() + 1);
+					for(Connection c : connectionCalculating.keySet()) {
+						c.send(calculatorThreads.get(connectionCalculating.get(c)));
+					}
+					barrier.await();
 				}
 			}
 		};
@@ -183,15 +185,15 @@ public class Server implements Runnable {
 		playThread.start();
 	}
 	
-	public void pause() {
+	private void pause() {
 		playThread.interrupt();
 	}
 	
-	public void clear() throws Exception {
+	private void clear() throws Exception {
 		g = new Grid(g.getNumRows());
 	}
 	
-	public void mergeData() {
+	private void mergeData() {
 		Grid tempGrid = null;
 		try {
 			tempGrid = new Grid(g.getNumRows());
@@ -215,7 +217,7 @@ public class Server implements Runnable {
 		}
 	}
 	
-	public void sendGameToAll() {
+	private void sendGameToAll() {
 		sendGameToAll(null);
 	}
 	private void sendGameToAll(Connection exception) {
@@ -231,7 +233,7 @@ public class Server implements Runnable {
 		}
 	}
 	
-	public void sendCellToAll(Cell cell) {
+	private void sendCellToAll(Cell cell) {
 		sendCellToAll(cell, null);
 	}
 	private void sendCellToAll(Cell cell, Connection exception) {
