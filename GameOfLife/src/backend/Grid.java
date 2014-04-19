@@ -65,7 +65,14 @@ public class Grid extends CoordinateCalculator implements Serializable {
 
         if (cell != null) {
             grid[convert2DCoordinateTo1D(cell.x, cell.y)] = new AtomicReference<>(cell);
+            try {
+				cell.setCellCase(getNumRows());
+			}
+			catch(Exception e) {
+				e.printStackTrace();//TODO: remove
+			}
         }
+        
     }
 
     public void setCellState(int index, int cellState) throws Exception {
