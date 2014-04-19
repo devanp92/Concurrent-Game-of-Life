@@ -4,8 +4,9 @@ import java.util.List;
 
 
 public class RuleChecker extends CoordinateCalculator {
-
-    private Cell currCell;
+	private static final long serialVersionUID = 6870831315760536089L;
+	
+	private Cell currCell;
     private Grid grid;
 
 

@@ -11,7 +11,7 @@ import java.util.HashMap;
  * Converts 2D coordinates and 1D coordinates
  */
 public abstract class CoordinateCalculator implements Serializable {
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 5718814464624244962L;
 	
 	int numRows;
 

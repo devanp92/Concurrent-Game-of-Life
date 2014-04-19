@@ -9,8 +9,9 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 
 public class NeighborFinder extends CoordinateCalculator {
-
-    private int CENTER_LEFT_NEIGHBOR;
+	private static final long serialVersionUID = 3479924798502760312L;
+	
+	private int CENTER_LEFT_NEIGHBOR;
     private int CENTER_RIGHT_NEIGHBOR;
 
     private int DOWN_LEFT_NEIGHBOR;

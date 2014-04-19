@@ -298,7 +298,7 @@ public class Server implements Runnable {
 			}
 		}
 		
-		public void send(Object o) {
+		private synchronized void send(Object o) {
 			try {
 				oos.writeObject(o);
 				oos.reset();
