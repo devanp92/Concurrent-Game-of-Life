@@ -336,7 +336,8 @@ public class Server implements Runnable {
 							//pause();
 							Cell c = (Cell) rcvObj;
 							System.out.println("Received Cell " + c + " " + ((c.getCellState() == 1) ? "alive":"dead"));
-							g.getCell(c.y, c.x).setCellState(c.getCellState());
+							//g.getCell(c.y, c.x).setCellState(c.getCellState());
+							g.setCell(c);
 	
 							sendCellToAll(c, this);
 						}

@@ -116,7 +116,7 @@ public class ClientConnection extends Thread {
 								break;
 						}
 					}
-					g.printGrid();
+					if(g != null) g.printGrid();
 					
 				}
 				else {
@@ -181,7 +181,8 @@ public class ClientConnection extends Thread {
 			c.setCellState(state);
 		}
 		System.out.println("Sent cell " + c + " " + ((state == 1) ? "alive":"dead") + " to server");
-		g.getCell(c.y, c.x).setCellState(c.getCellState());
+		//g.getCell(c.y, c.x).setCellState(c.getCellState());
+		g.setCell(c);
 		g.printGrid();
 		send(c);
 	}
