@@ -35,7 +35,7 @@ public class mainPageController implements UICallback {
     public Button buildGridButton;
     public Button pauseGameButton;
     public Label statusLabel;
-    public Button resumeGameButton;
+    public Button playGameButton;
     public TextField serverIpAddress;
     //Local variables
     ClientConnection connection = null;
@@ -189,13 +189,13 @@ public class mainPageController implements UICallback {
     {
         setStatusLabel("The game is paused", "yellow");
         pauseGameButton.setVisible(false);
-        resumeGameButton.setVisible(true);
+        playGameButton.setVisible(true);
         connection.pause();
     }
 
     public void resumeGame(ActionEvent event)
     {
-        resumeGameButton.setVisible(false);
+        playGameButton.setVisible(false);
         pauseGameButton.setVisible(true);
         setStatusLabel("The game has resumed", "green");
         connection.play();
@@ -331,8 +331,22 @@ public class mainPageController implements UICallback {
 			case CLEAR:
 				break;
 			case PAUSE:
-				break;
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        pauseGameButton.setVisible(false);
+                        playGameButton.setVisible(true);
+                    }
+                });
+                break;
 			case PLAY:
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        pauseGameButton.setVisible(true);
+                        playGameButton.setVisible(false);
+                    }
+                });
 				break;
 			default:
 				break;
