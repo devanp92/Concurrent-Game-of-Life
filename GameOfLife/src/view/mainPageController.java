@@ -32,7 +32,7 @@ public class mainPageController implements UICallback {
     public TextField size;
     public GridPane displayGrid;
     public Label currentBoardDimensionsLabel;
-    public Button buildGridButton;
+    public Button resizeGridButton;
     public Button pauseGameButton;
     public Label statusLabel;
     public Button playGameButton;
@@ -41,7 +41,6 @@ public class mainPageController implements UICallback {
     ClientConnection connection = null;
     private boolean connectionStarted = false;
     private volatile int gridSize = 0;
-    private boolean gridClickedOn = false;
     private boolean displayInitialized = false;
     //private boolean gridInitialized = false;
     private String serverIP = "";
@@ -63,7 +62,7 @@ public class mainPageController implements UICallback {
                 currentBoardDimensionsLabel.setVisible(true);
                 boardDimensionsLabel.setVisible(true);
                 size.setVisible(true);
-                buildGridButton.setVisible(true);
+                resizeGridButton.setVisible(true);
             }
             else
             {
@@ -127,7 +126,7 @@ public class mainPageController implements UICallback {
         System.out.println(displayGrid.getChildren().size());
     }
 
-    private void initializeBoard(int size)//TODO: REMOVE
+    /*private void initializeBoard(int size)//TODO: REMOVE
     {
         statusLabel.setVisible(false);
         for(Integer i = 0; i < size; i++)
@@ -141,10 +140,9 @@ public class mainPageController implements UICallback {
                     @Override
                     public void handle(Event event)
                     {
-                        if (!gridClickedOn)
+                        if (!connection.getIsPlaying())
                         {
-                            gridClickedOn = true;
-                            setStatusLabel("The Game has started!", "green");
+                            //setStatusLabel("The Game has started!", "green");
                             beginTheGame((Rectangle) event.getSource());
                             if (recta.getFill().equals(Color.BLACK))
                             {
@@ -168,14 +166,13 @@ public class mainPageController implements UICallback {
         displayGrid.setVisible(true);
         displayGrid.setMaxHeight(size*20);
         displayGrid.setMaxWidth(size*20);
-    }
+    }*/
     private void inGameStatus()
     {
-        boardDimensionsLabel.setVisible(false);
-        size.setVisible(false);
-        buildGridButton.setVisible(false);
+        boardDimensionsLabel.setVisible(true);
+        size.setVisible(true);
+        resizeGridButton.setVisible(true);
         //TODO initializedBoardDimensionsLabel.setVisible(true);
-        pauseGameButton.setVisible(true);
         //TODO initializedBoardDimensionsLabel.setText(initializedBoardDimensionsLabel.getText() + gridSize +" X " + gridSize);
     }
     private void setStatusLabel(String newStatus, String txtFill)
@@ -225,6 +222,7 @@ public class mainPageController implements UICallback {
                     //Displays the size of the grid to the user
                     currentBoardDimensionsLabel.setText("The grid size is: " + gridSize + " X " + gridSize);
                     playGameButton.setVisible(!connection.getIsPlaying());
+                    pauseGameButton.setVisible(connection.getIsPlaying());
                 }
             });
 
@@ -245,8 +243,7 @@ public class mainPageController implements UICallback {
                         {
                             if (!connection.getIsPlaying())
                             {
-                                gridClickedOn = true;
-                                setStatusLabel("The Game has started!", "green");
+                                //setStatusLabel("The Game has started!", "green");
                                 if (recta.getFill().equals(Color.BLACK))
                                 {
                                     recta.setFill(Color.WHITE);
@@ -303,7 +300,9 @@ public class mainPageController implements UICallback {
                     public void run()
                     {
                         Rectangle rectangle = (Rectangle) displayGrid.getChildren().get((row * gridSize) + col);
-                        rectangle.setFill((connection.getGrid().convertGridTo2DArray()[row][col].getCellState() == 1)? Color.BLACK : Color.WHITE );
+                        if(connection.getIsPlaying()) {
+                            rectangle.setFill((connection.getGrid().convertGridTo2DArray()[row][col].getCellState() == 1) ? Color.BLACK : Color.WHITE);
+                        }
                     }
                 });
             }
