@@ -193,6 +193,7 @@ public class ClientConnection extends Thread {
 		send(c);
 	}
 	
+	/*TODO: remove
 	public void startLife(int x, int y){
         //courdinates of the cell that the user clicked to be the first cell
 		Cell c = null;
@@ -218,6 +219,7 @@ public class ClientConnection extends Thread {
 		}
 		send(c);
 	}
+	*/
 	
 	public void play() {
 		//DON'T set isPlaying (let the receive set it)
@@ -229,10 +231,12 @@ public class ClientConnection extends Thread {
 		send(NetworkMessage.PAUSE);
 	}
 	
+	/*TODO: remove
 	//For resizes, or clearing of the Grid
 	public void newGame(Grid g) {
 		send(g);
 	}
+	*/
 	
 	public void sendPartialComponent(ArrayList<Cell> component) {
 		System.out.println("Sending component of size: " + component.size());

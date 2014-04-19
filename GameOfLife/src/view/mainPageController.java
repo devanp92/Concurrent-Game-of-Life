@@ -113,12 +113,14 @@ public class mainPageController implements UICallback {
         }
         event.consume();
     }
+    /*
     private void beginTheGame(Rectangle rectangle)
     {
         String[] indices = rectangle.getId().split(",");
         connection.startLife(Integer.parseInt(indices[0]), Integer.parseInt(indices[1]));
 
     }
+    */
     public void quit() {
         System.exit(0);
         //TODO: these never get executed, remove or call Platform.runLater() before System.exit(0)
