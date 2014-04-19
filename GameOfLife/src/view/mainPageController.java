@@ -112,6 +112,7 @@ public class mainPageController implements UICallback {
                 size.clear();
             }
         }
+        event.consume();
     }
     private void beginTheGame(Rectangle rectangle)
     {
@@ -187,18 +188,20 @@ public class mainPageController implements UICallback {
 
     public void pauseGame(ActionEvent event)
     {
-        setStatusLabel("The game is paused", "yellow");
+        setStatusLabel("The game is on paused", "yellow");
         pauseGameButton.setVisible(false);
         playGameButton.setVisible(true);
         connection.pause();
+        event.consume();
     }
 
-    public void resumeGame(ActionEvent event)
+    public void playGame(ActionEvent event)
     {
         playGameButton.setVisible(false);
         pauseGameButton.setVisible(true);
-        setStatusLabel("The game has resumed", "green");
+        setStatusLabel("The game is on play", "green");
         connection.play();
+        event.consume();
     }
 
     @Override
@@ -221,6 +224,7 @@ public class mainPageController implements UICallback {
                     displayGrid.getChildren().clear();
                     //Displays the size of the grid to the user
                     currentBoardDimensionsLabel.setText("The grid size is: " + gridSize + " X " + gridSize);
+                    playGameButton.setVisible(!connection.getIsPlaying());
                 }
             });
 
