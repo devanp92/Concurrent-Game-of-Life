@@ -35,7 +35,7 @@ public class Server extends Thread {
 	int numOfRespondedClients;
 
 	private volatile Grid g;
-	private Thread playThread = new Thread();
+	private volatile Thread playThread = new Thread();
 	private volatile IterationDelayPeriod iterationDelay = new IterationDelayPeriod(0);
 	
 	//Note: separate mappings are used for Connection->Integer & Integer->Component instead of Connection->Component
@@ -71,7 +71,6 @@ public class Server extends Thread {
 		}
 		catch(IOException e) {
 			System.err.println("Could not listen on port: " + port + ".");
-			//System.exit(-1);
 		}
 
 		if(serverSocket != null) {
@@ -88,11 +87,10 @@ public class Server extends Thread {
 
 					System.out.println("Client Connected");
 				}
-				System.out.println("Server DONE");
 			}
 			catch(IOException e) {//SocketException
 				//e.printStackTrace();
-				System.out.println("ServerSocket Broken");
+				//ignored: expected behavior for closing
 			}
 
 			try {
@@ -119,22 +117,22 @@ public class Server extends Thread {
     }
     
 	
-	private void play() {
+	private synchronized void play() {
 		final Runnable r = new Runnable() {
 			/**run()*/
 			public void run() {
 				try {
 					boolean gridChanged = true;
 					while(!Thread.interrupted() && gridChanged) {
-						System.out.println("Calculating New Iteration");
+						System.out.println("Server: Calculating New Iteration");
 						ArrayList<Connection> clientCopy;
 						synchronized(clients) {
 							clientCopy = new ArrayList<Connection>(Collections.unmodifiableCollection(clients));
 						}
-						DistributiveIterationCalculator dic = null;
+						DistributiveIterationCalculator distributedIC = null;
 						try {
-							dic = new DistributiveIterationCalculator(g);
-							List<AtomicReference[]> components = dic.findSubSetsOfCellsForClients(clientCopy.size());
+							distributedIC = new DistributiveIterationCalculator(g);
+							List<AtomicReference[]> components = distributedIC.findSubSetsOfCellsForClients(clientCopy.size());
 							
 							connectionComponentLock.lock();
 							try {
@@ -142,17 +140,21 @@ public class Server extends Thread {
 									connectionCalculating.put(clientCopy.get(i), new Integer(i));
 									partialComponents.put(new Integer(i), components.get(i));
 								}
+								completePartialComponents.clear();
 							}
 							finally {
 								connectionComponentLock.unlock();
 							}
 						}
 						catch(Exception e) {
-							//TODO: maybe?
+							//TODO
 						}
 						
-						g.printGrid();//TODO: remove
 						long start = System.currentTimeMillis();
+						synchronized(barrierLock) {
+							numOfRespondedClients = 0;
+						}
+						
 						connectionComponentLock.lock();
 						try {
 							for(Connection c : connectionCalculating.keySet()) {
@@ -163,7 +165,9 @@ public class Server extends Thread {
 							connectionComponentLock.unlock();
 						}
 						
-						System.out.println("WAITING ON BARRIER");
+						System.out.println("Server: waiting on barrier");
+						
+						
 						synchronized(barrierLock) {
 							while(numOfRespondedClients < clientCopy.size())  {
 								System.out.println(numOfRespondedClients + " : " + clientCopy.size());
@@ -172,6 +176,7 @@ public class Server extends Thread {
 							numOfRespondedClients = 0;
 						}
 
+						//handle if a client exited during calculation
 						boolean isEmpty;
 						int clientCount;
 						connectionComponentLock.lock();
@@ -198,10 +203,12 @@ public class Server extends Thread {
 							}
 						}
 						
-						System.out.println("After barrier WAIT");
+						
+						//merge data
+						System.out.println("Server: all clients responded");
 						gridChanged = !mergeData();
-						System.out.println("DONE Calculating New Iteration: sending merge to all Clients");
-						g.printGrid();
+						System.out.println("Server: DONE Calculating New Iteration: sending merge to all Clients");
+						//g.printGrid();
 						long stop = System.currentTimeMillis();
 						Thread.sleep(Math.max(iterationDelay.getDelayVal() - (stop-start), 0));
 						sendGameToAll();
@@ -244,39 +251,42 @@ public class Server extends Thread {
 					for(Connection c : connectionCalculating.keySet()) {
 						c.send(partialComponents.get(connectionCalculating.get(c)));
 					}
-					
-					System.out.println("WAITING ON BARRIER");
-					synchronized(barrierLock) {
-						while(numOfRespondedClients != clientCopy.size()) barrierLock.wait();
-						numOfRespondedClients = 0;
-					}
 				}
 				finally {
 					connectionComponentLock.unlock();
+				}	
+
+				System.out.println("Server: waiting on barrier");
+				synchronized(barrierLock) {
+					while(numOfRespondedClients < clientCopy.size()) {
+						barrierLock.wait();
+					}
+					numOfRespondedClients = 0;
 				}
 			}
 		};
-		synchronized(clients) {
-			for(Connection c : clients) {
-				c.send(NetworkMessage.PLAY);
+		if(!playThread.isAlive()) {
+			synchronized(clients) {
+				for(Connection c : clients) {
+					c.send(NetworkMessage.PLAY);
+				}
 			}
+			playThread = new Thread(r);
+			playThread.setDaemon(true);
+			playThread.start();
 		}
-		playThread = new Thread(r);
-		playThread.setDaemon(true);
-		playThread.start();
+		else {
+			System.out.println("Got PLAY, doing nothing");
+		}
 	}
 	
-	private void pause() {
+	private synchronized void pause() {
 		playThread.interrupt();
 		synchronized(clients) {
 			for(Connection c : clients) {
 				c.send(NetworkMessage.PAUSE);
 			}
 		}
-	}
-	
-	private void clear() throws Exception {
-		g = new Grid(g.getNumRows());
 	}
 	
 	/**Returns true if the new Grid is identical to the old Grid*/
@@ -290,7 +300,7 @@ public class Server extends Thread {
 		}
 		
 		Collection<ArrayList<Cell>> components = null;
-		//Note: connectionCalculating acts as a lock on itself and partialComponents
+		//Note: connectionCompnentLock acts as a lock on itself, partialComponents, and completePartialComponents
 		connectionComponentLock.lock();
 		try {
 			components = Collections.unmodifiableCollection(completePartialComponents.values());
@@ -384,7 +394,7 @@ public class Server extends Thread {
 				oos.reset();
 			}
 			catch(IOException e) {
-				e.printStackTrace();
+				//ignored, the socket was closed
 			}
 		}
 
@@ -397,11 +407,11 @@ public class Server extends Thread {
 						NetworkMessage nm = (NetworkMessage) rcvObj;
 						switch(nm) {
 							case PLAY:
-								System.out.println("Received PLAY");
+								System.out.println("Server: received PLAY");
 								play();
 								break;
 							case PAUSE:
-								System.out.println("Received PAUSE");
+								System.out.println("Server: received PAUSE");
 								pause();
 								break;
 							default:
@@ -411,7 +421,7 @@ public class Server extends Thread {
 					else if(rcvObj instanceof Cell) {
 						if(!playThread.isAlive()) {
 							Cell c = (Cell) rcvObj;
-							System.out.println("Received Cell " + c + " " + ((c.getCellState() == 1) ? "alive":"dead"));
+							System.out.println("Server: received Cell " + c + " " + ((c.getCellState() == 1) ? "alive":"dead"));
 							g.setCell(c);
 							sendCellToAll(c, this);
 						}
@@ -419,8 +429,8 @@ public class Server extends Thread {
 					else if(rcvObj instanceof Grid) {
 						if(!playThread.isAlive()) {
 							g = (Grid) rcvObj;
-							System.out.println("Received Grid: " + g.getNumRows());
-							sendGameToAll();//TODO:sendGameToAll(this) test before using
+							System.out.println("Server: received Grid: " + g.getNumRows());
+							sendGameToAll(this);//TODO:sendGameToAll(this) test before using
 						}
 					}
 					else if(rcvObj instanceof IterationDelayPeriod) {
@@ -438,7 +448,7 @@ public class Server extends Thread {
 					}
 					else if(rcvObj instanceof ArrayList<?>) {
 						if(playThread.isAlive()) {
-							System.out.println("Received Completed PartialComponent");
+							//System.out.println("Server: received Completed PartialComponent");
 							ArrayList<Cell> partialComponent = (ArrayList<Cell>) rcvObj;//TODO: reflection?
 							connectionComponentLock.lock();
 							try {
@@ -457,10 +467,10 @@ public class Server extends Thread {
 				}
 			}
 			catch(ClassNotFoundException e) {
-				//e.printStackTrace();
+				e.printStackTrace();
 			}
 			catch(IOException e) {
-				//e.printStackTrace();
+				e.printStackTrace();
 			} catch (Exception e) {
 				e.printStackTrace();//TODO: comment this out
 			} finally {
@@ -508,6 +518,7 @@ public class Server extends Thread {
 		private void passBarrier() {
 			synchronized(barrierLock) {
 				numOfRespondedClients++;
+				System.out.println("Server: responded client count: " + numOfRespondedClients);
 				barrierLock.notifyAll();
 			}
 		}
@@ -523,6 +534,8 @@ public class Server extends Thread {
 	}
 
 	public static void main(String[] args) throws Exception {
-		(new Server(defaultSize)).start();
+		Server s = new Server(defaultSize);
+		s.setDaemon(false);
+		s.start();
 	}
 }
