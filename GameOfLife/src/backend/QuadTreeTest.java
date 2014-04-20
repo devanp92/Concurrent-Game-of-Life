@@ -1,6 +1,6 @@
 package backend;
 
-public class QuadTreeTest {
+public class QuadTreeTest {/*
 	public static void main(String[] args) throws Exception {
 		QuadTree q = new QuadTree(8,8);
 		q.insert(new Cell(1,1));
@@ -32,5 +32,5 @@ public class QuadTreeTest {
 
 
 	}
-
+   */
 }

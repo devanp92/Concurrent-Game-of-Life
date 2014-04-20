@@ -22,7 +22,7 @@ public class startGame extends Application{
     @Override
     public void start(Stage primaryStage) throws Exception{
         Parent root = FXMLLoader.load(getClass().getResource("mainPage.fxml"));
-        //root.getStylesheets().add("sample/myStyle.css");
+        root.getStylesheets().add("view/css/Style.css");
         primaryStage.setTitle("Game of Life");
         primaryStage.setScene(new Scene(root, 550, 550));
         primaryStage.show();
