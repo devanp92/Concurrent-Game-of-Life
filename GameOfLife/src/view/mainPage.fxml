@@ -32,6 +32,7 @@
                 <TextField fx:id="size" maxWidth="60" promptText="Size" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="3" visible="false"/>
                 <Button fx:id="resizeGridButton" onAction="#resizeGridAction" text="Resize Grid" textAlignment="CENTER" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.rowIndex="3" visible="false"/>
                 <!--Row #4 -->
+                <!--<Button fx:id="iterationDelay" onAction="#resizeGridAction" text="Set iteration delay(ms)" textAlignment="CENTER" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.rowIndex="4" visible="false"/>-->
                 <Button fx:id="pauseGameButton" onAction="#pauseGame" text="Pause" textAlignment="CENTER" GridPane.columnIndex="0" GridPane.halignment="LEFT" GridPane.rowIndex="4" visible="false"/>
                 <Button fx:id="playGameButton" onAction="#playGame" text="Play" textAlignment="CENTER" GridPane.columnIndex="0" GridPane.halignment="LEFT" GridPane.rowIndex="4" visible="false"/>
                 <Button onAction="#quit" text="Quit" textAlignment="CENTER" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.rowIndex="4"/>
