@@ -242,7 +242,7 @@ public class mainPageController implements UICallback {
             {
                 for (Integer j = 0; j < gridSize; j++)
                 {
-                    final Rectangle recta = new Rectangle(20, 20);
+                    final Rectangle recta = new Rectangle(10, 10);
                     final int xcord = j;
                     final int ycord = i;
                     recta.setId(i.toString() + "," + j.toString());
@@ -278,8 +278,8 @@ public class mainPageController implements UICallback {
                         {
                             displayGrid.add(recta, xcord, ycord);
                             displayGrid.setVisible(true);
-                            displayGrid.setMaxHeight(gridSize * 20);
-                            displayGrid.setMaxWidth(gridSize * 20);
+                            displayGrid.setMaxHeight(gridSize * 10);
+                            displayGrid.setMaxWidth(gridSize * 10);
                         }
                     });
                 }
