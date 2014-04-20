@@ -303,7 +303,8 @@ public class mainPageController implements UICallback {
                     {
                         Rectangle rectangle = (Rectangle) displayGrid.getChildren().get((row * gridSize) + col);
                         if(connection.getIsPlaying()) {
-                            rectangle.setFill((connection.getGrid().convertGridTo2DArray()[row][col].getCellState() == 1) ? Color.BLACK : Color.WHITE);
+                            //rectangle.setFill((connection.getGrid().convertGridTo2DArray()[col][row].getCellState() == 1) ? Color.BLACK : Color.WHITE);
+                        	rectangle.setFill((connection.getGrid().getCell(col, row).getCellState() == 1) ? Color.BLACK : Color.WHITE);
                         }
                     }
                 });

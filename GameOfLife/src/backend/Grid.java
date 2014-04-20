@@ -41,11 +41,11 @@ public class Grid extends CoordinateCalculator implements Serializable {
         return cells;
     }
 
-    public Cell getCell(int row, int column) {
-        if (row < 0 || row >= numRows || column < 0 || column >= numRows) {
+    public Cell getCell(int x, int y) {
+        if (x < 0 || x >= numRows || y < 0 || y >= numRows) {
             throw new IllegalArgumentException("Row or column is out of bounds");
         }
-        AtomicReference atomicReferences = grid[super.convert2DCoordinateTo1D(row, column)];
+        AtomicReference atomicReferences = grid[super.convert2DCoordinateTo1D(x, y)];
         return (Cell) atomicReferences.get();
     }
 
