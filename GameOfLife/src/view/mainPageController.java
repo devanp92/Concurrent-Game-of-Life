@@ -386,20 +386,34 @@ public class mainPageController implements UICallback {
     	Platform.runLater(new Runnable() {
             @Override
             public void run() {
-            	delayInput.setText(String.valueOf(val));
+                delayInput.setPromptText("current: " + String.valueOf(val));
             }
         });
     }
 
     public void setDelay(ActionEvent event) {
-    	try {
-    		connection.updateDelayValue(Integer.parseInt(delayInput.getText()));
-    		setStatusLabel("", "green");
+    	try
+        {
+    		if(Integer.parseInt(delayInput.getText()) > -1)
+            {
+                connection.updateDelayValue(Integer.parseInt(delayInput.getText()));
+                delayInput.clear();
+                setStatusLabel("Delay Updated", "green");
+            }
+            else
+            {
+                setStatusLabel("Non-negative delay only", "red");
+                delayInput.clear();
+                delayInput.setPromptText("+Integers");
+            }
     	}
-    	catch(IllegalArgumentException e) {
-    		setStatusLabel("Non-negative delay only", "red");
+    	catch(IllegalArgumentException e)
+        {
+    		setStatusLabel("Integers only", "red");
+            delayInput.clear();
+            delayInput.setPromptText("+Integers");
     	}
-    	event.consume();//TODO: is this right?
+    	event.consume();
     }
 
     public void spawnServer(ActionEvent event) {

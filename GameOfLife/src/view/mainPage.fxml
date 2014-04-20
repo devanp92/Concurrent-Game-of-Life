@@ -40,7 +40,7 @@
                 <Button fx:id="resizeGridButton" onAction="#resizeGridAction" text="Resize Grid" textAlignment="CENTER" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.rowIndex="3" visible="false"/>
                 <!--Row #4 -->
                 <Label fx:id="delayLabel" style="-fx-font-size: 18pt" text="Delay (ms): " textAlignment="CENTER" GridPane.columnIndex="0" GridPane.halignment="LEFT" GridPane.rowIndex="4"  visible="false" />
-                <TextField fx:id="delayInput" maxWidth="70" promptText="" GridPane.columnIndex="0" GridPane.halignment="LEFT" GridPane.rowIndex="4" visible="false" >
+                <TextField fx:id="delayInput" maxWidth="70" promptText="+Integers" GridPane.columnIndex="0" GridPane.halignment="LEFT" GridPane.rowIndex="4" visible="false" >
                     <GridPane.margin><Insets left="120.0" /></GridPane.margin>
                 </TextField>
                 <Button fx:id="delayButton" onAction="#setDelay" text="Set Delay" textAlignment="CENTER" GridPane.columnIndex="0" GridPane.halignment="LEFT" GridPane.rowIndex="4" visible="false">
