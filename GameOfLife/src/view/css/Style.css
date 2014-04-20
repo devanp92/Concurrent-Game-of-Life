@@ -1,6 +1,10 @@
 .root{
     -fx-background-color: white;
+    -fx-font-family: sans-serif;
 }
 Button{
-    -fx-padding: 0pt;
+    -fx-padding: 2pt;
+}
+.normalLabel{
+    -fx-font-size: 18pt;
 }
