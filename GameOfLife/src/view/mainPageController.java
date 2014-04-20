@@ -215,18 +215,21 @@ public class mainPageController implements UICallback {
 
     public void pauseGame(ActionEvent event)
     {
-        setStatusLabel("The game is on paused", "yellow");
-        pauseGameButton.setVisible(false);
-        playGameButton.setVisible(true);
+    	//DON'T set anything: the visual effects will change when the official message comes from the server
+        //setStatusLabel("The game is paused", "yellow");
+        //pauseGameButton.setVisible(false);
+        //playGameButton.setVisible(true);
         connection.pause();
         event.consume();
     }
 
     public void playGame(ActionEvent event)
     {
-        playGameButton.setVisible(false);
-        pauseGameButton.setVisible(true);
-        setStatusLabel("The game is on play", "green");
+    	//DON'T set anything: the game might already be playing when the PLAY is received and the UI won't know
+    	//The visual effects will change when the official message comes from the server
+        //playGameButton.setVisible(false);
+        //pauseGameButton.setVisible(true);
+        //setStatusLabel("The game is playing", "green");
         connection.play();
         event.consume();
     }
@@ -330,9 +333,7 @@ public class mainPageController implements UICallback {
                     public void run()
                     {
                         Rectangle rectangle = (Rectangle) displayGrid.getChildren().get((row * gridSize) + col);
-                        //if(connection.getIsPlaying()) {//TODO: why was this here? it was messing up the display (the display was one iteration behind the actual)
-                        	rectangle.setFill((connection.getGrid().getCell(col, row).getCellState() == 1) ? Color.BLACK : Color.WHITE);
-                        //}
+                        rectangle.setFill((connection.getGrid().getCell(col, row).getCellState() == 1) ? Color.BLACK : Color.WHITE);
                     }
                 });
             }
@@ -359,7 +360,7 @@ public class mainPageController implements UICallback {
     }
 
     @Override
-    public void updatePausePlay(NetworkMessage nm) {//TODO
+    public void updatePausePlay(NetworkMessage nm) {
     	switch(nm) {
 			case CALCULATION_COMPLETE:
 			case PAUSE:
@@ -368,6 +369,7 @@ public class mainPageController implements UICallback {
                     public void run() {
                         pauseGameButton.setVisible(false);
                         playGameButton.setVisible(true);
+                        setStatusLabel("The game is paused", "yellow");
                     }
                 });
                 break;
@@ -377,6 +379,7 @@ public class mainPageController implements UICallback {
                     public void run() {
                         pauseGameButton.setVisible(true);
                         playGameButton.setVisible(false);
+                        setStatusLabel("The game is playing", "green");
                     }
                 });
 				break;

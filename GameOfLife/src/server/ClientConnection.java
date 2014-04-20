@@ -63,18 +63,18 @@ public class ClientConnection extends Thread {
 				if(rcvObj != null) {
 					if(rcvObj instanceof Grid) {
 						g = (Grid) rcvObj;
-						System.out.println("Received Grid Size: " + g.getNumRows() + " rows");
+						System.out.println("Client: received Grid Size: " + g.getNumRows() + " rows");
 						updateDisplay();
 					}
 					else if(rcvObj instanceof Cell) {
 						Cell c = (Cell) rcvObj;
 						g.setCell(c);
-						System.out.println("Received Cell " + c + " " + ((c.getCellState() == 1) ? "alive":"dead"));
+						System.out.println("Client: received Cell " + c + " " + ((c.getCellState() == 1) ? "alive":"dead"));
 						updateCell(c);
 					}
 					else if(rcvObj instanceof AtomicReference[]) {
 						AtomicReference[] list = (AtomicReference[]) rcvObj;
-						System.out.println("Received partialComponent of size: " + list.length);
+						System.out.println("Client: received partialComponent of size: " + list.length);
 						
 						ClientIterationCalculator cic = null;
 						try {
@@ -93,15 +93,15 @@ public class ClientConnection extends Thread {
 						NetworkMessage nm = (NetworkMessage) rcvObj;
 						switch(nm) {
 							case PLAY:
-								System.out.println("Received PLAY");
+								System.out.println("Client: received PLAY");
 								isPlaying = true;
 								break;
 							case CALCULATION_COMPLETE:
-								System.out.println("Received CALCULATION_COMPLETE");
+								System.out.println("Client: received CALCULATION_COMPLETE");
 								isPlaying = false;
 								break;
 							case PAUSE:
-								System.out.println("Received PAUSE");
+								System.out.println("Client: received PAUSE");
 								isPlaying = false;
 								break;
 							default:
@@ -185,10 +185,10 @@ public class ClientConnection extends Thread {
 		if(c != null) {
 			c.setCellState(state);
 		}
-		System.out.println("Sent cell " + c + " " + ((state == 1) ? "alive":"dead") + " to server");
 		g.setCell(c);
-		g.printGrid();
+		//g.printGrid();
 		send(c);
+		System.out.println("Client: sent cell " + c + " " + ((state == 1) ? "alive":"dead") + " to server");
 	}
 	
 	public void play() {
@@ -209,17 +209,10 @@ public class ClientConnection extends Thread {
         send(g);
     }
 	
-	/*TODO: remove
-	//For resizes, or clearing of the Grid
-	public void newGame(Grid g) {
-		send(g);
-	}
-	*/
-	
 	/**Callback method for when ClientIterationCalculator finishes*/
 	public void sendPartialComponent(ArrayList<Cell> component) {
-		System.out.println("Sending component of size: " + component.size());
 		send(component);
+		System.out.println("Client: Sending component of size: " + component.size());
 	}
 
 	
