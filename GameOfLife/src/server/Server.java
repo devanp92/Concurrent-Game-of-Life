@@ -37,14 +37,17 @@ public class Server implements Runnable {
 
 	private volatile Grid g;
 	private Thread playThread = new Thread();
+	private volatile IterationDelayPeriod iterationDelay = new IterationDelayPeriod(0);
 	
 	//Note: the next two are separated because it more easily separates a Connection from its list,
 	//making it easier to reassign a component to another Connection if a Connection drops before returning
 	//its assignment
+	//Uses of any of these should be GuardedBy synchronizing on connectionCalculating
 	/**A mapping between a connection and what component it is currently calculating*/
 	private HashMap<Connection, Integer> connectionCalculating = new HashMap<Connection, Integer>();
-	/**A mapping between a component of the Grid and the partial components*/
+	/**A mapping between a component of the Grid and the partial component to send*/
 	private HashMap<Integer, AtomicReference[]> partialComponents = new HashMap<Integer, AtomicReference[]>();
+	/**A mapping between a component of the Grid and the completed partial component*/
 	private HashMap<Integer, ArrayList<Cell>> completePartialComponents = new HashMap<Integer, ArrayList<Cell>>();
 	
     public Server(int numRows) throws Exception {
@@ -160,7 +163,7 @@ public class Server implements Runnable {
 						System.out.println("DONE Calculating New Iteration: sending merge to all Clients");
 						g.printGrid();
 						sendGameToAll();
-						//Thread.sleep(1000);//TODO: use appropriate timeout if necessary, make this editable in the GUI 
+						Thread.sleep(iterationDelay.getDelayVal()); 
 					}
 				}
 				catch(InterruptedException e) {
@@ -343,19 +346,19 @@ public class Server implements Runnable {
 							//pause();
 							Cell c = (Cell) rcvObj;
 							System.out.println("Received Cell " + c + " " + ((c.getCellState() == 1) ? "alive":"dead"));
-							//g.getCell(c.y, c.x).setCellState(c.getCellState());
 							g.setCell(c);
-	
 							sendCellToAll(c, this);
 						}
 					}
 					else if(rcvObj instanceof Grid) {
 						if(!playThread.isAlive()) {
-							//pause();
 							g = (Grid) rcvObj;
 							System.out.println("Received Grid: " + g.getNumRows());
 							sendGameToAll();//TODO:sendGameToAll(this) test before using
 						}
+					}
+					else if(rcvObj instanceof IterationDelayPeriod) {
+						iterationDelay = (IterationDelayPeriod) rcvObj;
 					}
 					else if(rcvObj instanceof ArrayList<?>) {
 						if(playThread.isAlive()) {

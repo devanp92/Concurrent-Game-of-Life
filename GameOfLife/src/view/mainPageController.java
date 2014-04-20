@@ -358,4 +358,9 @@ public class mainPageController implements UICallback {
 				break;
     	}
     }
+    
+    @Override
+    public void updateIterationDelay(int val) {
+    	//TODO: set the iteration delay textfield to val
+    }
 }

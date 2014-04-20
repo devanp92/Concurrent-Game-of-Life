@@ -69,13 +69,12 @@ public class ClientConnection extends Thread {
 					if(rcvObj instanceof Grid) {
 						g = (Grid) rcvObj;
 						System.out.println("Received Grid Size: " + g.getNumRows() + " rows");
-						updateDisplays();
+						updateDisplay();
 					}
 					else if(rcvObj instanceof Cell) {
 						Cell c = (Cell) rcvObj;
 						g.setCell(c);
 						System.out.println("Received Cell " + c + " " + ((c.getCellState() == 1) ? "alive":"dead"));
-						System.out.println(g.getCell(c.x, c.y)  + " : " + g.getCell(c.x, c.y).getCellState());
 						updateCell(c);
 					}
 					else if(rcvObj instanceof AtomicReference[]) {
@@ -87,17 +86,13 @@ public class ClientConnection extends Thread {
 							cic = new ClientIterationCalculator(list, g, this);
 						}
 						catch(Exception e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
+							e.printStackTrace();//TODO: Remove
 						}
-						cic.start();//This should make the callback when done.
-						
-						//TODO: receive a Calculator extends Thread: create ConnectionCallback method, 
-						//which the Calculator calls when it is done.
-						//set the callback for a function that sends back the AtomicReference[]
-						
-						//TODO: figure out how to calculate using this
-						//TODO: send back calculation to server
+						cic.start();//This makes the callback when done
+					}
+					else if(rcvObj instanceof IterationDelayPeriod) {
+						IterationDelayPeriod idp = (IterationDelayPeriod) rcvObj;
+						updateIterationDelay(idp.getDelayVal());
 					}
 					else if(rcvObj instanceof NetworkMessage) {
 						NetworkMessage nm = (NetworkMessage) rcvObj;
@@ -159,7 +154,7 @@ public class ClientConnection extends Thread {
 		}
 	}
 
-	private void updateDisplays() {
+	private void updateDisplay() {
 		for(UICallback uic : subscribedUI) {
 			uic.updateGame();
 		}
@@ -172,6 +167,11 @@ public class ClientConnection extends Thread {
 	private void updatePausePlay(NetworkMessage nm) {
 		for(UICallback uic : subscribedUI) {
 			uic.updatePausePlay(nm);
+		}
+	}
+	private void updateIterationDelay(int delay) {
+		for(UICallback uic : subscribedUI) {
+			uic.updateIterationDelay(delay);
 		}
 	}
 	
