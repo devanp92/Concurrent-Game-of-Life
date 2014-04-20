@@ -37,6 +37,9 @@ public class mainPageController implements UICallback {
     public Label statusLabel;
     public Button playGameButton;
     public TextField serverIpAddress;
+    public Button delayButton;
+    public TextField delayInput;
+    public Label delayLabel;
     //Local variables
     ClientConnection connection = null;
     private boolean connectionStarted = false;
@@ -59,12 +62,15 @@ public class mainPageController implements UICallback {
                 setStatusLabel("", "green");
                 connectionStarted = true;
                 serverIP = serverIpAddress.getText();
-                serverIpAddress.setDisable(true);
                 connectButton.setVisible(false);
+                serverIpAddress.setDisable(true);
                 currentBoardDimensionsLabel.setVisible(true);
                 boardDimensionsLabel.setVisible(true);
                 size.setVisible(true);
                 resizeGridButton.setVisible(true);
+                delayLabel.setVisible(true);
+                delayInput.setVisible(true);
+                delayButton.setVisible(true);
             }
             else
             {
@@ -181,11 +187,11 @@ public class mainPageController implements UICallback {
     }
     public void setStatus(final String newStatus, final String txtFill) {
     	Platform.runLater(new Runnable() {
-    		@Override
-    		public void run() {
-    			setStatusLabel(newStatus, txtFill);
-    		}
-    	});
+            @Override
+            public void run() {
+                setStatusLabel(newStatus, txtFill);
+            }
+        });
     }
     private void setStatusLabel(String newStatus, String txtFill)
     {
@@ -373,5 +379,13 @@ public class mainPageController implements UICallback {
     @Override
     public void updateIterationDelay(int val) {
     	//TODO: set the iteration delay textfield to val
+    }
+
+    public void setDelay(ActionEvent event) {
+
+    }
+
+    public void spawnServer(ActionEvent event) {
+
     }
 }
