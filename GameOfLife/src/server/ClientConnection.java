@@ -49,7 +49,6 @@ public class ClientConnection extends Thread {
 			oos.reset();
 		}
 		catch(IOException e) {
-			//e.printStackTrace();
 			setStatus("Can't send to Server", "red");
 		}
 	}
@@ -105,14 +104,12 @@ public class ClientConnection extends Thread {
 								System.out.println("Received PAUSE");
 								isPlaying = false;
 								break;
-							case CLEAR://probably won't be used
-								break;
 							default:
 								break;
 						}
 						updatePausePlay(nm);
 					}
-					if(g != null) g.printGrid();//TODO: remove
+					//if(g != null) g.printGrid();//TODO: remove
 				}
 				else {
 					doLoop = false;
@@ -122,34 +119,28 @@ public class ClientConnection extends Thread {
 		catch(ClassNotFoundException e) {
 			e.printStackTrace();
 		}
-		catch(IOException e) {
+		catch(IOException e) {//EOFException,SocketException
 			setStatus("Server Closed", "red");
-			//e.printStackTrace();//EOFException,SocketException
 		}
 		finally {
 			if(ois != null) {
 				try {
 					ois.close();
 				}
-				catch(IOException e) {
-					e.printStackTrace();
+				catch(IOException e) {/*ignored*/
 				}
 			}
 			if(oos != null) {
 				try {
 					oos.close();
 				}
-				catch(IOException e) {
-					e.printStackTrace();
-				}
+				catch(IOException e) {/*ignored*/}
 			}
 			if(s != null) {
 				try {
 					s.close();
 				}
-				catch(IOException e) {
-					e.printStackTrace();
-				}
+				catch(IOException e) {/*ignored*/}
 			}
 		}
 	}
@@ -182,35 +173,6 @@ public class ClientConnection extends Thread {
 	}
 	
 	
-	
-	/*TODO: remove
-	public void startLife(int x, int y){
-        //courdinates of the cell that the user clicked to be the first cell
-		Cell c = null;
-		try {
-			c = new Cell(x,y);
-		}
-		catch(Exception e) {
-			e.printStackTrace();
-		}
-		if(c != null) {
-			c.setCellState(1);
-		}
-		send(c);
-    }
-	
-	public void stopLife(int x, int y) {
-		Cell c = null;
-		try {
-			c = new Cell(x,y);
-		}
-		catch(Exception e) {
-			e.printStackTrace();
-		}
-		send(c);
-	}
-	*/
-	
 	/**Send back to server methods*/
 	public void changeCellState(int x, int y, int state) {
 		Cell c = null;
@@ -224,7 +186,6 @@ public class ClientConnection extends Thread {
 			c.setCellState(state);
 		}
 		System.out.println("Sent cell " + c + " " + ((state == 1) ? "alive":"dead") + " to server");
-		//g.getCell(c.y, c.x).setCellState(c.getCellState());
 		g.setCell(c);
 		g.printGrid();
 		send(c);

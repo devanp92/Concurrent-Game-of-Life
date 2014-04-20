@@ -404,16 +404,12 @@ public class Server extends Thread {
 								System.out.println("Received PAUSE");
 								pause();
 								break;
-							case CLEAR:
-								System.out.println("Received CLEAR");
-								pause();
-								clear();
+							default:
 								break;
 						}
 					}
 					else if(rcvObj instanceof Cell) {
 						if(!playThread.isAlive()) {
-							//pause();
 							Cell c = (Cell) rcvObj;
 							System.out.println("Received Cell " + c + " " + ((c.getCellState() == 1) ? "alive":"dead"));
 							g.setCell(c);

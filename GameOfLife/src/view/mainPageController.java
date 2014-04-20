@@ -361,8 +361,6 @@ public class mainPageController implements UICallback {
     @Override
     public void updatePausePlay(NetworkMessage nm) {//TODO
     	switch(nm) {
-			case CLEAR:
-				break;
 			case CALCULATION_COMPLETE:
 			case PAUSE:
                 Platform.runLater(new Runnable() {
