@@ -54,7 +54,9 @@ public class mainPageController implements UICallback {
             connection.start();
             if(connection != null)
             {
-                setStatusLabel("Server Connection Started", "green");
+//                setStatusLabel("Server Connection Started", "green");
+                //TODO This was behind the board
+                setStatusLabel("", "green");
                 connectionStarted = true;
                 serverIP = serverIpAddress.getText();
                 serverIpAddress.setDisable(true);
