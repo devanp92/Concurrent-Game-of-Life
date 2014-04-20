@@ -13,7 +13,6 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import server.ClientConnection;
-import server.IterationDelayPeriod;
 import server.NetworkMessage;
 import server.Server;
 import server.UICallback;
@@ -133,14 +132,7 @@ public class mainPageController implements UICallback {
         }
         event.consume();
     }
-    /*
-    private void beginTheGame(Rectangle rectangle)
-    {
-        String[] indices = rectangle.getId().split(",");
-        connection.startLife(Integer.parseInt(indices[0]), Integer.parseInt(indices[1]));
 
-    }
-    */
     public void quit() {
         System.exit(0);
         //TODO: these never get executed, remove or call Platform.runLater() before System.exit(0)
@@ -148,47 +140,6 @@ public class mainPageController implements UICallback {
         System.out.println(displayGrid.getChildren().size());
     }
 
-    /*private void initializeBoard(int size)//TODO: REMOVE
-    {
-        statusLabel.setVisible(false);
-        for(Integer i = 0; i < size; i++)
-        {
-            for (Integer j = 0; j <size; j++)
-            {
-                final Rectangle recta = new Rectangle(20,20);
-                recta.setId(i.toString() + "," + j.toString());
-                recta.setOnMouseClicked(new EventHandler<Event>()
-                {
-                    @Override
-                    public void handle(Event event)
-                    {
-                        if (!connection.getIsPlaying())
-                        {
-                            //setStatusLabel("The Game has started!", "green");
-                            beginTheGame((Rectangle) event.getSource());
-                            if (recta.getFill().equals(Color.BLACK))
-                            {
-                                recta.setFill(Color.WHITE);
-                            }
-                            else
-                            {
-                                recta.setFill(Color.BLACK);
-                            }
-                        }
-                        String xy = recta.getId();
-                        int x = Integer.valueOf(xy.split(",")[0]);
-                        int y = Integer.valueOf(xy.split(",")[1]);
-                        connection.changeCellState(x,y,(recta.getFill() == Color.BLACK) ? 1 : 0);
-                    }
-                });
-                recta.setFill(Color.WHITE);
-                displayGrid.add(recta,i,j);
-            }
-        }
-        displayGrid.setVisible(true);
-        displayGrid.setMaxHeight(size*20);
-        displayGrid.setMaxWidth(size*20);
-    }*/
     private void inGameStatus()
     {
         boardDimensionsLabel.setVisible(true);
@@ -241,7 +192,6 @@ public class mainPageController implements UICallback {
         {
             displayInitialized = true;
             gridSize = connection.getGrid().getNumRows();
-            //displayGrid.getChildren().removeAll(displayGrid.getChildren());
 
             Platform.runLater(new Runnable()
             {
@@ -304,10 +254,6 @@ public class mainPageController implements UICallback {
                     });
                 }
             }
-
-
-            //after changing the dimension of the grid color the grid
-            //colorDisplayGrid();
         }
         else
         {
@@ -330,16 +276,12 @@ public class mainPageController implements UICallback {
                     public void run()
                     {
                         Rectangle rectangle = (Rectangle) displayGrid.getChildren().get((row * gridSize) + col);
-                        //if(connection.getIsPlaying()) {//TODO: why was this here? it was messing up the display (the display was one iteration behind the actual)
-                        	rectangle.setFill((connection.getGrid().getCell(col, row).getCellState() == 1) ? Color.BLACK : Color.WHITE);
-                        //}
+                        rectangle.setFill((connection.getGrid().getCell(col, row).getCellState() == 1) ? Color.BLACK : Color.WHITE);
                     }
                 });
             }
         }
     }
-
-    //private void iterateAndDisplayGrid
 
     @Override
     /*update cell is called when another client changes the state of a cell and updates the board in each of the other clients*/
