@@ -27,6 +27,7 @@ public class Server extends Thread {
 	private volatile ServerSocket serverSocket = null;
 	private ArrayList<Connection> clients = new ArrayList<Connection>();
 	
+	/**An object for the playThread to wait on while clients respond with components*/
 	Object barrierLock = new Object();
 	/**An integer representing the number of responded clients
 	 * A client responds when it sends back partialComponent or it closes
@@ -50,6 +51,10 @@ public class Server extends Thread {
 	/**A mapping between a component of the Grid and the completed partial component*/
 	private HashMap<Integer, ArrayList<Cell>> completePartialComponents = new HashMap<Integer, ArrayList<Cell>>();
 	
+	/**Expected use case is for this to be a daemon thread. If you don't want it to be, explicitly setDaemon(false) before starting*/
+	public Server() throws Exception {
+		this(defaultSize);
+	}
     public Server(int numRows) throws Exception {
         g = new Grid(numRows);
         setDaemon(true);
@@ -65,6 +70,7 @@ public class Server extends Thread {
 			e.printStackTrace();
 		}
 
+		//Setup server
 		try {
 			serverSocket = new ServerSocket(port);
 			System.out.println("Listening on port " + port);
@@ -75,6 +81,7 @@ public class Server extends Thread {
 
 		if(serverSocket != null) {
 			try {
+				//Accept Clients, setup Connection thread for handling inputs
 				while(!Thread.currentThread().isInterrupted()) {
 					Connection c = new Connection(serverSocket.accept());
 					synchronized(clients) {
@@ -89,8 +96,8 @@ public class Server extends Thread {
 				}
 			}
 			catch(IOException e) {//SocketException
-				//e.printStackTrace();
 				//ignored: expected behavior for closing
+				//Usually invoked with stopServer()
 			}
 
 			try {
@@ -100,6 +107,7 @@ public class Server extends Thread {
 				e.printStackTrace();
 			}
 		}
+		//Close all client connections to finish
 		synchronized(clients) {
 			for(Connection c : clients) {
 				c.stopConnection();
@@ -112,7 +120,7 @@ public class Server extends Thread {
 			serverSocket.close();
 		}
 		catch(IOException e) {
-			e.printStackTrace();//TODO
+			e.printStackTrace();
 		}
     }
     
@@ -125,10 +133,13 @@ public class Server extends Thread {
 					boolean gridChanged = true;
 					while(!Thread.interrupted() && gridChanged) {
 						System.out.println("Server: Calculating New Iteration");
+						//Get a consistent (unmodifiable) list of clients
 						ArrayList<Connection> clientCopy;
 						synchronized(clients) {
 							clientCopy = new ArrayList<Connection>(Collections.unmodifiableCollection(clients));
 						}
+						
+						//Generate partial components to send to clients, initialize connectionCalculating, partialComponents
 						DistributiveIterationCalculator distributedIC = null;
 						try {
 							distributedIC = new DistributiveIterationCalculator(g);
@@ -146,15 +157,15 @@ public class Server extends Thread {
 								connectionComponentLock.unlock();
 							}
 						}
-						catch(Exception e) {
-							//TODO
-						}
+						catch(Exception e) {/*ignored*/}
 						
-						long start = System.currentTimeMillis();
+						//Clear number of responded clients
 						synchronized(barrierLock) {
 							numOfRespondedClients = 0;
 						}
 						
+						//Send partial components to clients
+						long start = System.currentTimeMillis();
 						connectionComponentLock.lock();
 						try {
 							for(Connection c : connectionCalculating.keySet()) {
@@ -165,18 +176,10 @@ public class Server extends Thread {
 							connectionComponentLock.unlock();
 						}
 						
-						System.out.println("Server: waiting on barrier");
-						
-						
-						synchronized(barrierLock) {
-							while(numOfRespondedClients < clientCopy.size())  {
-								System.out.println(numOfRespondedClients + " : " + clientCopy.size());
-								barrierLock.wait();
-							}
-							numOfRespondedClients = 0;
-						}
+						//wait until all clients have responded (not necessarily with results)
+						waitOnBarrier(clientCopy.size());
 
-						//handle if a client exited during calculation
+						//handle if a client exited during calculation: 
 						boolean isEmpty;
 						int clientCount;
 						connectionComponentLock.lock();
@@ -256,9 +259,13 @@ public class Server extends Thread {
 					connectionComponentLock.unlock();
 				}	
 
+				waitOnBarrier(clientCopy.size());
+			}
+			
+			private void waitOnBarrier(int waitCount) throws InterruptedException {
 				System.out.println("Server: waiting on barrier");
 				synchronized(barrierLock) {
-					while(numOfRespondedClients < clientCopy.size()) {
+					while(numOfRespondedClients < waitCount) {
 						barrierLock.wait();
 					}
 					numOfRespondedClients = 0;
@@ -274,9 +281,6 @@ public class Server extends Thread {
 			playThread = new Thread(r);
 			playThread.setDaemon(true);
 			playThread.start();
-		}
-		else {
-			System.out.println("Got PLAY, doing nothing");
 		}
 	}
 	
