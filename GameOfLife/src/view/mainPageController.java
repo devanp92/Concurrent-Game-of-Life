@@ -12,6 +12,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import server.ClientConnection;
+import server.IterationDelayPeriod;
 import server.NetworkMessage;
 import server.Server;
 import server.UICallback;
@@ -377,15 +378,37 @@ public class mainPageController implements UICallback {
     }
     
     @Override
-    public void updateIterationDelay(int val) {
+    public void updateIterationDelay(final int val) {
     	//TODO: set the iteration delay textfield to val
+    	Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+            	delayButton.setText(String.valueOf(val));
+            }
+        });
     }
 
     public void setDelay(ActionEvent event) {
-
+    	try {
+    		connection.updateDelayValue(Integer.parseInt(delayInput.getText()));
+    		setStatusLabel("Dea", "red");
+    	}
+    	catch(IllegalArgumentException e) {
+    		setStatusLabel("Non-negative delay only", "red");
+    	}
+    	event.consume();//TODO: is this right?
     }
 
     public void spawnServer(ActionEvent event) {
-
+    	try {
+			Server s = new Server(10);
+			Thread serverThread = new Thread(s);
+			serverThread.setDaemon(true);
+			serverThread.start();
+		}
+		catch(Exception e) {
+			setStatusLabel("Unable to start Server", "red");
+		}
+    	event.consume();//TODO: is this right?
     }
 }

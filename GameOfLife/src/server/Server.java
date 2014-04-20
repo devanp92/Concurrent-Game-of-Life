@@ -70,31 +70,33 @@ public class Server implements Runnable {
 		}
 		catch(IOException e) {
 			System.err.println("Could not listen on port: " + port + ".");
-			System.exit(-1);
+			//System.exit(-1);
 		}
 
-		try {
-			while(!Thread.currentThread().isInterrupted()) {
-				Connection c = new Connection(serverSocket.accept());
-				synchronized(clients) {
-					clients.add(c);
+		if(serverSocket != null) {
+			try {
+				while(!Thread.currentThread().isInterrupted()) {
+					Connection c = new Connection(serverSocket.accept());
+					synchronized(clients) {
+						clients.add(c);
+					}
+					c.start();
+					c.send((playThread.isAlive()) ? NetworkMessage.PLAY:NetworkMessage.PAUSE);
+					c.send(g);
+
+					System.out.println("Client Connected");
 				}
-				c.start();
-				c.send((playThread.isAlive()) ? NetworkMessage.PLAY:NetworkMessage.PAUSE);
-				c.send(g);
-				
-				System.out.println("Client Connected");
 			}
-		}
-		catch(IOException e) {
-			//e.printStackTrace();
-		}
+			catch(IOException e) {
+				//e.printStackTrace();
+			}
 
-		try {
-			serverSocket.close();
-		}
-		catch(IOException e) {
-			e.printStackTrace();
+			try {
+				serverSocket.close();
+			}
+			catch(IOException e) {
+				e.printStackTrace();
+			}
 		}
 	}
     
@@ -177,6 +179,7 @@ public class Server implements Runnable {
 							c.send(NetworkMessage.CALCULATION_COMPLETE);
 						}
 					}
+					sendGameToAll();
 				}
 			}
 			
