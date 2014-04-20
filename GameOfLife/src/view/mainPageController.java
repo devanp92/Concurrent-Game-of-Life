@@ -381,7 +381,7 @@ public class mainPageController implements UICallback {
     	Platform.runLater(new Runnable() {
             @Override
             public void run() {
-            	delayButton.setText(String.valueOf(val));
+            	delayInput.setText(String.valueOf(val));
             }
         });
     }

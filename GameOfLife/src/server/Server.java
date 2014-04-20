@@ -25,9 +25,6 @@ public class Server implements Runnable {
 	private ServerSocket serverSocket = null;
 	private ArrayList<Connection> clients = new ArrayList<Connection>();
 	
-	/**Barrier to have merging thread await until all calculating clients have sent back a partialComponent*/
-	//volatile CyclicBarrier barrier;
-	
 	Object barrierLock = new Object();
 	/**An integer representing the number of responded clients
 	 * A client responds when it sends back partialComponent or it closes
@@ -82,6 +79,7 @@ public class Server implements Runnable {
 					}
 					c.start();
 					c.send((playThread.isAlive()) ? NetworkMessage.PLAY:NetworkMessage.PAUSE);
+					c.send(iterationDelay);
 					c.send(g);
 
 					System.out.println("Client Connected");
@@ -302,6 +300,21 @@ public class Server implements Runnable {
 			}
 		}
 	}
+	
+	private void sendDelayToAll() {
+		sendDelayToAll(null);
+	}
+	private void sendDelayToAll(Connection exception) {
+		ArrayList<Connection> clientCopy;
+		synchronized(clients) {
+			clientCopy = new ArrayList<Connection>(Collections.unmodifiableCollection(clients));
+		}
+		for(Connection c : clientCopy) {
+			if(c != exception) {
+				c.send(iterationDelay);
+			}
+		}
+	}
 
 	class Connection extends Thread {
 		private Socket s = null;
@@ -370,6 +383,7 @@ public class Server implements Runnable {
 					}
 					else if(rcvObj instanceof IterationDelayPeriod) {
 						iterationDelay = (IterationDelayPeriod) rcvObj;
+						sendDelayToAll(this);
 					}
 					else if(rcvObj instanceof ArrayList<?>) {
 						if(playThread.isAlive()) {
