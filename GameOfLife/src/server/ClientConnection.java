@@ -54,7 +54,8 @@ public class ClientConnection extends Thread {
 			oos.reset();
 		}
 		catch(IOException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
+			setStatus("Can't send to Server", "red");
 		}
 	}
 	

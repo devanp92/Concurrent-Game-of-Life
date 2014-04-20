@@ -19,10 +19,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class Server implements Runnable {
+public class Server extends Thread {
 	public static final int port = 44445;
+	public static final int defaultSize = 10;
 
-	private ServerSocket serverSocket = null;
+	private volatile ServerSocket serverSocket = null;
 	private ArrayList<Connection> clients = new ArrayList<Connection>();
 	
 	Object barrierLock = new Object();
@@ -49,6 +50,7 @@ public class Server implements Runnable {
 	
     public Server(int numRows) throws Exception {
         g = new Grid(numRows);
+        setDaemon(true);
     }
 
     @Override
@@ -84,9 +86,11 @@ public class Server implements Runnable {
 
 					System.out.println("Client Connected");
 				}
+				System.out.println("Server DONE");
 			}
-			catch(IOException e) {
+			catch(IOException e) {//SocketException
 				//e.printStackTrace();
+				System.out.println("ServerSocket Broken");
 			}
 
 			try {
@@ -96,7 +100,21 @@ public class Server implements Runnable {
 				e.printStackTrace();
 			}
 		}
+		synchronized(clients) {
+			for(Connection c : clients) {
+				c.stopConnection();
+			}
+		}
 	}
+    
+    public void stopServer() {
+    	try {
+			serverSocket.close();
+		}
+		catch(IOException e) {
+			e.printStackTrace();//TODO
+		}
+    }
     
 	
 	private void play() {
@@ -326,6 +344,7 @@ public class Server implements Runnable {
 			try {
 				oos = new ObjectOutputStream(s.getOutputStream());
 				ois = new ObjectInputStream(s.getInputStream());
+				setDaemon(true);
 			}
 			catch(IOException e) {
 				e.printStackTrace();
@@ -452,9 +471,18 @@ public class Server implements Runnable {
 				barrierLock.notifyAll();
 			}
 		}
+		
+		public void stopConnection() {
+			try {
+				ois.close();
+			}
+			catch(IOException e) {
+				e.printStackTrace();//TODO
+			}
+		}
 	}
 
 	public static void main(String[] args) throws Exception {
-		new Thread(new Server(10)).start();
+		(new Server(defaultSize)).start();
 	}
 }

@@ -46,7 +46,7 @@ public class mainPageController implements UICallback {
     public Button closeServerButton;
     //Local variables
     ClientConnection connection = null;
-    Thread serverThread = null;
+    Server serverThread = null;
     private boolean connectionStarted = false;
     private volatile int gridSize = 0;
     private boolean displayInitialized = false;
@@ -404,9 +404,8 @@ public class mainPageController implements UICallback {
 
     public void spawnServer(ActionEvent event) {
     	try {
-			Server s = new Server(10);
-		    serverThread = new Thread(s);
-			serverThread.setDaemon(true);
+			//Server s = new Server(10);
+		    serverThread = new Server(Server.defaultSize);
 			serverThread.start();
             //Update UI
             serverButton.setDisable(true);
@@ -420,7 +419,7 @@ public class mainPageController implements UICallback {
     }
 
     public void closeServer(ActionEvent event) {
-        serverThread.interrupt();
+        serverThread.stopServer();
         event.consume();
     }
 }
