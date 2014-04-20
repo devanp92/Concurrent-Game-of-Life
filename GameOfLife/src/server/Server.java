@@ -26,6 +26,13 @@ public class Server extends Thread {
 
 	private volatile ServerSocket serverSocket = null;
 	private ArrayList<Connection> clients = new ArrayList<Connection>();
+	private ArrayList<Connection> getClientCopy() {
+		ArrayList<Connection> clientCopy;
+		synchronized(clients) {
+			clientCopy = new ArrayList<Connection>(Collections.unmodifiableCollection(clients));
+		}
+		return clientCopy;
+	}
 	
 	/**An object for the playThread to wait on while clients respond with components*/
 	Object barrierLock = new Object();
@@ -134,10 +141,7 @@ public class Server extends Thread {
 					while(!Thread.interrupted() && gridChanged) {
 						System.out.println("Server: Calculating New Iteration");
 						//Get a consistent (unmodifiable) list of clients
-						ArrayList<Connection> clientCopy;
-						synchronized(clients) {
-							clientCopy = new ArrayList<Connection>(Collections.unmodifiableCollection(clients));
-						}
+						ArrayList<Connection> clientCopy = getClientCopy();
 						
 						//Generate partial components to send to clients, initialize connectionCalculating, partialComponents
 						DistributiveIterationCalculator distributedIC = null;
@@ -179,7 +183,7 @@ public class Server extends Thread {
 						//wait until all clients have responded (not necessarily with results)
 						waitOnBarrier(clientCopy.size());
 
-						//handle if a client exited during calculation: 
+						//handle if a client exited during calculation 
 						boolean isEmpty;
 						int clientCount;
 						connectionComponentLock.lock();
@@ -210,8 +214,7 @@ public class Server extends Thread {
 						//merge data
 						System.out.println("Server: all clients responded");
 						gridChanged = !mergeData();
-						System.out.println("Server: DONE Calculating New Iteration: sending merge to all Clients");
-						//g.printGrid();
+						System.out.println("Server: merge DONE. Sending to all Clients");
 						long stop = System.currentTimeMillis();
 						Thread.sleep(Math.max(iterationDelay.getDelayVal() - (stop-start), 0));
 						sendGameToAll();
@@ -235,10 +238,8 @@ public class Server extends Thread {
 			
 			/**resendRemainingPartialComponents()*/
 			private void resendRemainingPartialComponents() throws InterruptedException {
-				ArrayList<Connection> clientCopy;
-				synchronized(clients) {
-					clientCopy = new ArrayList<Connection>(Collections.unmodifiableCollection(clients));
-				}
+				ArrayList<Connection> clientCopy = getClientCopy();
+				
 				if(clientCopy.size() == 0) return;
 				HashMap<Connection, Integer> newConnectionCalculating = new HashMap<Connection, Integer>();
 				int i = 0;
@@ -304,7 +305,7 @@ public class Server extends Thread {
 		}
 		
 		Collection<ArrayList<Cell>> components = null;
-		//Note: connectionCompnentLock acts as a lock on itself, partialComponents, and completePartialComponents
+		//Note: connectionComponentLock acts as a lock on itself, partialComponents, and completePartialComponents
 		connectionComponentLock.lock();
 		try {
 			components = Collections.unmodifiableCollection(completePartialComponents.values());
@@ -334,10 +335,7 @@ public class Server extends Thread {
 		sendGameToAll(null);
 	}
 	private void sendGameToAll(Connection exception) {
-		ArrayList<Connection> clientCopy;
-		synchronized(clients) {
-			clientCopy = new ArrayList<Connection>(Collections.unmodifiableCollection(clients));
-		}
+		ArrayList<Connection> clientCopy = getClientCopy();
 		for(Connection c : clientCopy) {
 			if(c != exception) {
 				c.send(g);
@@ -349,10 +347,7 @@ public class Server extends Thread {
 		sendCellToAll(cell, null);
 	}
 	private void sendCellToAll(Cell cell, Connection exception) {
-		ArrayList<Connection> clientCopy;
-		synchronized(clients) {
-			clientCopy = new ArrayList<Connection>(Collections.unmodifiableCollection(clients));
-		}
+		ArrayList<Connection> clientCopy = getClientCopy();
 		for(Connection c : clientCopy) {
 			if(c != exception) {
 				c.send(cell);
@@ -364,10 +359,7 @@ public class Server extends Thread {
 		sendDelayToAll(null);
 	}
 	private void sendDelayToAll(Connection exception) {
-		ArrayList<Connection> clientCopy;
-		synchronized(clients) {
-			clientCopy = new ArrayList<Connection>(Collections.unmodifiableCollection(clients));
-		}
+		ArrayList<Connection> clientCopy = getClientCopy();
 		for(Connection c : clientCopy) {
 			if(c != exception) {
 				c.send(iterationDelay);
@@ -473,10 +465,10 @@ public class Server extends Thread {
 			catch(ClassNotFoundException e) {
 				e.printStackTrace();
 			}
-			catch(IOException e) {
-				e.printStackTrace();
+			catch(IOException e) {//SocketException
+				/*ignored: expected behavior*/
 			} catch (Exception e) {
-				e.printStackTrace();//TODO: comment this out
+				/*ignored: expected behavior*/
 			} finally {
 				synchronized(clients) {
 					clients.remove(this);
