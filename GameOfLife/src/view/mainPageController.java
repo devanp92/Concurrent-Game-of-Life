@@ -394,10 +394,12 @@ public class mainPageController implements UICallback {
     public void setDelay(ActionEvent event) {
     	try
         {
-    		if(Integer.parseInt(delayInput.getText()) > -1)
+    		int delayVal = Integer.parseInt(delayInput.getText());
+    		if(delayVal > -1)
             {
-                connection.updateDelayValue(Integer.parseInt(delayInput.getText()));
+                connection.updateDelayValue(delayVal);
                 delayInput.clear();
+                delayInput.setPromptText("current: " + delayVal);
                 setStatusLabel("Delay Updated", "green");
             }
             else
