@@ -128,6 +128,7 @@ public class Server implements Runnable {
 						}
 						
 						g.printGrid();
+						long start = System.currentTimeMillis();
 						synchronized(connectionCalculating) {
 							for(Connection c : connectionCalculating.keySet()) {
 								c.send(partialComponents.get(connectionCalculating.get(c)));
@@ -162,8 +163,9 @@ public class Server implements Runnable {
 						gridChanged = !mergeData();
 						System.out.println("DONE Calculating New Iteration: sending merge to all Clients");
 						g.printGrid();
+						long stop = System.currentTimeMillis();
+						Thread.sleep(Math.max(iterationDelay.getDelayVal() - (stop-start), 0));
 						sendGameToAll();
-						Thread.sleep(iterationDelay.getDelayVal()); 
 					}
 				}
 				catch(InterruptedException e) {

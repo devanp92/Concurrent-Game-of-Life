@@ -267,7 +267,7 @@ public class mainPageController implements UICallback {
                             }
                         }
                     });
-                    recta.setFill((connection.getGrid().convertGridTo2DArray()[ycord][xcord].getCellState() == 1)? Color.BLACK : Color.WHITE );
+                    recta.setFill((connection.getGrid().getCell(xcord, ycord).getCellState() == 1) ? Color.BLACK : Color.WHITE);
                         /*
                             This call and everything inside it will update the FX thread still need some tweaking to do.
                          */
