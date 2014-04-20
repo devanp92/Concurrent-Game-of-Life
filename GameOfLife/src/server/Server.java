@@ -129,7 +129,7 @@ public class Server implements Runnable {
 							//TODO: maybe?
 						}
 						
-						g.printGrid();
+						g.printGrid();//TODO: remove
 						long start = System.currentTimeMillis();
 						synchronized(connectionCalculating) {
 							for(Connection c : connectionCalculating.keySet()) {
@@ -139,7 +139,10 @@ public class Server implements Runnable {
 						
 						System.out.println("WAITING ON BARRIER");
 						synchronized(barrierLock) {
-							while(numOfRespondedClients != clientCopy.size()) barrierLock.wait();
+							while(numOfRespondedClients < clientCopy.size())  {
+								System.out.println(numOfRespondedClients + " : " + clientCopy.size());
+								barrierLock.wait();
+							}
 							numOfRespondedClients = 0;
 						}
 
@@ -178,6 +181,9 @@ public class Server implements Runnable {
 						for(Connection c : clients) {
 							c.send(NetworkMessage.CALCULATION_COMPLETE);
 						}
+					}
+					synchronized(barrierLock) {
+						numOfRespondedClients = 0;
 					}
 					sendGameToAll();
 				}

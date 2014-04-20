@@ -319,10 +319,9 @@ public class mainPageController implements UICallback {
                     public void run()
                     {
                         Rectangle rectangle = (Rectangle) displayGrid.getChildren().get((row * gridSize) + col);
-                        if(connection.getIsPlaying()) {
-                            //rectangle.setFill((connection.getGrid().convertGridTo2DArray()[col][row].getCellState() == 1) ? Color.BLACK : Color.WHITE);
+                        //if(connection.getIsPlaying()) {//TODO: why was this here? it was messing up the display (the display was one iteration behind the actual)
                         	rectangle.setFill((connection.getGrid().getCell(col, row).getCellState() == 1) ? Color.BLACK : Color.WHITE);
-                        }
+                        //}
                     }
                 });
             }
@@ -379,7 +378,6 @@ public class mainPageController implements UICallback {
     
     @Override
     public void updateIterationDelay(final int val) {
-    	//TODO: set the iteration delay textfield to val
     	Platform.runLater(new Runnable() {
             @Override
             public void run() {
@@ -391,7 +389,7 @@ public class mainPageController implements UICallback {
     public void setDelay(ActionEvent event) {
     	try {
     		connection.updateDelayValue(Integer.parseInt(delayInput.getText()));
-    		setStatusLabel("Dea", "red");
+    		setStatusLabel("", "green");
     	}
     	catch(IllegalArgumentException e) {
     		setStatusLabel("Non-negative delay only", "red");
