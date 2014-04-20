@@ -344,6 +344,7 @@ public class mainPageController implements UICallback {
     	switch(nm) {
 			case CLEAR:
 				break;
+			case CALCULATION_COMPLETE:
 			case PAUSE:
                 Platform.runLater(new Runnable() {
                     @Override

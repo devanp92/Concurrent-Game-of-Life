@@ -101,6 +101,10 @@ public class ClientConnection extends Thread {
 								System.out.println("Received PLAY");
 								isPlaying = true;
 								break;
+							case CALCULATION_COMPLETE:
+								System.out.println("Received CALCULATION_COMPLETE");
+								isPlaying = false;
+								break;
 							case PAUSE:
 								System.out.println("Received PAUSE");
 								isPlaying = false;

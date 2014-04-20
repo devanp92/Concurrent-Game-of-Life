@@ -1,5 +1,5 @@
 package server;
 
 public enum NetworkMessage {
-	PLAY, PAUSE, CLEAR
+	PLAY, PAUSE, CALCULATION_COMPLETE, CLEAR
 }

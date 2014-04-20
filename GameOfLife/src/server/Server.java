@@ -174,7 +174,7 @@ public class Server implements Runnable {
 				finally {
 					synchronized(clients) {
 						for(Connection c : clients) {
-							c.send(NetworkMessage.PAUSE);
+							c.send(NetworkMessage.CALCULATION_COMPLETE);
 						}
 					}
 				}
