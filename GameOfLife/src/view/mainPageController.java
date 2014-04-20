@@ -73,7 +73,8 @@ public class mainPageController implements UICallback {
                 delayLabel.setVisible(true);
                 delayInput.setVisible(true);
                 delayButton.setVisible(true);
-                GridPane.setMargin(serverButton, new Insets(0,90,0,0));
+                System.out.println("margin: ");
+                GridPane.setMargin(serverButton, new Insets(0,closeServerButton.getWidth() + 5,0,0));
                 closeServerButton.setVisible(true);
             }
             else
