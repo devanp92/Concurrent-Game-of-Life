@@ -32,11 +32,6 @@ public class ClientConnection extends Thread {
 		subscribedUI.remove(e);
 	}
 
-    public void resizeGrid(int numRows) throws Exception {
-        g = new Grid(numRows);
-        send(g);
-    }
-
 	public ClientConnection(Socket s) {
 		this.s = s;
 		try {
@@ -159,6 +154,7 @@ public class ClientConnection extends Thread {
 		}
 	}
 
+	/**UICallback methods*/
 	private void updateDisplay() {
 		for(UICallback uic : subscribedUI) {
 			uic.updateGame();
@@ -185,23 +181,7 @@ public class ClientConnection extends Thread {
 		}
 	}
 	
-	public void changeCellState(int x, int y, int state) {
-		Cell c = null;
-		try {
-			c = new Cell(x,y);
-		}
-		catch(Exception e) {
-			e.printStackTrace();
-		}
-		if(c != null) {
-			c.setCellState(state);
-		}
-		System.out.println("Sent cell " + c + " " + ((state == 1) ? "alive":"dead") + " to server");
-		//g.getCell(c.y, c.x).setCellState(c.getCellState());
-		g.setCell(c);
-		g.printGrid();
-		send(c);
-	}
+	
 	
 	/*TODO: remove
 	public void startLife(int x, int y){
@@ -231,6 +211,25 @@ public class ClientConnection extends Thread {
 	}
 	*/
 	
+	/**Send back to server methods*/
+	public void changeCellState(int x, int y, int state) {
+		Cell c = null;
+		try {
+			c = new Cell(x,y);
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+		}
+		if(c != null) {
+			c.setCellState(state);
+		}
+		System.out.println("Sent cell " + c + " " + ((state == 1) ? "alive":"dead") + " to server");
+		//g.getCell(c.y, c.x).setCellState(c.getCellState());
+		g.setCell(c);
+		g.printGrid();
+		send(c);
+	}
+	
 	public void play() {
 		//DON'T set isPlaying (let the receive set it)
 		send(NetworkMessage.PLAY);
@@ -244,6 +243,11 @@ public class ClientConnection extends Thread {
 		send(new IterationDelayPeriod(delay));
 	}
 	
+	public void resizeGrid(int numRows) throws Exception {
+        g = new Grid(numRows);
+        send(g);
+    }
+	
 	/*TODO: remove
 	//For resizes, or clearing of the Grid
 	public void newGame(Grid g) {
@@ -251,6 +255,7 @@ public class ClientConnection extends Thread {
 	}
 	*/
 	
+	/**Callback method for when ClientIterationCalculator finishes*/
 	public void sendPartialComponent(ArrayList<Cell> component) {
 		System.out.println("Sending component of size: " + component.size());
 		send(component);

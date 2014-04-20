@@ -105,25 +105,31 @@ public class mainPageController implements UICallback {
     public void resizeGridAction(ActionEvent event) {
         if(connectionStarted)
         {
-            try
-            {
-                if (!size.getText().isEmpty())
-                {
-                    connection.resizeGrid(Integer.parseInt(size.getText()));
-                    size.clear();
-                    updateGame();
-                    inGameStatus();
-                    setStatusLabel("Click on board to start Game!", "green");
-                } else
-                {
-                    setStatusLabel("Please input a Grid size!!", "red");
-                }
-            }
-            catch (Exception e)
-            {
-                setStatusLabel("Not valid a valid grid size","red");
+        	if(!connection.getIsPlaying()) { 
+	            try
+	            {
+	                if (!size.getText().isEmpty())
+	                {
+	                    connection.resizeGrid(Integer.parseInt(size.getText()));
+	                    size.clear();
+	                    updateGame();
+	                    inGameStatus();
+	                    setStatusLabel("Click on board to start Game!", "green");
+	                } else
+	                {
+	                    setStatusLabel("Please input a Grid size!!", "red");
+	                }
+	            }
+	            catch (Exception e)
+	            {
+	                setStatusLabel("Not valid a valid grid size","red");
+	                size.clear();
+	            }
+        	}
+        	else {
+        		setStatusLabel("Can't resize while playing","red");
                 size.clear();
-            }
+        	}
         }
         event.consume();
     }
@@ -436,7 +442,9 @@ public class mainPageController implements UICallback {
     }
 
     public void closeServer(ActionEvent event) {
-        serverThread.stopServer();
+    	if(serverThread != null) {
+    		serverThread.stopServer();
+    	}
         event.consume();
     }
 }

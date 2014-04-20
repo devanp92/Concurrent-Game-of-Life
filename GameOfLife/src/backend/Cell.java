@@ -3,7 +3,7 @@ package backend;
 import java.io.Serializable;
 import java.util.InputMismatchException;
 
-public class Cell extends QuadTreeElement implements Serializable {
+public class Cell extends Coordinate implements Serializable {
 	private static final long serialVersionUID = -2777226268857678244L;
 	
 	private int cellState;

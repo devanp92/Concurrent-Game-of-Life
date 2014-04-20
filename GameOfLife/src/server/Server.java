@@ -428,9 +428,15 @@ public class Server extends Thread {
 						}
 					}
 					else if(rcvObj instanceof IterationDelayPeriod) {
-						IterationDelayPeriod idp = (IterationDelayPeriod) rcvObj; 
-						if(idp.getDelayVal() != iterationDelay.getDelayVal()) {
-							iterationDelay.setDelayVal(idp.getDelayVal());
+						IterationDelayPeriod idp = (IterationDelayPeriod) rcvObj;
+						boolean isSame = true;
+						synchronized(iterationDelay) {
+							if(idp.getDelayVal() != iterationDelay.getDelayVal()) {
+								iterationDelay.setDelayVal(idp.getDelayVal());
+								isSame = false;
+							}
+						}
+						if(!isSame) {
 							sendDelayToAll(this);
 						}
 					}
