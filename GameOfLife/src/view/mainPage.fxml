@@ -21,7 +21,7 @@
                 <RowConstraints prefHeight="30.0" vgrow="SOMETIMES" />
                 <RowConstraints />
                 <RowConstraints />
-<RowConstraints />
+                <RowConstraints />
             </rowConstraints>
             <children>
                 <Label fx:id="title" style="-fx-font-size: 24pt" text="The Game of Life" textAlignment="CENTER" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="0" />
@@ -31,19 +31,20 @@
                 <Button fx:id="connectButton" onAction="#startConnection" text="Connect" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.rowIndex="1" />
                 <Button fx:id="serverButton" onAction="#spawnServer" text="Spawn Server" textAlignment="CENTER" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.rowIndex="1">
                     <GridPane.margin><Insets right="70.0" /></GridPane.margin></Button>
+                <Button fx:id="closeServerButton" onAction="#closeServer" text="Close Server" GridPane.halignment="RIGHT" GridPane.rowIndex="1" GridPane.columnIndex="0" visible="false"/>
                 <!--Row #2 -->
                 <Label fx:id="currentBoardDimensionsLabel" minWidth="200" style="-fx-font-size: 20pt" text="The grid size is: " visible="false" GridPane.columnIndex="0" GridPane.halignment="LEFT" GridPane.rowIndex="2" />
                 <!--Row #3 -->
                 <Label fx:id="boardDimensionsLabel" minWidth="200" style="-fx-font-size: 18pt" text="Enter grid size:" visible="false" GridPane.columnIndex="0" GridPane.halignment="LEFT" GridPane.rowIndex="3" />
                 <TextField fx:id="size" maxWidth="60" promptText="Size" visible="false" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="3" />
-                <Button fx:id="resizeGridButton" onAction="#resizeGridAction" text="Resize Grid" textAlignment="CENTER" visible="false" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.rowIndex="3" />
+                <Button fx:id="resizeGridButton" onAction="#resizeGridAction" text="Resize Grid" textAlignment="CENTER" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.rowIndex="3" visible="false"/>
                 <!--Row #4 -->
                 <Label fx:id="delayLabel" style="-fx-font-size: 18pt" text="Delay (ms): " textAlignment="CENTER" GridPane.columnIndex="0" GridPane.halignment="LEFT" GridPane.rowIndex="4"  visible="false" />
                 <TextField fx:id="delayInput" maxWidth="70" promptText="" GridPane.columnIndex="0" GridPane.halignment="LEFT" GridPane.rowIndex="4" visible="false" >
-                    <GridPane.margin><Insets left="75.0" /></GridPane.margin>
+                    <GridPane.margin><Insets left="120.0" /></GridPane.margin>
                 </TextField>
                 <Button fx:id="delayButton" onAction="#setDelay" text="Set Delay" textAlignment="CENTER" GridPane.columnIndex="0" GridPane.halignment="LEFT" GridPane.rowIndex="4" visible="false">
-                    <GridPane.margin><Insets left="150.0" /></GridPane.margin>
+                    <GridPane.margin><Insets left="200.0" /></GridPane.margin>
                 </Button>
                 <!--Row #5 -->
                 <Button fx:id="pauseGameButton" onAction="#pauseGame" text="Pause" textAlignment="CENTER" visible="false" GridPane.columnIndex="0" GridPane.halignment="LEFT" GridPane.rowIndex="5" />

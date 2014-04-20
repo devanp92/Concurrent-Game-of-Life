@@ -5,6 +5,7 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -41,12 +42,14 @@ public class mainPageController implements UICallback {
     public Button delayButton;
     public TextField delayInput;
     public Label delayLabel;
+    public Button serverButton;
+    public Button closeServerButton;
     //Local variables
     ClientConnection connection = null;
+    Thread serverThread = null;
     private boolean connectionStarted = false;
     private volatile int gridSize = 0;
     private boolean displayInitialized = false;
-    //private boolean gridInitialized = false;
     private String serverIP = "";
 
     public void startConnection(ActionEvent actionEvent)
@@ -72,6 +75,8 @@ public class mainPageController implements UICallback {
                 delayLabel.setVisible(true);
                 delayInput.setVisible(true);
                 delayButton.setVisible(true);
+                GridPane.setMargin(serverButton, new Insets(0,90,0,0));
+                closeServerButton.setVisible(true);
             }
             else
             {
@@ -400,13 +405,22 @@ public class mainPageController implements UICallback {
     public void spawnServer(ActionEvent event) {
     	try {
 			Server s = new Server(10);
-			Thread serverThread = new Thread(s);
+		    serverThread = new Thread(s);
 			serverThread.setDaemon(true);
 			serverThread.start();
+            //Update UI
+            serverButton.setDisable(true);
+            serverButton.setText("Server Started");
+            serverButton.setStyle("-fx-text-fill: green;");
 		}
 		catch(Exception e) {
 			setStatusLabel("Unable to start Server", "red");
 		}
-    	event.consume();//TODO: is this right?
+    	event.consume();
+    }
+
+    public void closeServer(ActionEvent event) {
+        serverThread.interrupt();
+        event.consume();
     }
 }
