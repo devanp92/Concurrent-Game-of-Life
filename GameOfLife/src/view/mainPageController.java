@@ -387,6 +387,7 @@ public class mainPageController implements UICallback {
             @Override
             public void run() {
                 delayInput.setPromptText("current: " + String.valueOf(val));
+                setStatusLabel("Delay Updated", "green");
             }
         });
     }

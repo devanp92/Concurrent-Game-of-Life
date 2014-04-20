@@ -18,6 +18,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class Server extends Thread {
 	public static final int port = 44445;
@@ -37,10 +38,11 @@ public class Server extends Thread {
 	private Thread playThread = new Thread();
 	private volatile IterationDelayPeriod iterationDelay = new IterationDelayPeriod(0);
 	
-	//Note: the next two are separated because it more easily separates a Connection from its list,
-	//making it easier to reassign a component to another Connection if a Connection drops before returning
+	//Note: separate mappings are used for Connection->Integer & Integer->Component instead of Connection->Component
+	//making it easier to reassign a Component to another Connection if a Connection drops before returning
 	//its assignment
-	//Uses of any of these should be GuardedBy synchronizing on connectionCalculating
+	/**A lock for access to any of the next 3 HashMaps*/
+	ReentrantLock connectionComponentLock = new ReentrantLock();
 	/**A mapping between a connection and what component it is currently calculating*/
 	private HashMap<Connection, Integer> connectionCalculating = new HashMap<Connection, Integer>();
 	/**A mapping between a component of the Grid and the partial component to send*/
@@ -134,11 +136,15 @@ public class Server extends Thread {
 							dic = new DistributiveIterationCalculator(g);
 							List<AtomicReference[]> components = dic.findSubSetsOfCellsForClients(clientCopy.size());
 							
-							synchronized(connectionCalculating) {
+							connectionComponentLock.lock();
+							try {
 								for(int i = 0;i<clientCopy.size();i++) {
 									connectionCalculating.put(clientCopy.get(i), new Integer(i));
 									partialComponents.put(new Integer(i), components.get(i));
 								}
+							}
+							finally {
+								connectionComponentLock.unlock();
 							}
 						}
 						catch(Exception e) {
@@ -147,10 +153,14 @@ public class Server extends Thread {
 						
 						g.printGrid();//TODO: remove
 						long start = System.currentTimeMillis();
-						synchronized(connectionCalculating) {
+						connectionComponentLock.lock();
+						try {
 							for(Connection c : connectionCalculating.keySet()) {
 								c.send(partialComponents.get(connectionCalculating.get(c)));
 							}
+						}
+						finally {
+							connectionComponentLock.unlock();
 						}
 						
 						System.out.println("WAITING ON BARRIER");
@@ -164,16 +174,24 @@ public class Server extends Thread {
 
 						boolean isEmpty;
 						int clientCount;
-						synchronized(connectionCalculating) {
+						connectionComponentLock.lock();
+						try {
 							isEmpty = connectionCalculating.isEmpty();
+						}
+						finally {
+							connectionComponentLock.unlock();
 						}
 						synchronized(clients) {
 							clientCount = clients.size();
 						}
 						while(!isEmpty && clientCount > 0) {
 							resendRemainingPartialComponents();
-							synchronized(connectionCalculating) {
+							connectionComponentLock.lock();
+							try {
 								isEmpty = connectionCalculating.isEmpty();
+							}
+							finally {
+								connectionComponentLock.unlock();
 							}
 							synchronized(clients) {
 								clientCount = clients.size();
@@ -214,7 +232,9 @@ public class Server extends Thread {
 				if(clientCopy.size() == 0) return;
 				HashMap<Connection, Integer> newConnectionCalculating = new HashMap<Connection, Integer>();
 				int i = 0;
-				synchronized(connectionCalculating) {
+				
+				connectionComponentLock.lock();
+				try {
 					for(Connection c : connectionCalculating.keySet()) {
 						newConnectionCalculating.put(clientCopy.get(i), connectionCalculating.get(c));
 						i++;
@@ -230,6 +250,9 @@ public class Server extends Thread {
 						while(numOfRespondedClients != clientCopy.size()) barrierLock.wait();
 						numOfRespondedClients = 0;
 					}
+				}
+				finally {
+					connectionComponentLock.unlock();
 				}
 			}
 		};
@@ -268,9 +291,13 @@ public class Server extends Thread {
 		
 		Collection<ArrayList<Cell>> components = null;
 		//Note: connectionCalculating acts as a lock on itself and partialComponents
-		synchronized(connectionCalculating) {
+		connectionComponentLock.lock();
+		try {
 			components = Collections.unmodifiableCollection(completePartialComponents.values());
 			partialComponents.clear();
+		}
+		finally {
+			connectionComponentLock.unlock();
 		}
 		for(ArrayList<Cell> cells : components) {
 			for(Cell c : cells) {
@@ -401,17 +428,24 @@ public class Server extends Thread {
 						}
 					}
 					else if(rcvObj instanceof IterationDelayPeriod) {
-						iterationDelay = (IterationDelayPeriod) rcvObj;
-						sendDelayToAll(this);
+						IterationDelayPeriod idp = (IterationDelayPeriod) rcvObj; 
+						if(idp.getDelayVal() != iterationDelay.getDelayVal()) {
+							iterationDelay.setDelayVal(idp.getDelayVal());
+							sendDelayToAll(this);
+						}
 					}
 					else if(rcvObj instanceof ArrayList<?>) {
 						if(playThread.isAlive()) {
 							System.out.println("Received Completed PartialComponent");
 							ArrayList<Cell> partialComponent = (ArrayList<Cell>) rcvObj;//TODO: reflection?
-							synchronized(connectionCalculating) {
+							connectionComponentLock.lock();
+							try {
 								Integer item = connectionCalculating.get(this);
 								completePartialComponents.put(item, partialComponent);
 								connectionCalculating.remove(this);
+							}
+							finally {
+								connectionComponentLock.unlock();
 							}
 							passBarrier();
 						}
@@ -456,11 +490,15 @@ public class Server extends Thread {
 					}
 				}
 				//if the current thread should await on the barrier, pass it to not create deadlock
-				synchronized(connectionCalculating) {
+				connectionComponentLock.lock();
+				try {
 					if(connectionCalculating.containsKey(this)) {
 						passBarrier();
 						//Don't remove this from connectionCalculating
 					}
+				}
+				finally {
+					connectionComponentLock.unlock();
 				}
 			}
 		}
