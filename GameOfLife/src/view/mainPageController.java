@@ -177,6 +177,14 @@ public class mainPageController implements UICallback {
         //TODO initializedBoardDimensionsLabel.setVisible(true);
         //TODO initializedBoardDimensionsLabel.setText(initializedBoardDimensionsLabel.getText() + gridSize +" X " + gridSize);
     }
+    public void setStatus(final String newStatus, final String txtFill) {
+    	Platform.runLater(new Runnable() {
+    		@Override
+    		public void run() {
+    			setStatusLabel(newStatus, txtFill);
+    		}
+    	});
+    }
     private void setStatusLabel(String newStatus, String txtFill)
     {
         statusLabel.setText(newStatus);

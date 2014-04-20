@@ -112,8 +112,7 @@ public class ClientConnection extends Thread {
 						}
 						updatePausePlay(nm);
 					}
-					if(g != null) g.printGrid();
-					
+					if(g != null) g.printGrid();//TODO: remove
 				}
 				else {
 					doLoop = false;
@@ -124,6 +123,7 @@ public class ClientConnection extends Thread {
 			e.printStackTrace();
 		}
 		catch(IOException e) {
+			setStatus("Server Closed", "red");
 			e.printStackTrace();//EOFException
 		}
 		finally {
@@ -172,6 +172,11 @@ public class ClientConnection extends Thread {
 	private void updateIterationDelay(int delay) {
 		for(UICallback uic : subscribedUI) {
 			uic.updateIterationDelay(delay);
+		}
+	}
+	private void setStatus(String newStatus, String txtFill) {
+		for(UICallback uic : subscribedUI) {
+			uic.setStatus(newStatus, txtFill);
 		}
 	}
 	

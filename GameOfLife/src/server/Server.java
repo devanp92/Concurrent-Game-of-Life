@@ -364,9 +364,6 @@ public class Server implements Runnable {
 						if(playThread.isAlive()) {
 							System.out.println("Received Completed PartialComponent");
 							ArrayList<Cell> partialComponent = (ArrayList<Cell>) rcvObj;//TODO: reflection?
-							for(Cell c : partialComponent) {
-								System.out.println(c + " : " + c.getCellState());
-							}
 							synchronized(connectionCalculating) {
 								Integer item = connectionCalculating.get(this);
 								completePartialComponents.put(item, partialComponent);
