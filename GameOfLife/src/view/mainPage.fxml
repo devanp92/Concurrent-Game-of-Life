@@ -33,7 +33,7 @@
                     <GridPane.margin><Insets right="70.0" /></GridPane.margin></Button>
                 <Button fx:id="closeServerButton" onAction="#closeServer" text="Close Server" GridPane.halignment="RIGHT" GridPane.rowIndex="1" GridPane.columnIndex="0" visible="false"/>
                 <!--Row #2 -->
-                <Label fx:id="currentBoardDimensionsLabel" minWidth="200" style="-fx-font-size: 20pt" text="The grid size is: " visible="false" GridPane.columnIndex="0" GridPane.halignment="LEFT" GridPane.rowIndex="2" />
+                <Label fx:id="currentBoardDimensionsLabel" minWidth="200" style="-fx-font-size: 18pt" text="The grid size is: " visible="false" GridPane.columnIndex="0" GridPane.halignment="LEFT" GridPane.rowIndex="2" />
                 <!--Row #3 -->
                 <Label fx:id="boardDimensionsLabel" minWidth="200" style="-fx-font-size: 18pt" text="Enter grid size:" visible="false" GridPane.columnIndex="0" GridPane.halignment="LEFT" GridPane.rowIndex="3" />
                 <TextField fx:id="size" maxWidth="60" promptText="Size" visible="false" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="3" />

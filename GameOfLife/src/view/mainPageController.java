@@ -60,9 +60,8 @@ public class mainPageController implements UICallback {
             connection.start();
             if(connection != null)
             {
-//                setStatusLabel("Server Connection Started", "green");
+                setStatusLabel("Connected to server", "green");
                 //TODO This was behind the board
-                setStatusLabel("", "green");
                 connectionStarted = true;
                 serverIP = serverIpAddress.getText();
                 connectButton.setVisible(false);
@@ -136,8 +135,6 @@ public class mainPageController implements UICallback {
     public void quit() {
         System.exit(0);
         //TODO: these never get executed, remove or call Platform.runLater() before System.exit(0)
-        System.out.println(displayGrid.getChildren().removeAll(displayGrid.getChildren()));
-        System.out.println(displayGrid.getChildren().size());
     }
 
     private void inGameStatus()
