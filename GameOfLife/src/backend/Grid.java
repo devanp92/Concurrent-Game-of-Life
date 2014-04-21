@@ -69,7 +69,7 @@ public class Grid extends CoordinateCalculator implements Serializable {
 				cell.setCellCase(getNumRows());
 			}
 			catch(Exception e) {
-				e.printStackTrace();//TODO: remove
+				e.printStackTrace();
 			}
         }
         
