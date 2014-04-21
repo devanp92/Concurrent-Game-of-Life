@@ -30,8 +30,7 @@
                 <Label fx:id="serverIpAddressPrompt" styleClass="normalLabel" text="Server IP address:" textAlignment="CENTER" GridPane.columnIndex="0" GridPane.halignment="LEFT" GridPane.rowIndex="1" />
                 <TextField fx:id="serverIpAddress" maxWidth="100" text="127.0.0.1" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
                 <Button fx:id="connectButton" onAction="#startConnection" text="Connect" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.rowIndex="1" />
-                <Button fx:id="serverButton" onAction="#spawnServer" text="Spawn Server" textAlignment="CENTER" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.rowIndex="1">
-                    <GridPane.margin><Insets right="70.0" /></GridPane.margin></Button>
+                <Button fx:id="serverButton" onAction="#spawnServer" text="Spawn Server" textAlignment="CENTER" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.rowIndex="2"/>
                 <Button fx:id="closeServerButton" onAction="#closeServer" text="Close Server" visible="false" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.rowIndex="1" />
                 <!--Row #2 -->
                 <Label fx:id="currentBoardDimensionsLabel" minWidth="200" styleClass="normalLabel" text="The grid size is: " visible="false" GridPane.columnIndex="0" GridPane.halignment="LEFT" GridPane.rowIndex="2" />
@@ -41,10 +40,8 @@
                 <Button fx:id="resizeGridButton" onAction="#resizeGridAction" text="Resize Grid" textAlignment="CENTER" visible="false" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.rowIndex="3" />
                 <!--Row #4 -->
                 <Label fx:id="delayLabel" maxWidth="130" styleClass="normalLabel" text="Delay (ms): " textAlignment="CENTER" visible="false" GridPane.columnIndex="0" GridPane.halignment="LEFT" GridPane.rowIndex="4" />
-                <TextField fx:id="delayInput" maxWidth="80" promptText="+Integers" visible="false" GridPane.columnIndex="0" GridPane.halignment="LEFT" GridPane.rowIndex="4">
-                    <GridPane.margin><Insets left="120.0" /></GridPane.margin>
-                </TextField>
-                <Button fx:id="delayButton" onAction="#setDelay" text="Set Delay" textAlignment="CENTER" visible="false" GridPane.columnIndex="0" GridPane.halignment="LEFT" GridPane.rowIndex="4">
+                <TextField fx:id="delayInput" maxWidth="80" promptText="+Integers" visible="false" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="4"/>
+                <Button fx:id="delayButton" onAction="#setDelay" text="Set Delay" textAlignment="CENTER" visible="false" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.rowIndex="4">
                     <GridPane.margin><Insets left="200.0" /></GridPane.margin>
                 </Button>
                 <!--Row #5 -->
