@@ -1,6 +1,7 @@
 package backend;
 
 import server.ClientConnection;
+import view.startGame;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -48,15 +49,17 @@ public class ClientIterationCalculator extends Thread {
         long timeDifference = System.currentTimeMillis() - start;
         PrintWriter printWriter;
         try {
-            printWriter = new PrintWriter(new FileWriter("Times.txt"));
-            printWriter.println(numThreads + " " + timeDifference);
+            printWriter = new PrintWriter(new FileWriter("Times.txt", true));
+            printWriter.println("Number of threads: " + numThreads + "\tClient-side Calculation delay: " + timeDifference);
+            printWriter.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     private void initializeCalculators() throws RuntimeException, InterruptedException {
-        int numThreads = numThreads();
+        numThreads = numThreads();
+        if(startGame.numOfClientThreads > 0) numThreads = startGame.numOfClientThreads;
         calculators = new NextCellCalculator[numThreads];
         //int numCellsPerThread = oldCells.length / numThreads;
         List<AtomicReference[]> listOfSubSets = findSubSetsOfCellsForThread(numThreads);

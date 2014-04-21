@@ -11,8 +11,21 @@ import javafx.stage.Stage;
  * Created by Daniel on 3/29/2014.
  */
 public class startGame extends Application{
+	public static int numOfClientThreads = -1;
 
     public static void main(String[] args) {
+    	if(args.length > 0) {
+    		try {
+    			int numOfThreads = Integer.parseInt(args[0]);
+    			if(numOfThreads <= 0) throw new NumberFormatException();
+    			else {
+    				numOfClientThreads = numOfThreads;
+    			}
+    		}
+    		catch(NumberFormatException e) {
+    			System.err.println("Input a positive integer or no argument for default");
+    		}
+    	}
 
         launch(args);
 
