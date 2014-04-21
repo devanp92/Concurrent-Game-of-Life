@@ -531,5 +531,6 @@ public class Server extends Thread {
 		Server s = new Server();
 		s.setDaemon(false);
 		s.start();
+        ClientIterationCalculator.printTimeForAllIterations();
 	}
 }

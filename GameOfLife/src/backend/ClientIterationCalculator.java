@@ -7,7 +7,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class ClientIterationCalculator extends Thread {
@@ -17,6 +20,8 @@ public class ClientIterationCalculator extends Thread {
     private NextCellCalculator[] calculators;
     private ClientConnection callback;
     public static int numThreads;
+    private static HashMap<Integer, Long> iterationNumToTime = new HashMap<>();
+    private AtomicInteger iterationNum = new AtomicInteger(0);
 
     public ClientIterationCalculator(AtomicReference[] ar, Grid g, ClientConnection conn) throws Exception {
         if (ar == null) {
@@ -39,18 +44,25 @@ public class ClientIterationCalculator extends Thread {
 
     private void calculateNewIteration() throws Exception {
         initializeCalculators();
-        long start = System.currentTimeMillis();
+        long start = System.nanoTime();
         startThreads();
         newCells = joinThreads();
-        printTimeForEachIteration(start);
+        int count = iterationNum.incrementAndGet();
+        storeTimeForEachIteration(start, count);
     }
 
-    private void printTimeForEachIteration(long start) {
+    private void storeTimeForEachIteration(long start, int count) {
         long timeDifference = System.currentTimeMillis() - start;
+        iterationNumToTime.put(count, timeDifference);
+    }
+    public static void printTimeForAllIterations(){
         PrintWriter printWriter;
         try {
             printWriter = new PrintWriter(new FileWriter("Times.txt", true));
-            printWriter.println("Number of threads: " + numThreads + "\tClient-side Calculation delay: " + timeDifference);
+            printWriter.println("Number of threads: " + numThreads);
+            for(Map.Entry time : iterationNumToTime.entrySet()){
+                printWriter.println("Iteration count: " + time.getKey() + "\t Time: " + time.getValue());
+            }
             printWriter.close();
         } catch (IOException e) {
             e.printStackTrace();
