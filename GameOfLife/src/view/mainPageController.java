@@ -63,7 +63,6 @@ public class mainPageController implements UICallback {
             if(connection != null)
             {
                 setStatusLabel("Connected to server", "green");
-                //TODO This was behind the board
                 connectionStarted = true;
                 serverIP = serverIpAddress.getText();
                 connectButton.setVisible(false);
@@ -137,7 +136,6 @@ public class mainPageController implements UICallback {
 
     public void quit() {
         System.exit(0);
-        //TODO: these never get executed, remove or call Platform.runLater() before System.exit(0)
     }
 
     private void inGameStatus()
@@ -191,7 +189,7 @@ public class mainPageController implements UICallback {
     {
         System.out.println("updateGame called, GridSize: " + connection.getGrid().getNumRows());
         //if the size of the client is not the same as the size in the server the board will readjust
-        if((connection.getGrid().getNumRows() != gridSize)/* || !displayInitialized*/)
+        if(connection.getGrid().getNumRows() != gridSize)
         {
             displayInitialized = true;
             gridSize = connection.getGrid().getNumRows();
@@ -263,10 +261,10 @@ public class mainPageController implements UICallback {
             colorDisplayGrid();
         }
     }
+    
+    //Fill color the board respectively to the states of the cells
     private void colorDisplayGrid()
     {
-        //Fill color the board respectively to the states of the cells
-        System.out.println(displayGrid.getChildren().size());
         for (Integer i = 0; i < gridSize; i++)
         {
             for (Integer j = 0; j < gridSize; j++)
