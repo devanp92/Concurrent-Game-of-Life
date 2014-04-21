@@ -31,7 +31,7 @@
                 <TextField fx:id="serverIpAddress" maxWidth="100" text="127.0.0.1" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
                 <Button fx:id="connectButton" onAction="#startConnection" text="Connect" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.rowIndex="1" />
                 <Button fx:id="serverButton" onAction="#spawnServer" text="Spawn Server" textAlignment="CENTER" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.rowIndex="2"/>
-                <Button fx:id="closeServerButton" onAction="#closeServer" text="Close Server" visible="false" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.rowIndex="1" />
+                <Button fx:id="closeServerButton" onAction="#closeServer" text="Close Server" visible="false" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.rowIndex="2" />
                 <!--Row #2 -->
                 <Label fx:id="currentBoardDimensionsLabel" minWidth="200" styleClass="normalLabel" text="The grid size is: " visible="false" GridPane.columnIndex="0" GridPane.halignment="LEFT" GridPane.rowIndex="2" />
                 <!--Row #3 -->

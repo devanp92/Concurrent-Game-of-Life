@@ -5,7 +5,6 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
-import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -141,8 +140,6 @@ public class mainPageController implements UICallback {
         boardDimensionsLabel.setVisible(true);
         size.setVisible(true);
         resizeGridButton.setVisible(true);
-        //TODO initializedBoardDimensionsLabel.setVisible(true);
-        //TODO initializedBoardDimensionsLabel.setText(initializedBoardDimensionsLabel.getText() + gridSize +" X " + gridSize);
     }
     public void setStatus(final String newStatus, final String txtFill) {
     	Platform.runLater(new Runnable() {
@@ -162,21 +159,12 @@ public class mainPageController implements UICallback {
 
     public void pauseGame(ActionEvent event)
     {
-    	//DON'T set anything: the visual effects will change when the official message comes from the server
-        //setStatusLabel("The game is paused", "yellow");
-        //pauseGameButton.setVisible(false);
-        //playGameButton.setVisible(true);
         connection.pause();
         event.consume();
     }
 
     public void playGame(ActionEvent event)
     {
-    	//DON'T set anything: the game might already be playing when the PLAY is received and the UI won't know
-    	//The visual effects will change when the official message comes from the server
-        //playGameButton.setVisible(false);
-        //pauseGameButton.setVisible(true);
-        //setStatusLabel("The game is playing", "green");
         connection.play();
         event.consume();
     }
@@ -371,7 +359,8 @@ public class mainPageController implements UICallback {
 		    serverThread = new Server(Server.defaultSize);
 			serverThread.start();
             //Update UI
-            serverButton.setDisable(true);
+            serverButton.setVisible(false);
+            closeServerButton.setVisible(true);
             serverButton.setText("Server Started");
             serverButton.setStyle("-fx-text-fill: green;");
 		}
