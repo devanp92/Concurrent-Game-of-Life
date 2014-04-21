@@ -79,7 +79,6 @@ public class ClientIterationCalculator extends Thread {
      * @return List of arrays that contains an array of cells
      */
     private List<AtomicReference[]> findSubSetsOfCellsForThread(int numThreads) {
-        //int size = (int) Math.pow(oldGrid.numRows, 2);//gridSize
     	int size = oldCells.length;
         int numCellsPerThread = size / numThreads;
         List<AtomicReference[]> list = new ArrayList<>();

@@ -1,5 +1,7 @@
 package backend;
 
+import fallback.QuadTreeElement;
+
 import java.io.Serializable;
 
 public abstract class Coordinate implements Serializable {
