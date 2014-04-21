@@ -396,7 +396,8 @@ public class mainPageController implements UICallback {
     public void renderUI(ActionEvent actionEvent) {
         renderUI.setVisible(false);
         menu.setVisible(true);
-        GridPane.setMargin(serverButton, new Insets(0, connectButton.getWidth() + 5,0,0));
+        GridPane.setMargin(serverButton, new Insets(0, connectButton.getWidth() + 5, 0, 0));
+        GridPane.setMargin(delayInput, new Insets(0,0,0, delayLabel.getWidth() + 5));
 
     }
 }

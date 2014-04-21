@@ -40,8 +40,8 @@
                 <TextField fx:id="size" maxWidth="60" promptText="Size" visible="false" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="3" />
                 <Button fx:id="resizeGridButton" onAction="#resizeGridAction" text="Resize Grid" textAlignment="CENTER" visible="false" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.rowIndex="3" />
                 <!--Row #4 -->
-                <Label fx:id="delayLabel" styleClass="normalLabel" text="Delay (ms): " textAlignment="CENTER" visible="false" GridPane.columnIndex="0" GridPane.halignment="LEFT" GridPane.rowIndex="4" />
-                <TextField fx:id="delayInput" maxWidth="70" promptText="+Integers" visible="false" GridPane.columnIndex="0" GridPane.halignment="LEFT" GridPane.rowIndex="4">
+                <Label fx:id="delayLabel" maxWidth="130" styleClass="normalLabel" text="Delay (ms): " textAlignment="CENTER" visible="false" GridPane.columnIndex="0" GridPane.halignment="LEFT" GridPane.rowIndex="4" />
+                <TextField fx:id="delayInput" maxWidth="80" promptText="+Integers" visible="false" GridPane.columnIndex="0" GridPane.halignment="LEFT" GridPane.rowIndex="4">
                     <GridPane.margin><Insets left="120.0" /></GridPane.margin>
                 </TextField>
                 <Button fx:id="delayButton" onAction="#setDelay" text="Set Delay" textAlignment="CENTER" visible="false" GridPane.columnIndex="0" GridPane.halignment="LEFT" GridPane.rowIndex="4">
