@@ -84,7 +84,8 @@ public class ClientConnection extends Thread {
 						catch(Exception e) {
 							e.printStackTrace();
 						}
-						cic.start();//This makes the callback when done
+                        assert cic != null;
+                        cic.start();//This makes the callback when done
 					}
 					else if(rcvObj instanceof IterationDelayPeriod) {
 						IterationDelayPeriod idp = (IterationDelayPeriod) rcvObj;

@@ -2,6 +2,7 @@ package server;
 
 
 import backend.Cell;
+import backend.ClientIterationCalculator;
 import backend.DistributiveIterationCalculator;
 import backend.Grid;
 
@@ -148,7 +149,9 @@ public class Server extends Thread {
 						try {
 							distributedIC = new DistributiveIterationCalculator(g);
 							List<AtomicReference[]> components = distributedIC.findSubSetsOfCellsForClients(clientCopy.size());
-							
+                            //-------------Needed for timed results------------------------------//
+                            ClientIterationCalculator.numThreads = clientCopy.size();
+                            //-------------Needed for timed results------------------------------//
 							connectionComponentLock.lock();
 							try {
 								for(int i = 0;i<clientCopy.size();i++) {
@@ -318,13 +321,15 @@ public class Server extends Thread {
 		}
 		for(ArrayList<Cell> cells : components) {
 			for(Cell c : cells) {
-				tempGrid.setCell(c);
+                assert tempGrid != null;
+                tempGrid.setCell(c);
 			}
 		}
 		boolean isSameGrid = true;
 		for(int i = 0;i<g.getNumRows();i++) {
 			for(int j = 0;j<g.getNumRows();j++) {
-				if(tempGrid.getCell(i, j).getCellState() != g.getCell(i,j).getCellState()) {
+                assert tempGrid != null;
+                if(tempGrid.getCell(i, j).getCellState() != g.getCell(i,j).getCellState()) {
 					isSameGrid = false;
 				}
 			}
