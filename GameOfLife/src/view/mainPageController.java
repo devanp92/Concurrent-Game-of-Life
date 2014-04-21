@@ -5,7 +5,6 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
-import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -393,8 +392,6 @@ public class mainPageController implements UICallback {
     public void renderUI(ActionEvent actionEvent) {
         renderUI.setVisible(false);
         menu.setVisible(true);
-        GridPane.setMargin(serverButton, new Insets(0, connectButton.getWidth() + 5, 0, 0));
-        GridPane.setMargin(delayInput, new Insets(0,0,0, delayLabel.getWidth() + 5));
-
+        System.out.println(delayLabel.getLayoutX());
     }
 }
