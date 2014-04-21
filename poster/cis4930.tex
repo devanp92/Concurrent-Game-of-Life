@@ -68,7 +68,7 @@
 %----------------------------------------------------------------------------------------
 
 
-\begin{alertblock}{Introduction}
+\begin{block}{Introduction}
 Jon Conway devised an algorithm to mimic cell automation in 1970, called the 'Game of Life'. Essentially, the game consists of a finite grid of cells that are either 'alive' or 'dead' and are dependent on the following rules:
 \begin{itemize}
 \item Any live cell with fewer than two live neighbours dies, as if caused by under-population.
@@ -77,7 +77,7 @@ Jon Conway devised an algorithm to mimic cell automation in 1970, called the 'Ga
 \item Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction.
 \end{itemize}
 
-\end{alertblock}
+\end{block}
 
 %----------------------------------------------------------------------------------------
 %	Objective
@@ -85,7 +85,7 @@ Jon Conway devised an algorithm to mimic cell automation in 1970, called the 'Ga
 
 
 \begin{block}{Objective}
-	Our Game of Life implementation uses a server-client architecture, controlled and played on multiple clients. Iterations are computed on multiple clients; the server will constantly transmit the grid to clients after each iteration. When played, the server will distribute tasks of calculating iterations amongst the clients, and the calculations are returned to the server; it then merges the calculations, distribute the board and tasks to the clients again. Clients update grid size and initialialize living cells in order to play and then receive commands to calculate the next iteration. After these calculations are complete and sent to the server, client waits for future information.
+	Our Game of Life implementation uses a server-client architecture, controlled and played on multiple clients. Iterations are computed on multiple clients; the server will constantly transmit the grid to clients after each iteration. When played, the server will distribute tasks of calculating iterations amongst the clients, and the calculations are returned to the server; it then merges the calculations, distributes the board and tasks to the clients again. Clients update grid size and initialialize living cells in order to play and then receive commands to calculate the next iteration. After these calculations are complete and sent to the server, client waits for future information.
 \end{block}
 
 %------------------------------------------------
@@ -108,44 +108,26 @@ Jon Conway devised an algorithm to mimic cell automation in 1970, called the 'Ga
 \begin{column}{\onecolwid}\vspace{-.6in} % The first column within column 2 (column 2.1)
 
 %----------------------------------------------------------------------------------------
-%	WHAT EACH MEMBER DID
+%	SCREENSHOT
 %----------------------------------------------------------------------------------------
 
-\begin{block}{Member Contributions}
-
-\begin{itemize}
-\item \textbf{Devan Patel} developed a concurrent algorithm determining neighboring cells, calculating the next iteration, and synchonously updating the grid.
-\item\textbf{Kyle Koceski} managed the appropriate synchronization of multiple client threads and communication between clients and server.
-\item\textbf{Daniel Fuentes} designed the graphical user interface that allowed clients to interact with the board, as well as displaying the board's current status, and the changes as the game progressed.
-\end{itemize}
+\begin{block}{}
+\begin{figure}
+\includegraphics[width=.7\linewidth]{gol.jpg}
+\caption{Game of Life in action!}
+\end{figure}
 \end{block}
 
-%----------------------------------------------------------------------------------------
 
 \end{column} % End of column 2.1
 
 \begin{column}{\onecolwid}\vspace{-.6in} % The second column within column 2 (column 2.2)
-
-%----------------------------------------------------------------------------------------
-%	CONCURRENCY INVOLVED
-%----------------------------------------------------------------------------------------
-
-\begin{block}{Concurrency Involved}
-\textbf{Server}:
-\begin{itemize}
-\item Synchronization on client list which is necessary to ensure a consistent view of the current clients before distributing tasks
-\item Utilizing a Lock over HashMaps associating Connections to Tasks and Tasks to Returned Components
-\item ''Barrier'' synchronization using Object.wait() and Object.notifyAll() to inform the playThread when all clients have returned back partial nextIteration objects
-\end{itemize}
-\textbf{Client}:
-\begin{itemize}
-\item GUI thread and ClientConnection thread
-\item ClientConnection uses JavaFX marshalling functions to receive information from Server and display it the the user
-\item Calculates nextIteration from the tasked partial components by distributing amongst threads (relatively equivalent to the number of available processors), sending back to server after threads complete
-\end{itemize}
+\begin{block}{}
+\begin{figure}
+\includegraphics[width=.7\linewidth]{gol2.jpg}
+\centering \caption{Unique shapes and patterns appear when ran long enough. Here is one called the "Glider Gun".}
+\end{figure}
 \end{block}
-
-%----------------------------------------------------------------------------------------
 
 \end{column} % End of column 2.2
 
@@ -174,56 +156,38 @@ NEED TO ADD GRAPHS
 \begin{column}{\sepwid}\end{column} % Empty spacer column
 
 \begin{column}{\onecolwid} % The third column
-
 %----------------------------------------------------------------------------------------
-%	CONCLUSION
+%	CONCURRENCY INVOLVED
 %----------------------------------------------------------------------------------------
 
-\begin{block}{Conclusion}
-
-Nunc tempus venenatis facilisis. \textbf{Curabitur suscipit} consequat eros non porttitor. Sed a massa dolor, id ornare enim. Fusce quis massa dictum tortor \textbf{tincidunt mattis}. Donec quam est, lobortis quis pretium at, laoreet scelerisque lacus. Nam quis odio enim, in molestie libero. Vivamus cursus mi at \textit{nulla elementum sollicitudin}.
-
+\begin{block}{Concurrency Involved}
+\textbf{Server}:
+\begin{itemize}
+\item Synchronization on client list which is necessary to ensure a consistent view of the current clients before distributing tasks
+\item Utilizing a lock for hash maps associating Connections to Tasks and Tasks to Returned Components
+\item ''Barrier'' synchronization using Object.wait() and Object.notifyAll() to inform a thread when all clients have returned back partial calculation objects
+\item Use of atomic references to hold cells for eliminating race conditions
+\end{itemize}
+\textbf{Client}:
+\begin{itemize}
+\item GUI thread and ClientConnection thread
+\item ClientConnection uses JavaFX marshalling functions to receive information from Server and display the new grid to the user
+\item Calculates the next iteration from the tasked partial components by distributing amongst threads (relatively equivalent to the number of available processors), sending back to server after threads complete
+\end{itemize}
 \end{block}
 
 %----------------------------------------------------------------------------------------
-%	TECHNOLOGIES
+
 %----------------------------------------------------------------------------------------
-
-\begin{block}{Technologies}
-
-The following technologies were required to complete the project:
+%	WHAT EACH MEMBER DID
+%----------------------------------------------------------------------------------------
+\begin{block}{Member Contributions}
 
 \begin{itemize}
-\item Java 1.8
-\item JUnit 1.4
-\item JavaFX 2.0.3
-\item Java Swing
+\item \textbf{Devan Patel} developed a concurrent algorithm determining neighboring cells, calculating the next iteration, and synchonously updating the grid.
+\item\textbf{Kyle Koceski} managed the appropriate synchronization of multiple client threads and communication between clients and server.
+\item\textbf{Daniel Fuentes} designed the graphical user interface that allowed clients to interact with the board, as well as displaying the board's current status, and the changes as the game progressed.
 \end{itemize}
-
-\end{block}
-
-%----------------------------------------------------------------------------------------
-%	IMPROVING RESULTS
-%----------------------------------------------------------------------------------------
-
-\begin{block}{Improving Results}
-Factors that would improve our results include:
-\begin{itemize}
-\item Support more cores for threads in order to extrpolate our data
-\item Support larger grids to determine speed for different grid sizes
-\end{itemize}
-
-\end{block}
-
-%----------------------------------------------------------------------------------------
-%	ACKNOWLEDGEMENTS
-%----------------------------------------------------------------------------------------
-
-\setbeamercolor{block title}{fg=red,bg=white} % Change the block title color
-
-\begin{block}{Acknowledgements}
-WHAT TO ADD HERE?
-
 \end{block}
 
 %----------------------------------------------------------------------------------------

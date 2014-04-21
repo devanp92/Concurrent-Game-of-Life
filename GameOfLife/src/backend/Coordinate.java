@@ -9,13 +9,13 @@ public abstract class Coordinate implements Serializable {
 	public int y;
 	
 	public boolean equals(Object o) {
-		if(o instanceof QuadTreeElement) {
-			QuadTreeElement qte = (QuadTreeElement) o;
-			return equals(qte);
+		if(o instanceof Coordinate) {
+			Coordinate c = (Coordinate) o;
+			return equals(c);
 		}
 		else return false;
 	}
-	public boolean equals(QuadTreeElement e) {
+	public boolean equals(Coordinate e) {
 		return x == e.x && y == e.y;
 	}
 	public int hashCode() {
