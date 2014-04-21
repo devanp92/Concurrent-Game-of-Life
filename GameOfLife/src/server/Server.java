@@ -235,12 +235,12 @@ public class Server extends Thread {
 						for(Connection c : clients) {
 							c.send(NetworkMessage.CALCULATION_COMPLETE);
 						}
-					}
-					synchronized(barrierLock) {
-						numOfRespondedClients = 0;
-					}
-					sendGameToAll();
-				}
+                    }
+                    synchronized(barrierLock) {
+                        numOfRespondedClients = 0;
+                    }
+                    sendGameToAll();
+                }
 			}
 			
 			/**resendRemainingPartialComponents()*/
@@ -474,6 +474,7 @@ public class Server extends Thread {
 							}
 							finally {
 								connectionComponentLock.unlock();
+
 							}
 							passBarrier();
 						}
@@ -537,7 +538,7 @@ public class Server extends Thread {
 			catch(IOException e) {
 				e.printStackTrace();
 			}
-		}
+        }
 	}
 
 	//in case you want to run the Server externally
@@ -545,6 +546,5 @@ public class Server extends Thread {
 		Server s = new Server();
 		s.setDaemon(false);
 		s.start();
-        ClientIterationCalculator.printTimeForAllIterations();
 	}
 }

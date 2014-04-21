@@ -9,7 +9,6 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -20,7 +19,7 @@ public class ClientIterationCalculator extends Thread {
     private NextCellCalculator[] calculators;
     private ClientConnection callback;
     public static int numThreads;
-    private static HashMap<Integer, Long> iterationNumToTime = new HashMap<>();
+    public static HashMap<Integer, Long> iterationNumToTime = new HashMap<>();
     private AtomicInteger iterationNum = new AtomicInteger(0);
 
     public ClientIterationCalculator(AtomicReference[] ar, Grid g, ClientConnection conn) throws Exception {
@@ -30,6 +29,7 @@ public class ClientIterationCalculator extends Thread {
         this.oldCells = ar;
         this.oldGrid = g;
         this.callback = conn;
+
     }
 
     @Override
@@ -47,31 +47,28 @@ public class ClientIterationCalculator extends Thread {
         long start = System.nanoTime();
         startThreads();
         newCells = joinThreads();
-        int count = iterationNum.incrementAndGet();
-        storeTimeForEachIteration(start, count);
+        int count = iterationNum.get();
+        iterationNum.set(++count);
+        count = iterationNum.get();
+        printIteration(start, count);
     }
 
-    private void storeTimeForEachIteration(long start, int count) {
+    private void printIteration(long start, int count) {
         long timeDifference = System.nanoTime() - start;
-        iterationNumToTime.put(count, timeDifference);
-    }
-    public static void printTimeForAllIterations(){
         PrintWriter printWriter;
         try {
             printWriter = new PrintWriter(new FileWriter("Times.txt", true));
-            printWriter.println("Number of threads: " + numThreads);
-            for(Map.Entry time : iterationNumToTime.entrySet()){
-                printWriter.println("Iteration count: " + time.getKey() + "\t Time: " + time.getValue());
-            }
+            printWriter.println("Iteration count: " + count + "\t Time: " + timeDifference);
             printWriter.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
+
     private void initializeCalculators() throws RuntimeException, InterruptedException {
         numThreads = numThreads();
-        if(startGame.numOfClientThreads > 0) numThreads = startGame.numOfClientThreads;
+        if (startGame.numOfClientThreads > 0) numThreads = startGame.numOfClientThreads;
         calculators = new NextCellCalculator[numThreads];
         //int numCellsPerThread = oldCells.length / numThreads;
         List<AtomicReference[]> listOfSubSets = findSubSetsOfCellsForThread(numThreads);

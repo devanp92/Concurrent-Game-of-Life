@@ -198,7 +198,7 @@ public class ClientConnection extends Thread {
 	public void pause() {
 		//DON'T set isPlaying (let the receive set it)
 		send(NetworkMessage.PAUSE);
-	}
+    }
 	public void updateDelayValue(int delay) {
 		send(new IterationDelayPeriod(delay));
 	}
