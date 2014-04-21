@@ -16,6 +16,7 @@ public class ClientIterationCalculator extends Thread {
     private ArrayList<Cell> newCells;
     private NextCellCalculator[] calculators;
     private ClientConnection callback;
+    public static int numClients;
     public static int numThreads;
 
     public ClientIterationCalculator(AtomicReference[] ar, Grid g, ClientConnection conn) throws Exception {
@@ -49,8 +50,8 @@ public class ClientIterationCalculator extends Thread {
         long timeDifference = System.currentTimeMillis() - start;
         PrintWriter printWriter;
         try {
-            printWriter = new PrintWriter(new FileWriter("Times.txt", true));
-            printWriter.println("Number of threads: " + numThreads + "\tClient-side Calculation delay: " + timeDifference);
+            printWriter = new PrintWriter(new FileWriter("ClientTimes.txt", true));
+            printWriter.println(numThreads + " " + timeDifference);
             printWriter.close();
         } catch (IOException e) {
             e.printStackTrace();

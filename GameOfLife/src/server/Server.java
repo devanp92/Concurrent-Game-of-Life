@@ -6,9 +6,11 @@ import backend.ClientIterationCalculator;
 import backend.DistributiveIterationCalculator;
 import backend.Grid;
 
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -124,12 +126,14 @@ public class Server extends Thread {
 	}
     
     public void stopServer() {
-    	try {
-			serverSocket.close();
-		}
-		catch(IOException e) {
-			e.printStackTrace();
-		}
+    	if(serverSocket != null) {
+	    	try {
+				serverSocket.close();
+			}
+			catch(IOException e) {
+				/*ignored*/
+			}
+    	}
     }
     
 	
@@ -150,7 +154,7 @@ public class Server extends Thread {
 							distributedIC = new DistributiveIterationCalculator(g);
 							List<AtomicReference[]> components = distributedIC.findSubSetsOfCellsForClients(clientCopy.size());
                             //-------------Needed for timed results------------------------------//
-                            ClientIterationCalculator.numThreads = clientCopy.size();
+                            ClientIterationCalculator.numClients = clientCopy.size();
                             //-------------Needed for timed results------------------------------//
 							connectionComponentLock.lock();
 							try {
@@ -211,6 +215,14 @@ public class Server extends Thread {
 						gridChanged = !mergeData();
 						System.out.println("Server: merge DONE. Sending to all Clients");
 						long stop = System.currentTimeMillis();
+						PrintWriter printWriter;
+				        try {
+				            printWriter = new PrintWriter(new FileWriter("ServerTimes.txt", true));
+				            printWriter.println(ClientIterationCalculator.numClients + "  " + (stop-start));
+				            printWriter.close();
+				        } catch (IOException e) {
+				            e.printStackTrace();
+				        }
 						Thread.sleep(Math.max(iterationDelay.getDelayVal() - (stop-start), 0));
 						sendGameToAll();
 					}
@@ -475,6 +487,7 @@ public class Server extends Thread {
 			} catch (Exception e) {
 				/*ignored: expected behavior*/
 			} finally {
+				System.out.println("Client Left");
 				synchronized(clients) {
 					clients.remove(this);
 				}
