@@ -1,6 +1,8 @@
 \documentclass[final]{beamer}
 
 \usepackage[scale=1.24]{beamerposter} % Use the beamerposter package for laying out the poster
+\usepackage{float}
+\usepackage[export]{adjustbox}
 
 \usetheme{confposter} % Use the confposter theme supplied with this template
 
@@ -142,7 +144,26 @@ Jon Conway devised an algorithm to mimic cell automation in 1970, called the 'Ga
 %----------------------------------------------------------------------------------------
 
 \begin{block}{Results}
-NEED TO ADD GRAPHS
+The graphs below show when each calculation was either ran on the server or client and one or two clients with four lines representing one, two, four, or eight cores. 
+
+\begin{figure}[!htb]
+\minipage{0.48\textwidth}
+  \includegraphics[width=\linewidth]{server-1.png}
+\endminipage\hfill
+\minipage{0.48\textwidth}
+  \includegraphics[width=\linewidth]{client-1.png}
+\endminipage\hfill
+\end{figure}
+
+\begin{figure}[!htb]
+\minipage{0.48\textwidth}
+  \includegraphics[width=\linewidth]{server-2.png}
+\endminipage\hfill
+\minipage{0.48\textwidth}
+  \includegraphics[width=\linewidth]{client-2.png}
+\endminipage\hfill
+\end{figure}
+
 \end{block}
 
 %----------------------------------------------------------------------------------------
