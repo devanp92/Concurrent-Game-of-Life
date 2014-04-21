@@ -154,7 +154,7 @@ public class Server extends Thread {
 							distributedIC = new DistributiveIterationCalculator(g);
 							List<AtomicReference[]> components = distributedIC.findSubSetsOfCellsForClients(clientCopy.size());
                             //-------------Needed for timed results------------------------------//
-                            ClientIterationCalculator.numClients = clientCopy.size();
+                            ClientIterationCalculator.numThreads = clientCopy.size();
                             //-------------Needed for timed results------------------------------//
 							connectionComponentLock.lock();
 							try {
@@ -218,7 +218,7 @@ public class Server extends Thread {
 						PrintWriter printWriter;
 				        try {
 				            printWriter = new PrintWriter(new FileWriter("ServerTimes.txt", true));
-				            printWriter.println(ClientIterationCalculator.numClients + "  " + (stop-start));
+				            printWriter.println(ClientIterationCalculator.numThreads + "  " + (stop-start));
 				            printWriter.close();
 				        } catch (IOException e) {
 				            e.printStackTrace();
