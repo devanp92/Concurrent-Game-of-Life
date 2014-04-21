@@ -210,7 +210,7 @@ public class ClientConnection extends Thread {
 	/**Callback method for when ClientIterationCalculator finishes*/
 	public void sendPartialComponent(ArrayList<Cell> component) {
 		send(component);
-		System.out.println("Client: Sending component of size: " + component.size());
+		//System.out.println("Client: Sending component of size: " + component.size());
 	}
 
 	//in case you want to run a Client without a GUI
