@@ -74,7 +74,6 @@ public class mainPageController implements UICallback {
                 delayInput.setVisible(true);
                 delayButton.setVisible(true);
                 serverButton.setVisible(false);
-                //closeServerButton.setVisible(true);
             }
             else
             {
