@@ -5,7 +5,7 @@ CIS4930: Concurrent Programming
 ----------
 
 
-A concurrent version of John Conway's Game of Life
+A concurrent version of Jon Conway's Game of Life
 
 
 ----------
