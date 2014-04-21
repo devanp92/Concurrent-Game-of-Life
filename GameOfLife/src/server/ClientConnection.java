@@ -16,14 +16,15 @@ public class ClientConnection extends Thread {
 	private ObjectOutputStream oos = null;
 	private ObjectInputStream ois = null;
 	private volatile Grid g = null;
+	public Grid getGrid() {
+		return g;
+	}
+	
 	private volatile boolean isPlaying = false;
 	public boolean getIsPlaying() {
 		return isPlaying;
 	}
 	
-	public Grid getGrid() {
-		return g;
-	}
 	private ArrayList<UICallback> subscribedUI = new ArrayList<UICallback>();
 	public void subscribe(UICallback e) {
 		subscribedUI.add(e);
@@ -63,25 +64,25 @@ public class ClientConnection extends Thread {
 				if(rcvObj != null) {
 					if(rcvObj instanceof Grid) {
 						g = (Grid) rcvObj;
-						System.out.println("Client: received Grid Size: " + g.getNumRows() + " rows");
+						//System.out.println("Client: received Grid Size: " + g.getNumRows() + " rows");
 						updateDisplay();
 					}
 					else if(rcvObj instanceof Cell) {
 						Cell c = (Cell) rcvObj;
 						g.setCell(c);
-						System.out.println("Client: received Cell " + c + " " + ((c.getCellState() == 1) ? "alive":"dead"));
+						//System.out.println("Client: received Cell " + c + " " + ((c.getCellState() == 1) ? "alive":"dead"));
 						updateCell(c);
 					}
 					else if(rcvObj instanceof AtomicReference[]) {
 						AtomicReference[] list = (AtomicReference[]) rcvObj;
-						System.out.println("Client: received partialComponent of size: " + list.length);
+						//System.out.println("Client: received partialComponent of size: " + list.length);
 						
 						ClientIterationCalculator cic = null;
 						try {
 							cic = new ClientIterationCalculator(list, g, this);
 						}
 						catch(Exception e) {
-							e.printStackTrace();//TODO: Remove
+							e.printStackTrace();
 						}
 						cic.start();//This makes the callback when done
 					}
@@ -93,15 +94,15 @@ public class ClientConnection extends Thread {
 						NetworkMessage nm = (NetworkMessage) rcvObj;
 						switch(nm) {
 							case PLAY:
-								System.out.println("Client: received PLAY");
+								//System.out.println("Client: received PLAY");
 								isPlaying = true;
 								break;
 							case CALCULATION_COMPLETE:
-								System.out.println("Client: received CALCULATION_COMPLETE");
+								//System.out.println("Client: received CALCULATION_COMPLETE");
 								isPlaying = false;
 								break;
 							case PAUSE:
-								System.out.println("Client: received PAUSE");
+								//System.out.println("Client: received PAUSE");
 								isPlaying = false;
 								break;
 							default:
@@ -109,7 +110,6 @@ public class ClientConnection extends Thread {
 						}
 						updatePausePlay(nm);
 					}
-					//if(g != null) g.printGrid();//TODO: remove
 				}
 				else {
 					doLoop = false;
@@ -127,20 +127,19 @@ public class ClientConnection extends Thread {
 				try {
 					ois.close();
 				}
-				catch(IOException e) {/*ignored*/
-				}
+				catch(IOException e) {e.printStackTrace();}
 			}
 			if(oos != null) {
 				try {
 					oos.close();
 				}
-				catch(IOException e) {/*ignored*/}
+				catch(IOException e) {e.printStackTrace();}
 			}
 			if(s != null) {
 				try {
 					s.close();
 				}
-				catch(IOException e) {/*ignored*/}
+				catch(IOException e) {e.printStackTrace();}
 			}
 		}
 	}
@@ -186,9 +185,8 @@ public class ClientConnection extends Thread {
 			c.setCellState(state);
 		}
 		g.setCell(c);
-		//g.printGrid();
 		send(c);
-		System.out.println("Client: sent cell " + c + " " + ((state == 1) ? "alive":"dead") + " to server");
+		//System.out.println("Client: sent cell " + c + " " + ((state == 1) ? "alive":"dead") + " to server");
 	}
 	
 	public void play() {
@@ -215,7 +213,7 @@ public class ClientConnection extends Thread {
 		System.out.println("Client: Sending component of size: " + component.size());
 	}
 
-	
+	//in case you want to run a Client without a GUI
 	public static void main(String[] args) {
 		final String serverIP = "127.0.0.1";
 		ClientConnection self;
@@ -223,17 +221,13 @@ public class ClientConnection extends Thread {
 			Socket clientSocket = new Socket(serverIP, Server.port);
 			self = new ClientConnection(clientSocket);
 			self.start();
-			Thread.sleep(5000);
-			self.send(NetworkMessage.PLAY);
 			System.out.println("Client socket accepted");
 			System.out.println("Created I/O streams");
 		}
 		catch(IOException ex) {
 			System.out.println("Failed to create I/O streams");
 			System.exit(1);
-		} catch(InterruptedException ex){
-            System.out.println("Failed to create connection");
-        }
+		}
 	}
     
 }

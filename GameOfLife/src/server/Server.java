@@ -168,17 +168,9 @@ public class Server extends Thread {
 							numOfRespondedClients = 0;
 						}
 						
-						//Send partial components to clients
+						//Send tasks to clients
 						long start = System.currentTimeMillis();
-						connectionComponentLock.lock();
-						try {
-							for(Connection c : connectionCalculating.keySet()) {
-								c.send(partialComponents.get(connectionCalculating.get(c)));
-							}
-						}
-						finally {
-							connectionComponentLock.unlock();
-						}
+						sendConnectionCalculatingTasks();
 						
 						//wait until all clients have responded (not necessarily with results)
 						waitOnBarrier(clientCopy.size());
@@ -251,16 +243,26 @@ public class Server extends Thread {
 						i++;
 					}
 					connectionCalculating = newConnectionCalculating;
-					
+				}
+				finally {
+					connectionComponentLock.unlock();
+				}
+				
+				sendConnectionCalculatingTasks();
+
+				waitOnBarrier(clientCopy.size());
+			}
+			
+			private void sendConnectionCalculatingTasks() {
+				connectionComponentLock.lock();
+				try {
 					for(Connection c : connectionCalculating.keySet()) {
 						c.send(partialComponents.get(connectionCalculating.get(c)));
 					}
 				}
 				finally {
 					connectionComponentLock.unlock();
-				}	
-
-				waitOnBarrier(clientCopy.size());
+				}
 			}
 			
 			private void waitOnBarrier(int waitCount) throws InterruptedException {
@@ -301,7 +303,7 @@ public class Server extends Thread {
 			tempGrid = new Grid(g.getNumRows());
 		}
 		catch(Exception e) {
-			e.printStackTrace();//TODO: remove
+			e.printStackTrace();
 		}
 		
 		Collection<ArrayList<Cell>> components = null;
@@ -426,7 +428,7 @@ public class Server extends Thread {
 						if(!playThread.isAlive()) {
 							g = (Grid) rcvObj;
 							System.out.println("Server: received Grid: " + g.getNumRows());
-							sendGameToAll(this);//TODO:sendGameToAll(this) test before using
+							sendGameToAll(this);
 						}
 					}
 					else if(rcvObj instanceof IterationDelayPeriod) {
@@ -445,7 +447,7 @@ public class Server extends Thread {
 					else if(rcvObj instanceof ArrayList<?>) {
 						if(playThread.isAlive()) {
 							//System.out.println("Server: received Completed PartialComponent");
-							ArrayList<Cell> partialComponent = (ArrayList<Cell>) rcvObj;//TODO: reflection?
+							ArrayList<Cell> partialComponent = (ArrayList<Cell>) rcvObj;
 							connectionComponentLock.lock();
 							try {
 								Integer item = connectionCalculating.get(this);
@@ -477,25 +479,19 @@ public class Server extends Thread {
 					try {
 						ois.close();
 					}
-					catch(IOException e) {
-						e.printStackTrace();
-					}
+					catch(IOException e) {e.printStackTrace();}
 				}
 				if(oos != null) {
 					try {
 						oos.close();
 					}
-					catch(IOException e) {
-						e.printStackTrace();
-					}
+					catch(IOException e) {e.printStackTrace();}
 				}
 				if(s != null) {
 					try {
 						s.close();
 					}
-					catch(IOException e) {
-						e.printStackTrace();
-					}
+					catch(IOException e) {e.printStackTrace();}
 				}
 				//if the current thread should await on the barrier, pass it to not create deadlock
 				connectionComponentLock.lock();
@@ -514,7 +510,6 @@ public class Server extends Thread {
 		private void passBarrier() {
 			synchronized(barrierLock) {
 				numOfRespondedClients++;
-				System.out.println("Server: responded client count: " + numOfRespondedClients);
 				barrierLock.notifyAll();
 			}
 		}
@@ -524,13 +519,14 @@ public class Server extends Thread {
 				ois.close();
 			}
 			catch(IOException e) {
-				e.printStackTrace();//TODO
+				e.printStackTrace();
 			}
 		}
 	}
 
+	//in case you want to run the Server externally
 	public static void main(String[] args) throws Exception {
-		Server s = new Server(defaultSize);
+		Server s = new Server();
 		s.setDaemon(false);
 		s.start();
 	}
