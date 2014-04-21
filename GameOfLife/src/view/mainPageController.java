@@ -43,6 +43,8 @@ public class mainPageController implements UICallback {
     public Label delayLabel;
     public Button serverButton;
     public Button closeServerButton;
+    public Button renderUI;
+    public GridPane menu;
     //Local variables
     ClientConnection connection = null;
     Server serverThread = null;
@@ -74,7 +76,7 @@ public class mainPageController implements UICallback {
                 delayInput.setVisible(true);
                 delayButton.setVisible(true);
                 System.out.println("margin: ");
-                GridPane.setMargin(serverButton, new Insets(0,closeServerButton.getWidth() + 5,0,0));
+                GridPane.setMargin(serverButton, new Insets(0, closeServerButton.getWidth() + 5, 0, 0));
                 closeServerButton.setVisible(true);
             }
             else
@@ -389,5 +391,12 @@ public class mainPageController implements UICallback {
     		serverThread.stopServer();
     	}
         event.consume();
+    }
+
+    public void renderUI(ActionEvent actionEvent) {
+        renderUI.setVisible(false);
+        menu.setVisible(true);
+        GridPane.setMargin(serverButton, new Insets(0, connectButton.getWidth() + 5,0,0));
+
     }
 }

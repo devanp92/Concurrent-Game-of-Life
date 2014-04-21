@@ -8,3 +8,6 @@ Button{
 .normalLabel{
     -fx-font-size: 18pt;
 }
+.renderUI{
+    -fx-font-size: 24pt;
+}
