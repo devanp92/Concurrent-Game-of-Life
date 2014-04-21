@@ -22,8 +22,6 @@ public class DistributiveIterationCalculator {
 	 * @param numClients How many cells you want per array
 	 * @return List of arrays that contains an array of cells
 	 */
-	//probably should be a method of Grid
-	//alternatively inherit from an abstract parent class
 	public List<AtomicReference[]> findSubSetsOfCellsForClients(int numClients) {
 		int gridSize = (int) Math.pow(grid.numRows, 2);
 		int numCellsPerThread = gridSize / numClients;
@@ -44,11 +42,27 @@ public class DistributiveIterationCalculator {
 	}
 
 	public void mergeClientCalculations(List<AtomicReference[]> list) {
-		//TODO: multithread this
-		for(AtomicReference[] ar : list) {
-			for(Object o : ar) {
-				Cell c = (Cell) o;
-				newGridToSet.setCell(c);
+		ArrayList<Thread> threadList = new ArrayList<Thread>();
+		for(final AtomicReference[] ar : list) {
+			Thread t = new Thread() {
+				@Override
+				public void run() {
+					for(Object o : ar) {
+						Cell c = (Cell) o;
+						newGridToSet.setCell(c);
+					}
+				}
+			};
+			t.start();
+			threadList.add(t);
+		}
+		
+		for(Thread t : threadList) {
+			try {
+				t.join();
+			}
+			catch(InterruptedException e) {
+				e.printStackTrace();
 			}
 		}
 	}
