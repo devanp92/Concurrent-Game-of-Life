@@ -1,19 +1,23 @@
 package backend;
 
+import server.ClientConnection;
+
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
-import server.ClientConnection;
-
 public class ClientIterationCalculator extends Thread {
-	private Grid oldGrid;
-	private AtomicReference[] oldCells;
-	private ArrayList<Cell> newCells;
-	private NextCellCalculator[] calculators;
-	private ClientConnection callback;
-	
-	public ClientIterationCalculator(AtomicReference[] ar, Grid g, ClientConnection conn) throws Exception {
+    private Grid oldGrid;
+    private AtomicReference[] oldCells;
+    private ArrayList<Cell> newCells;
+    private NextCellCalculator[] calculators;
+    private ClientConnection callback;
+    public static int numThreads;
+
+    public ClientIterationCalculator(AtomicReference[] ar, Grid g, ClientConnection conn) throws Exception {
         if (ar == null) {
             throw new NullPointerException("The grid is null");
         }
@@ -21,25 +25,37 @@ public class ClientIterationCalculator extends Thread {
         this.oldGrid = g;
         this.callback = conn;
     }
-	
-	@Override
-	public void run() {
-		try {
-			calculateNewIteration();
-		}
-		catch(Exception e) {
-			e.printStackTrace();
-		}
-		callback.sendPartialComponent(newCells);
-	}
-	
-	private void calculateNewIteration() throws Exception {
+
+    @Override
+    public void run() {
+        try {
+            calculateNewIteration();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        callback.sendPartialComponent(newCells);
+    }
+
+    private void calculateNewIteration() throws Exception {
         initializeCalculators();
+        long start = System.currentTimeMillis();
         startThreads();
         newCells = joinThreads();
+        printTimeForEachIteration(start);
     }
-	
-	private void initializeCalculators() throws RuntimeException, InterruptedException {
+
+    private void printTimeForEachIteration(long start) {
+        long timeDifference = System.currentTimeMillis() - start;
+        PrintWriter printWriter;
+        try {
+            printWriter = new PrintWriter(new FileWriter("Times.txt"));
+            printWriter.println(numThreads + " " + timeDifference);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void initializeCalculators() throws RuntimeException, InterruptedException {
         int numThreads = numThreads();
         calculators = new NextCellCalculator[numThreads];
         //int numCellsPerThread = oldCells.length / numThreads;
@@ -54,11 +70,11 @@ public class ClientIterationCalculator extends Thread {
 
 
     private ArrayList<Cell> joinThreads() throws InterruptedException {
-    	ArrayList<Cell> partialComponent = new ArrayList<Cell>();
+        ArrayList<Cell> partialComponent = new ArrayList<Cell>();
         for (NextCellCalculator calculator : calculators) {
             calculator.join();
-            for(Cell c : calculator.getNextCells()) {
-            	partialComponent.add(c);
+            for (Cell c : calculator.getNextCells()) {
+                partialComponent.add(c);
             }
         }
         return partialComponent;
@@ -70,7 +86,6 @@ public class ClientIterationCalculator extends Thread {
         }
     }
 
-    
 
     /**
      * Finds subsets of cells from grid depending on how many cells per set
@@ -79,20 +94,20 @@ public class ClientIterationCalculator extends Thread {
      * @return List of arrays that contains an array of cells
      */
     private List<AtomicReference[]> findSubSetsOfCellsForThread(int numThreads) {
-    	int size = oldCells.length;
+        int size = oldCells.length;
         int numCellsPerThread = size / numThreads;
         List<AtomicReference[]> list = new ArrayList<>();
 
         for (int i = 0; i < size; i += numCellsPerThread) {
             AtomicReference[] subSet;
             if (list.size() + 1 == numThreads) {
-            	subSet = new AtomicReference[size-i];
-                System.arraycopy(oldCells, i, subSet, 0, size-i);
+                subSet = new AtomicReference[size - i];
+                System.arraycopy(oldCells, i, subSet, 0, size - i);
                 list.add(subSet);
                 break;
             } else {
-            	subSet = new AtomicReference[numCellsPerThread];
-            	System.arraycopy(oldCells, i, subSet, 0, numCellsPerThread);
+                subSet = new AtomicReference[numCellsPerThread];
+                System.arraycopy(oldCells, i, subSet, 0, numCellsPerThread);
                 list.add(subSet);
             }
         }
