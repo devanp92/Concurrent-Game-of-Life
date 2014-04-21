@@ -73,7 +73,7 @@ public class mainPageController implements UICallback {
                 delayLabel.setVisible(true);
                 delayInput.setVisible(true);
                 delayButton.setVisible(true);
-                closeServerButton.setVisible(true);
+                serverButton.setVisible(false);
             }
             else
             {
@@ -374,7 +374,9 @@ public class mainPageController implements UICallback {
     		serverThread.stopServer();
             closeServerButton.setVisible(false);
             serverButton.setVisible(true);
-            connectButton.setVisible(true);
+            if(connection == null) {
+            	connectButton.setVisible(true);
+            }
             serverIpAddress.setDisable(false);
     	}
         event.consume();

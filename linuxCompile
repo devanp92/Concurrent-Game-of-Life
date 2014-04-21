@@ -1,0 +1,4 @@
+mkdir -p bin
+javac -classpath "junit.jar:jfxrt.jar" -Xlint:unchecked -d bin/ GameOfLife/src/*/*.java
+cp -r GameOfLife/src/view/css bin/view/css
+cp GameOfLife/src/view/mainPage.fxml bin/view/mainPage.fxml
