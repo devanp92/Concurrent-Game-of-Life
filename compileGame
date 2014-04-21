@@ -1,3 +1,3 @@
 cp -r GameOfLife/src/view/css bin/view/css
 cp GameOfLife/src/view/mainPage.fxml bin/view/mainPage.fxml
-javac -classpath jfxrt.jar -Xlint:unchecked -d bin/ GameOfLife/src/*/*.java
+javac -classpath "junit.jar;jfxrt.jar" -Xlint:unchecked -d bin/ GameOfLife/src/*/*.java
