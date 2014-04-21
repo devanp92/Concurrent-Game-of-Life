@@ -452,6 +452,7 @@ public class Server extends Thread {
 					else if(rcvObj instanceof ArrayList<?>) {
 						if(playThread.isAlive()) {
 							//System.out.println("Server: received Completed PartialComponent");
+							@SuppressWarnings("unchecked")
 							ArrayList<Cell> partialComponent = (ArrayList<Cell>) rcvObj;
 							connectionComponentLock.lock();
 							try {
