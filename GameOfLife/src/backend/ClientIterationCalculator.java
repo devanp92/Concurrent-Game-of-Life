@@ -52,7 +52,7 @@ public class ClientIterationCalculator extends Thread {
     }
 
     private void storeTimeForEachIteration(long start, int count) {
-        long timeDifference = System.currentTimeMillis() - start;
+        long timeDifference = System.nanoTime() - start;
         iterationNumToTime.put(count, timeDifference);
     }
     public static void printTimeForAllIterations(){
