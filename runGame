@@ -1,1 +1,0 @@
-java -classpath "jfxrt.jar;bin/" view.startGame
