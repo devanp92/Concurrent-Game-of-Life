@@ -74,7 +74,7 @@ public class mainPageController implements UICallback {
                 delayLabel.setVisible(true);
                 delayInput.setVisible(true);
                 delayButton.setVisible(true);
-                System.out.println("margin: ");
+                System.out.println("margin: ");//TODO: remove
                 GridPane.setMargin(serverButton, new Insets(0, closeServerButton.getWidth() + 5, 0, 0));
                 closeServerButton.setVisible(true);
             }
@@ -187,7 +187,6 @@ public class mainPageController implements UICallback {
     /*update game is called when the server sends a new "grid" to the user, init connect, resize, during play(iteration action process)*/
     public void updateGame()
     {
-        System.out.println("updateGame called, GridSize: " + connection.getGrid().getNumRows());
         //if the size of the client is not the same as the size in the server the board will readjust
         if(connection.getGrid().getNumRows() != gridSize)
         {
