@@ -95,6 +95,7 @@ public class mainPageController implements UICallback {
             setStatusLabel("Connection to server Failed","red");
             e.printStackTrace();
         }
+        actionEvent.consume();
     }
     /*
         Sets up the grid after user defines a size for the
@@ -361,8 +362,6 @@ public class mainPageController implements UICallback {
             //Update UI
             serverButton.setVisible(false);
             closeServerButton.setVisible(true);
-            serverButton.setText("Server Started");
-            serverButton.setStyle("-fx-text-fill: green;");
 		}
 		catch(Exception e) {
 			setStatusLabel("Unable to start Server", "red");
@@ -373,6 +372,10 @@ public class mainPageController implements UICallback {
     public void closeServer(ActionEvent event) {
     	if(serverThread != null) {
     		serverThread.stopServer();
+            closeServerButton.setVisible(false);
+            serverButton.setVisible(true);
+            connectButton.setVisible(true);
+            serverIpAddress.setDisable(false);
     	}
         event.consume();
     }
@@ -380,5 +383,6 @@ public class mainPageController implements UICallback {
     public void renderUI(ActionEvent actionEvent) {
         renderUI.setVisible(false);
         menu.setVisible(true);
+        actionEvent.consume();
     }
 }
