@@ -155,8 +155,8 @@ public class Server extends Thread {
 							connectionComponentLock.lock();
 							try {
 								for(int i = 0;i<clientCopy.size();i++) {
-									connectionCalculating.put(clientCopy.get(i), new Integer(i));
-									partialComponents.put(new Integer(i), components.get(i));
+									connectionCalculating.put(clientCopy.get(i), i);
+									partialComponents.put(i, components.get(i));
 								}
 								completePartialComponents.clear();
 							}
@@ -471,9 +471,6 @@ public class Server extends Thread {
 			}
 			catch(ClassNotFoundException e) {
 				e.printStackTrace();
-			}
-			catch(IOException e) {//SocketException
-				/*ignored: expected behavior*/
 			} catch (Exception e) {
 				/*ignored: expected behavior*/
 			} finally {
