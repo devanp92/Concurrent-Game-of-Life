@@ -5,6 +5,7 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -73,8 +74,6 @@ public class mainPageController implements UICallback {
                 delayLabel.setVisible(true);
                 delayInput.setVisible(true);
                 delayButton.setVisible(true);
-                System.out.println("margin: ");//TODO: remove
-                GridPane.setMargin(serverButton, new Insets(0, closeServerButton.getWidth() + 5, 0, 0));
                 closeServerButton.setVisible(true);
             }
             else
@@ -392,6 +391,5 @@ public class mainPageController implements UICallback {
     public void renderUI(ActionEvent actionEvent) {
         renderUI.setVisible(false);
         menu.setVisible(true);
-        System.out.println(delayLabel.getLayoutX());
     }
 }
